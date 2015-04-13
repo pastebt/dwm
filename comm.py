@@ -12,10 +12,11 @@ except ImportError:
 
 class DWM(object):
     def __init__(self):
-        #self.proxyh = ProxyHandler("http", "211.155.86.25:8888")
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()
         self.opener = build_opener(self.redirh, self.cookie)
+        #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+        #self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
 
     def get_html(self, url):
         '''
@@ -45,3 +46,5 @@ print(html)
 #print(zlib.decompress(open('a.zip', 'rb').read(), -zlib.MAX_WBITS))  # deflate
 #print(zlib.decompress(open('a.zip', 'rb').read(), zlib.MAX_WBITS))   # zlib
 #print(zlib.decompress(open('a.zip', 'rb').read(), zlib.MAX_WBITS|16)) # gzip
+
+#'http://ws.acgvideo.com/3/af/3190241-1.flv', 'http://ws.acgvideo.com/c/d8/3190242-1.flv'
