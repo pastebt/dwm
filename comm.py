@@ -2,6 +2,7 @@ import re
 import sys
 import zlib
 try:
+    from queue import Queue
     import http.client as httplib
     import urllib.parse as urlparse
     from urllib.request import HTTPCookieProcessor, ProxyHandler
@@ -13,6 +14,7 @@ try:
 except ImportError:
     import httplib
     import urlparse
+    from Queue import Queue
     from urllib2 import HTTPCookieProcessor, ProxyHandler
     from urllib2 import HTTPRedirectHandler, Request
     from urllib2 import build_opener
@@ -65,49 +67,81 @@ class DWM(object):
         else:
             return data
 
-    def get_kind_size(self, url):
-        url_parts = urlparse.urlsplit(url)
-        conn = httplib.HTTPConnection(url_parts[1])
-        #print url_parts
-        q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-        conn.request("HEAD", q)
-        resp = conn.getresponse()
-        echo(resp.status, resp.reason)
-    
-        echo("data1 =", resp.read())
-        conn.close()
-        echo(resp.getheaders())
-        size = int(resp.getheader('Content-Length', '0'))
-        kind = resp.getheader('Content-Type', '')
-        return kind, size
-
     def get_total_size(self, urllist):
-        size = 0
-        cnt = 0
-        echo("total %d" % len(urllist))
-        for url in urllist:
-            k, s = self.get_kind_size(url)
-            size += s
-            cnt += 1
-            #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-            echo("%d / %d" % (cnt, len(urllist)))
-        echo("")
-        echo("size =", size)
-        return k, size
+        if len(urllist) > 9:
+            return get_total_size_mt(urllist)
+        return get_total_size_st(urllist)
 
-    def get_total_size_mt(self, urllist, t = 10):
-        size = 0
-        cnt = 0
-        echo("total %d" % len(urllist))
-        for url in urllist:
-            k, s = self.get_kind_size(url)
-            size += s
-            cnt += 1
-            #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-            echo("%d / %d" % (cnt, len(urllist)))
-        echo("")
-        echo("size =", size)
-        return k, size
+
+def get_kind_size(url):
+    url_parts = urlparse.urlsplit(url)
+    conn = httplib.HTTPConnection(url_parts[1])
+    #print url_parts
+    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
+    conn.request("HEAD", q)
+    resp = conn.getresponse()
+    echo(resp.status, resp.reason)
+
+    echo("data1 =", resp.read())
+    conn.close()
+    echo(resp.getheaders())
+    size = int(resp.getheader('Content-Length', '0'))
+    kind = resp.getheader('Content-Type', '')
+    return kind, size
+
+
+def get_total_size_st(urllist):
+    size = 0
+    cnt = 0
+    echo("total %d" % len(urllist))
+    for url in urllist:
+        k, s = get_kind_size(url)
+        size += s
+        cnt += 1
+        #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
+        echo("%d / %d" % (cnt, len(urllist)))
+    echo("")
+    echo("size =", size)
+    return k, size
+
+
+def get_total_size_mt(urllist, tn = 10):
+    from threading import Thread
+    qsrc, qdst = Queue(), Queue()
+    size = 0
+    cnt = 0
+    echo("total %d" % len(urllist))
+
+    def worker():
+        while True:
+            url = qsrc.get()
+            if not url:
+                break
+            k, s = get_kind_size(url)
+            qdst.put((k, s))
+
+    ths = []
+    for i in range(tn):
+        th = Thread(target=worker)
+        ths.append(th)
+        th.start()
+
+    for url in urllist:
+        qsrc.put(url)
+    for i in range(tn):
+        qsrc.put("")
+    for th in ths:
+        th.join()
+
+    for url in urllist:
+        k, s = qdst.get(False)
+        size += s
+        cnt += 1
+        #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
+        #echo("%d / %d" % (cnt, len(urllist)))
+    echo("")
+    echo("size =", size, "cnt =", cnt)
+    return k, size
 
 
 def match1(text, *patterns):
