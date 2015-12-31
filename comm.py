@@ -69,8 +69,11 @@ class DWM(object):
 
     def get_total_size(self, urllist):
         if len(urllist) > 9:
-            return get_total_size_mt(urllist)
-        return get_total_size_st(urllist)
+            k, s = get_total_size_mt(urllist)
+        else:
+            k, s = get_total_size_st(urllist)
+        echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
+        return k, s
 
 
 def get_kind_size(url):
@@ -80,11 +83,10 @@ def get_kind_size(url):
     q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
     conn.request("HEAD", q)
     resp = conn.getresponse()
-    echo(resp.status, resp.reason)
-
-    echo("data1 =", resp.read())
+    #echo(resp.status, resp.reason)
+    #echo("data1 =", resp.read())
     conn.close()
-    echo(resp.getheaders())
+    #echo(resp.getheaders())
     size = int(resp.getheader('Content-Length', '0'))
     kind = resp.getheader('Content-Type', '')
     return kind, size
@@ -98,10 +100,10 @@ def get_total_size_st(urllist):
         k, s = get_kind_size(url)
         size += s
         cnt += 1
-        #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-        echo("%d / %d" % (cnt, len(urllist)))
+        sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
+        #echo("%d / %d" % (cnt, len(urllist)))
     echo("")
-    echo("size =", size)
+    #echo("size =", size)
     return k, size
 
 
@@ -139,8 +141,8 @@ def get_total_size_mt(urllist, tn = 10):
         cnt += 1
         #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
         #echo("%d / %d" % (cnt, len(urllist)))
-    echo("")
-    echo("size =", size, "cnt =", cnt)
+    #echo("")
+    #echo("size =", size, "cnt =", cnt)
     return k, size
 
 

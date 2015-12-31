@@ -106,9 +106,10 @@ class LETV(DWM):
         m3u8_list = decode_m3u8(bytearray(m3u8))
         us = re.findall(r'^[^#][^\r]*', m3u8_list, re.MULTILINE)
         #print(ext, us)
-        echo("us[0, 1]", us[0], us[1])
-        echo(len(us))
-        self.get_total_size(us)
+        #echo("us[0, 1]", us[0], us[1])
+        #echo(len(us))
+        k, size = self.get_total_size(us)
+        #echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2), size))
         return ext, us
 
 
