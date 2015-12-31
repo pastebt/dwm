@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-#from mechanize import Browser
-#from lxml import html, etree
-
 import os
 import re
 import sys
@@ -16,16 +13,8 @@ import random
 from comm import DWM, match1, echo
 
 
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) Gecko/20100101 Firefox/33.0'
-OSTYPE = 'MacOS10.10.1'
-
-
-#def ror(a, b):
-#    c = 0
-#    while c < b:
-#        a = (0x7fffffff & (a >> 1)) + (0x80000000 & (a << 31))
-#        c += 1
-#    return a
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
+USER_AGENT += 'Gecko/20100101 Firefox/33.0'
 
 
 def decode_m3u8(data):
@@ -34,14 +23,14 @@ def decode_m3u8(data):
         #get real m3u8
         loc2 = data[5:]
         length = len(loc2)
-        loc4 = [0]*(2*length)
+        loc4 = [0] * (2 * length)
         for i in range(length):
-            loc4[2*i] = loc2[i] >> 4
-            loc4[2*i+1]= loc2[i] & 15;
-        loc6 = loc4[len(loc4)-11:]+loc4[:len(loc4)-11]
-        loc7 = [0]*length
+            loc4[2 * i] = loc2[i] >> 4
+            loc4[2 * i + 1] = loc2[i] & 15
+        loc6 = loc4[len(loc4) - 11:] + loc4[:len(loc4) - 11]
+        loc7 = [0] * length
         for i in range(length):
-            loc7[i] = (loc6[2 * i] << 4) +loc6[2*i+1]
+            loc7[i] = (loc6[2 * i] << 4) + loc6[2 * i + 1]
         return ''.join([chr(i) for i in loc7])
     else:
         # directly return
@@ -49,8 +38,9 @@ def decode_m3u8(data):
 
 
 def calcTimeKey(t):
-    ror = lambda val, r_bits, : ((val & (2**32-1)) >> r_bits%32) |  (val << (32-(r_bits%32)) & (2**32-1))
-    return ror(ror(t,773625421%13)^773625421,773625421%17)
+    ror = lambda val, r_bits: ((val & (2 ** 32 - 1)) >> r_bits % 32) | \
+                              (val << (32 - (r_bits % 32)) & (2 ** 32 - 1))
+    return ror(ror(t, 773625421 % 13) ^ 773625421, 773625421 % 17)
 
 
 class LETV(DWM):
@@ -75,28 +65,31 @@ class LETV(DWM):
         u = 'http://api.letv.com/mms/out/video/playJson?'
         u = u + ("id=%s&platid=1&splatid=101&format=1" % vid)
         u = u + ("&tkey=%d&domain=www.letv.com" % tkey)
-        echo("u =", u)
+        #echo("u =", u)
         data = self.get_html(u)
         #print data
         #info=json.loads(str(data,"utf-8"))
-        info=json.loads(data.decode("utf-8"))
+        info = json.loads(data.decode("utf-8"))
         #print info
 
         stream_id = None
         kwargs = {}
         support_stream_id = info["playurl"]["dispatch"].keys()
-        if "stream_id" in kwargs and kwargs["stream_id"].lower() in support_stream_id:
-            stream_id = kwargs["stream_id"]
+        #si = kwargs.get("stream_id", "")
+        si = kwargs.get("stream_id", "720p")
+        if si and si.lower() in support_stream_id:
+            stream_id = si
         else:
             echo("Current Video Supports:")
             for i in support_stream_id:
-                echo("\t--format",i,"<URL>")
+                echo("\t--format", i, "<URL>")
             if "1080p" in support_stream_id:
                 stream_id = '1080p'
             elif "720p" in support_stream_id:
                 stream_id = '720p'
             else:
-                stream_id =sorted(support_stream_id,key= lambda i: int(i[1:]))[-1]
+                sids = sorted(support_stream_id, key=lambda i: int(i[1:]))
+                stream_id = sids[-1]
 
         u2 = info["playurl"]["domain"][0]
         u2 = u2 + info["playurl"]["dispatch"][stream_id][0]
@@ -104,21 +97,23 @@ class LETV(DWM):
         u2 = u2 + "&ctv=pc&m3v=1&termid=1&format=1&hwtype=un&ostype=Linux"
         u2 = u2 + ("&tag=letv&sign=letv&expect=3&tn=%d" % random.random())
         u2 = u2 + ("&pay=0&iscpn=f9051&rateid=%s" % stream_id)
-        
+
         r2 = self.get_html(u2)
         info2 = json.loads(r2.decode("utf-8"))
         #print info2
         #print info2["location"]
         m3u8 = self.get_html(info2["location"])
         m3u8_list = decode_m3u8(bytearray(m3u8))
-        us = re.findall(r'^[^#][^\r]*',m3u8_list,re.MULTILINE)
+        us = re.findall(r'^[^#][^\r]*', m3u8_list, re.MULTILINE)
         #print(ext, us)
         echo("us[0, 1]", us[0], us[1])
         echo(len(us))
+        self.get_total_size(us)
+        return ext, us
 
 
 def usage():
-    print('Usage:', sys.argv[0], 'source_url target_dir')
+    echo('Usage:', sys.argv[0], 'source_url target_dir')
     sys.exit(1)
 
 
