@@ -5,11 +5,22 @@ try:
     from urllib.request import HTTPCookieProcessor, ProxyHandler
     from urllib.request import HTTPRedirectHandler, Request
     from urllib.request import build_opener
+    def echo(*args):
+        sys.stdout.write(" ".join(map(str, args)) + "\n")
 except ImportError:
     from urllib2 import HTTPCookieProcessor, ProxyHandler
     from urllib2 import HTTPRedirectHandler, Request
     from urllib2 import build_opener
-    
+    def echo(*args):
+        #sys.stdout.write(" ".join(map(str, args)) + "\n")
+        for arg in args:
+            if isinstance(arg, unicode):
+                sys.stdout.write(arg.encode("utf8"))
+            else:
+                sys.stdout.write(str(arg))
+            sys.stdout.write(" ")
+        sys.stdout.write("\n")
+                
 
 class DWM(object):
     def __init__(self):
@@ -32,7 +43,7 @@ class DWM(object):
         '''
         req = Request(url)
         for k, v in self.extra_headers.items():
-            print("add header", k, v)
+            #print("add header", k, v)
             req.add_header(k, v)
         
         rep = self.opener.open(req)
@@ -59,7 +70,7 @@ def match1(text, *patterns):
         When more than one pattern are given, returns a list of strings
         ([] if no match found).
     """
-    text = str(text)
+    #text = str(text)
     if len(patterns) == 1:
         pattern = patterns[0]
         match = re.search(pattern, text)
