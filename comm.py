@@ -75,6 +75,11 @@ class DWM(object):
         echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
+    def download_urls(self, title, ext, urls, totalsize, dstdir):
+        sys.path.insert(1, '../you-get/src')
+        from you_get.common import download_urls
+        download_urls(urls, title, ext, totalsize, dstdir)
+
 
 def get_kind_size(url):
     url_parts = urlparse.urlsplit(url)

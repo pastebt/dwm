@@ -110,7 +110,7 @@ class LETV(DWM):
         #echo(len(us))
         k, size = self.get_total_size(us)
         #echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2), size))
-        return ext, us
+        return title, ext, us, size
 
 
 def usage():
@@ -125,4 +125,5 @@ if __name__ == '__main__':
     target_dir = sys.argv[2]
     #letv(page_url, target_dir)
     l = LETV()
-    l.query_info(page_url)
+    title, ext, urls, size = l.query_info(page_url)
+    l.download_urls(title, ext, urls, size, target_dir)
