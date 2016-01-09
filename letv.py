@@ -6,9 +6,6 @@ import sys
 import json
 import time
 import random
-#import urllib
-#import urllib2
-#import urlparse
 
 from comm import DWM, match1, echo
 
@@ -20,7 +17,7 @@ USER_AGENT += 'Gecko/20100101 Firefox/33.0'
 def decode_m3u8(data):
     version = data[0:5]
     if version.lower() == b'vc_01':
-        #get real m3u8
+        # get real m3u8
         loc2 = data[5:]
         length = len(loc2)
         loc4 = [0] * (2 * length)
@@ -65,18 +62,18 @@ class LETV(DWM):
         u = 'http://api.letv.com/mms/out/video/playJson?'
         u = u + ("id=%s&platid=1&splatid=101&format=1" % vid)
         u = u + ("&tkey=%d&domain=www.letv.com" % tkey)
-        #echo("u =", u)
+        # echo("u =", u)
         data = self.get_html(u)
-        #print data
-        #info=json.loads(str(data,"utf-8"))
+        # print data
+        # info=json.loads(str(data,"utf-8"))
         info = json.loads(data.decode("utf-8"))
-        #print info
+        # print info
 
         stream_id = None
         kwargs = {}
         support_stream_id = info["playurl"]["dispatch"].keys()
-        si = kwargs.get("stream_id", "")
-        #si = kwargs.get("stream_id", "720p")
+        # si = kwargs.get("stream_id", "")
+        si = kwargs.get("stream_id", "720p")
         if si and si.lower() in support_stream_id:
             stream_id = si
         else:
@@ -100,16 +97,15 @@ class LETV(DWM):
 
         r2 = self.get_html(u2)
         info2 = json.loads(r2.decode("utf-8"))
-        #print info2
-        #print info2["location"]
+        # print info2
+        # print info2["location"]
         m3u8 = self.get_html(info2["location"])
         m3u8_list = decode_m3u8(bytearray(m3u8))
         us = re.findall(r'^[^#][^\r]*', m3u8_list, re.MULTILINE)
-        #print(ext, us)
-        #echo("us[0, 1]", us[0], us[1])
-        #echo(len(us))
+        # print(ext, us)
+        # echo("us[0, 1]", us[0], us[1])
+        # echo(len(us))
         k, size = self.get_total_size(us)
-        #echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2), size))
         return title, ext, us, size
 
 
@@ -123,7 +119,6 @@ if __name__ == '__main__':
         usage()
     page_url = sys.argv[1]
     target_dir = sys.argv[2]
-    #letv(page_url, target_dir)
     l = LETV()
     title, ext, urls, size = l.query_info(page_url)
     l.download_urls(title, ext, urls, size, target_dir)

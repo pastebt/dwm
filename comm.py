@@ -20,7 +20,7 @@ except ImportError:
     from urllib2 import build_opener
 
     def echo(*args):
-        #sys.stdout.write(" ".join(map(str, args)) + "\n")
+        # sys.stdout.write(" ".join(map(str, args)) + "\n")
         for arg in args:
             if isinstance(arg, unicode):
                 sys.stdout.write(arg.encode("utf8"))
@@ -35,8 +35,8 @@ class DWM(object):
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()
         self.opener = build_opener(self.redirh, self.cookie)
-        #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
-        #self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        # self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+        # self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         self.extra_headers = {}
 
     def get_html(self, url):
@@ -52,7 +52,7 @@ class DWM(object):
         req = Request(url, headers=self.extra_headers)
         rep = self.opener.open(req)
         hds = rep.info()
-        #print(repr(info))
+        # print(repr(info))
         data = rep.read()
         if hds.get("Content-Encoding") == 'gzip':
             echo("It is gzip")
@@ -60,9 +60,9 @@ class DWM(object):
             return html
         elif hds.get("Content-Encoding") == 'deflate':
             echo("It is deflate")
-            #decompressobj = zlib.decompressobj(-zlib.MAX_WBITS)
-            #return decompressobj.decompress(data) + decompressobj.flush()
-            html = zlib.decompress(data, -zlib.MAX_WBITS)   
+            # decompressobj = zlib.decompressobj(-zlib.MAX_WBITS)
+            # return decompressobj.decompress(data) + decompressobj.flush()
+            html = zlib.decompress(data, -zlib.MAX_WBITS)
             return html
         else:
             return data
@@ -77,21 +77,26 @@ class DWM(object):
 
     def download_urls(self, title, ext, urls, totalsize, dstdir):
         sys.path.insert(1, '../you-get/src')
-        from you_get.common import download_urls
+        from you_get.common import download_urls, SimpleProgressBar
+        l = len(str(len(urls)))
+        b = SimpleProgressBar.bar_size - l - l 
+        SimpleProgressBar.bar_size = b
+        SimpleProgressBar.bar = '{0:>5}% ({1:>5}/{2:<5}MB) ├{3:─<' + \
+                                str(b) + '}┤[{4:>' + str(l) + '}/{5}] {6}'
         download_urls(urls, title, ext, totalsize, dstdir)
 
 
 def get_kind_size(url):
     url_parts = urlparse.urlsplit(url)
     conn = httplib.HTTPConnection(url_parts[1])
-    #print url_parts
+    # print url_parts
     q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
     conn.request("HEAD", q)
     resp = conn.getresponse()
-    #echo(resp.status, resp.reason)
-    #echo("data1 =", resp.read())
+    # echo(resp.status, resp.reason)
+    # echo("data1 =", resp.read())
     conn.close()
-    #echo(resp.getheaders())
+    # echo(resp.getheaders())
     size = int(resp.getheader('Content-Length', '0'))
     kind = resp.getheader('Content-Type', '')
     return kind, size
@@ -106,13 +111,13 @@ def get_total_size_st(urllist):
         size += s
         cnt += 1
         sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-        #echo("%d / %d" % (cnt, len(urllist)))
+        # echo("%d / %d" % (cnt, len(urllist)))
     echo("")
-    #echo("size =", size)
+    # echo("size =", size)
     return k, size
 
 
-def get_total_size_mt(urllist, tn = 10):
+def get_total_size_mt(urllist, tn=10):
     from threading import Thread
     qsrc, qdst = Queue(), Queue()
     size = 0
@@ -144,10 +149,10 @@ def get_total_size_mt(urllist, tn = 10):
         k, s = qdst.get(False)
         size += s
         cnt += 1
-        #sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-        #echo("%d / %d" % (cnt, len(urllist)))
-    #echo("")
-    #echo("size =", size, "cnt =", cnt)
+        # sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
+        # echo("%d / %d" % (cnt, len(urllist)))
+    # echo("")
+    # echo("size =", size, "cnt =", cnt)
     return k, size
 
 
