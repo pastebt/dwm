@@ -78,11 +78,11 @@ class DWM(object):
     def download_urls(self, title, ext, urls, totalsize, dstdir):
         sys.path.insert(1, '../you-get/src')
         from you_get.common import download_urls, SimpleProgressBar
-        l = len(str(len(urls)))
-        b = SimpleProgressBar.bar_size - l - l 
-        SimpleProgressBar.bar_size = b
-        SimpleProgressBar.bar = '{0:>5}% ({1:>5}/{2:<5}MB) ├{3:─<' + \
-                                str(b) + '}┤[{4:>' + str(l) + '}/{5}] {6}'
+        #l = len(str(len(urls)))
+        #b = SimpleProgressBar.bar_size - l - l 
+        #SimpleProgressBar.bar_size = b
+        #SimpleProgressBar.bar = '{0:>5}% ({1:>5}/{2:<5}MB) ├{3:─<' + \
+        #                        str(b) + '}┤[{4:>' + str(l) + '}/{5}] {6}'
         download_urls(urls, title, ext, totalsize, dstdir)
 
 
