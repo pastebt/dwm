@@ -130,6 +130,8 @@ class MyHTMLParser(HTMLParser):
         self.urllist = []
 
     def handle_starttag(self, tag, attrs):
+        # python3 letv.py --playlist http://www.letv.com/tv/10003313.html .
+        # 女医明妃传
         if tag != 'a':
             return
         if len(attrs) != 3:
@@ -198,6 +200,17 @@ if __name__ == '__main__':
     if playlist:
         for title, url in get_list(args[0]):
             echo(title, url)
-            get_one(url, args[1])
+            for i in range(3):
+                try:
+                    get_one(url, args[1])
+                #except KeyboardInterrupt:
+                #    raise
+                #except socket.ConnectionResetError as e:
+                except ConnectionResetError as e:
+                    echo(e)
+                except Exception: # as e:
+                    raise
+                else:
+                    break
     else:
         get_one(args[0], args[1])
