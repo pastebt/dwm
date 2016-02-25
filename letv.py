@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 import os
 import re
@@ -6,6 +7,13 @@ import sys
 import json
 import time
 import random
+
+try:
+    from HTMLParser import HTMLParser
+    p3 = False
+except ImportError:
+    from html.parser import HTMLParser
+    p3 = True
 
 from comm import DWM, match1, echo
 
@@ -109,16 +117,87 @@ class LETV(DWM):
         return title, ext, us, size
 
 
+def get_one(page_url, target_dir):
+    l = LETV()
+    title, ext, urls, size = l.query_info(page_url)
+    l.download_urls(title, ext, urls, size, target_dir)
+
+
+class MyHTMLParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        #self.p = 0
+        self.urllist = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag != 'a':
+            return
+        if len(attrs) != 3:
+            return
+        ats = dict(attrs)
+        if ats.get('target') != '_blank':
+            return
+        u = ats.get('href')
+        if not re.match(r'http://www.letv.com/ptv/vplay/(\d+).html', u):
+            return
+
+        T = ats.get('title')
+        if p3:
+            t = T
+        else:
+            t = T.encode('utf8')
+        if not re.match('^女医明妃传\d\d$', t):
+            return
+
+        self.urllist.append([t, u])
+
+    #def handle_starttag(self, tag, attrs):
+    #    if tag == 'p' and len(attrs) == 1 and dict(attrs).get('class') == 'p1':
+    #        self.p = 1
+    #    if self.p and tag == 'a':
+    #        for k, v in attrs:
+    #            echo(k, v)
+
+    #def handle_endtag(self, tag):
+    #    if tag == 'p':
+    #        self.p = 0
+
+
+
+def get_list(page_url):
+    l =  LETV()
+    html = l.get_html(page_url)
+    #echo(html)
+    hutf = html.decode('utf8')
+    #echo(hutf)
+    m = MyHTMLParser()
+    m.feed(hutf[1000:])
+    #echo(m.urllist)
+    #return []
+    return m.urllist
+
+
 def usage():
-    echo('Usage:', sys.argv[0], 'source_url target_dir')
+    echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
     sys.exit(1)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    args = sys.argv[1:]
+    if len(args) < 2:
         usage()
-    page_url = sys.argv[1]
-    target_dir = sys.argv[2]
-    l = LETV()
-    title, ext, urls, size = l.query_info(page_url)
-    l.download_urls(title, ext, urls, size, target_dir)
+
+    playlist = False
+    while args[0][:2] == '--':
+        opt = args.pop(0)
+        if opt == '--playlist':
+            playlist = True
+        else:
+            usage()
+
+    if playlist:
+        for title, url in get_list(args[0]):
+            echo(title, url)
+            get_one(url, args[1])
+    else:
+        get_one(args[0], args[1])
