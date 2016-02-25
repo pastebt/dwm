@@ -2,7 +2,14 @@
 
 import os
 import sys
-from httplib import HTTPConnection
+try:
+    from httplib import HTTPConnection
+    from urllib import quote
+except ImportError:
+    from http.client import HTTPConnection
+    from urllib.parse import quote
+
+from comm import echo
 
 
 class UpFile(object):
@@ -26,7 +33,7 @@ class UpFile(object):
         #FIXME, if bufsize < len(self.pre) or bufsize < len(self.end)
         if self.s == 0:
             self.s = 1
-            print '#',
+            #print '#',
             return self.pre
         if self.s == 1:
             buf = self.f.read(bufsize)
@@ -36,26 +43,44 @@ class UpFile(object):
                 sys.stdout.write("%0.1f\r" % (self.cnt * 100.0 / self.tal))
                 return buf
             self.s = 2
-            print ""
+            echo("")
             return self.end
         return ""
 
 
-def post(fn, dst):
+def get(dst):
     conn = HTTPConnection("10.0.0.7", 8080)
-    bun = "-----------------1212313----61b3e9bf8df4ee45---------------"
+    print(repr(dst))
+    conn.request("GET", dst)
+    resp = conn.getresponse()
+    echo(resp.read().decode('utf8'))
+
+
+def post(dst, fns):
+    for fn in fns:
+        post_one(fn, dst)
+
+
+def post_one(fn, dst):
+    echo(fn)
+    conn = HTTPConnection("10.0.0.7", 8080)
+    bun = "-----------------12123135---61b3e9bf8df4ee45---------------"
     fo = UpFile(fn, 'attachment', bun)
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
                "Content-Length": str(fo.size())
              }
-    conn.request("POST", dst, fo, headers)
+    conn.request("POST", dst.decode('utf8'), fo, headers)
     resp = conn.getresponse()
     #print
-    print resp.status, resp.reason
+    echo(resp.status, resp.reason)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print 'Usage:', sys.argv[0], 'filename  remote_path'
+    if len(sys.argv) < 2:
+        echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)
-    post(sys.argv[1], sys.argv[2])
+    dst = quote(sys.argv[1])
+    if len(sys.argv) < 3:
+        get(dst)
+    else:
+        post(dst, sys.argv[2:])
