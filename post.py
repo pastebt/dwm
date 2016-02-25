@@ -36,17 +36,17 @@ class UpFile(object):
         return ""
 
 
-def post(fn):
-    conn = HTTPConnection("127.0.0.1", 8080)
+def post(fn, dst):
+    conn = HTTPConnection("10.0.0.7", 8080)
     bun = "-----------------1212313----61b3e9bf8df4ee45---------------"
     fo = UpFile(fn, 'attachment', bun)
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
                "Content-Length": str(fo.size())
              }
-    conn.request("POST", "/", fo, headers)
+    conn.request("POST", dst, fo, headers)
     resp = conn.getresponse()
     print
     print resp.status, resp.reason
 
 
-post(sys.argv[1])
+post(sys.argv[1], sys.argv[2])
