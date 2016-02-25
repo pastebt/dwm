@@ -15,10 +15,12 @@ class UpFile(object):
         pre = '%sContent-Type: text/plain\r\n\r\n' % pre
         self.pre = pre
         self.end = "\r\n--%s--" % bun
+        self.tal = 0
+        self.cnt = 0
 
     def size(self):
-        l = os.fstat(self.f.fileno()).st_size
-        return len(self.pre) + l + len(self.end)
+        self.tal = os.fstat(self.f.fileno()).st_size
+        return len(self.pre) + self.tal + len(self.end)
 
     def read(self, bufsize):
         #FIXME, if bufsize < len(self.pre) or bufsize < len(self.end)
@@ -29,9 +31,12 @@ class UpFile(object):
         if self.s == 1:
             buf = self.f.read(bufsize)
             if buf:
-                print '#',
+                #print '#',
+                self.cnt += len(buf)
+                sys.stdout.write("%0.1f\r" % (self.cnt * 100.0 / self.tal))
                 return buf
             self.s = 2
+            print ""
             return self.end
         return ""
 
@@ -45,8 +50,12 @@ def post(fn, dst):
              }
     conn.request("POST", dst, fo, headers)
     resp = conn.getresponse()
-    print
+    #print
     print resp.status, resp.reason
 
 
-post(sys.argv[1], sys.argv[2])
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        print 'Usage:', sys.argv[0], 'filename  remote_path'
+        sys.exit(1)
+    post(sys.argv[1], sys.argv[2])
