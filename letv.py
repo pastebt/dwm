@@ -49,6 +49,9 @@ def calcTimeKey(t):
 
 
 class LETV(DWM):
+    class ExistsError(Exception):
+        pass
+
     def __init__(self):
         DWM.__init__(self)
         ip = "220.181.111.%d" % random.randint(1, 254)
@@ -113,13 +116,20 @@ class LETV(DWM):
         # print(ext, us)
         # echo("us[0, 1]", us[0], us[1])
         # echo(len(us))
+        fn = "%s.%s" % (title, ext)
+        if os.path.exists("%s.%s" % (title, ext)):
+            raise self.ExistsError(fn)
         k, size = self.get_total_size(us)
         return title, ext, us, size
 
 
 def get_one(page_url, target_dir):
     l = LETV()
-    title, ext, urls, size = l.query_info(page_url)
+    try:
+        title, ext, urls, size = l.query_info(page_url)
+    except l.ExistsError as e:
+        echo(e)
+        return
     l.download_urls(title, ext, urls, size, target_dir)
 
 
