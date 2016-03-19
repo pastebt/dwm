@@ -40,7 +40,7 @@ class UpFile(object):
             if buf:
                 #print '#',
                 self.cnt += len(buf)
-                sys.stdout.write("%0.1f\r" % (self.cnt * 100.0 / self.tal))
+                sys.stdout.write("\r%0.1f" % (self.cnt * 100.0 / self.tal))
                 return buf
             self.s = 2
             echo("")
