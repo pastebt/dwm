@@ -35,9 +35,11 @@ class DRAMA8(DWM):
         #print url
         m = re.search("<title>([^<>]+)</title>", hutf)
         title = m.groups()[0]
+        title = title.split("|")[0].strip()
         k, size = self.get_total_size([url])
         #print title, k, [url], size
-        return title, "mp4", [url], size
+        t = k.split("/")[1]
+        return title, t, [url], size
         #raise self.ExistsError()
 
 
@@ -57,10 +59,13 @@ def get_list(page_url):
     d = DRAMA8()
     html = d.get_html(page_url)
     hutf = html.decode('utf8')
-    m = re.search("""<td width="20%"><a href="(http://8drama.com/\d+/)">""",
+    m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
                   hutf)
-    print m.group()
-    yield ""
+    for u, t in m:
+        yield t, u
+    #echo(m.groups())
+    #print m
+    #yield ""
 
 
 def usage():
@@ -84,6 +89,7 @@ if __name__ == '__main__':
     if playlist:
         for title, url in get_list(args[0]):
             echo(title, url)
+            #continue
             for i in range(3):
                 try:
                     get_one(url, args[1])
