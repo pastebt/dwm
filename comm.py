@@ -33,6 +33,9 @@ except ImportError:
 
 
 class DWM(object):
+    class ExistsError(Exception):
+        pass
+
     def __init__(self):
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()

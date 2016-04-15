@@ -49,9 +49,6 @@ def calcTimeKey(t):
 
 
 class LETV(DWM):
-    class ExistsError(Exception):
-        pass
-
     def __init__(self):
         DWM.__init__(self)
         ip = "220.181.111.%d" % random.randint(1, 254)
