@@ -18,9 +18,6 @@ except ImportError:
 from comm import DWM, match1, echo
 
 
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
-USER_AGENT += 'Gecko/20100101 Firefox/33.0'
-
 
 def decode_m3u8(data):
     version = data[0:5]

@@ -32,6 +32,10 @@ except ImportError:
         sys.stdout.write("\n")
 
 
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
+USER_AGENT += 'Gecko/20100101 Firefox/33.0'
+
+
 class DWM(object):
     class ExistsError(Exception):
         pass

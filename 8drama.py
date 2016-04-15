@@ -53,6 +53,16 @@ def get_one(page_url, target_dir):
     p.wait()
 
 
+def get_list(page_url):
+    d = DRAMA8()
+    html = d.get_html(page_url)
+    hutf = html.decode('utf8')
+    m = re.search("""<td width="20%"><a href="(http://8drama.com/\d+/)">""",
+                  hutf)
+    print m.group()
+    yield ""
+
+
 def usage():
     echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
     sys.exit(1)
