@@ -16,8 +16,8 @@ except ImportError:
     from html.parser import HTMLParser
     p3 = True
 
-import comm
-from comm import DWM, match1, echo
+#import comm
+from comm import DWM, echo, start
 
 
 class DRAMA8(DWM):
@@ -42,65 +42,22 @@ class DRAMA8(DWM):
         return title, t, [url], size
         #raise self.ExistsError()
 
+    def download_urls(self, title, ext, urls, totalsize, dstdir):
+        p = Popen(["wget", "-O", title + "." + ext, urls[0]])
+        p.wait()
+        
 
-def get_one(page_url, target_dir):
-    l = DRAMA8()
-    try:
-        title, ext, urls, size = l.query_info(page_url)
-    except l.ExistsError as e:
-        echo(e)
-        return
-    #l.download_urls(title, ext, urls, size, target_dir)
-    p = Popen(["wget", "-O", title + "." + ext, urls[0]])
-    p.wait()
-
-
-def get_list(page_url):
-    d = DRAMA8()
-    html = d.get_html(page_url)
-    hutf = html.decode('utf8')
-    m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
-                  hutf)
-    for u, t in m:
-        yield t, u
-    #echo(m.groups())
-    #print m
-    #yield ""
-
-
-def usage():
-    echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
-    sys.exit(1)
+    def get_list(self, page_url):
+        html = self.get_html(page_url)
+        hutf = html.decode('utf8')
+        m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
+                      hutf)
+        for u, t in m:
+            yield t, u
+        #echo(m.groups())
+        #print m
+        #yield ""
 
 
 if __name__ == '__main__':
-    args = sys.argv[1:]
-    if len(args) < 2:
-        usage()
-
-    playlist = False
-    while args[0][:2] == '--':
-        opt = args.pop(0)
-        if opt == '--playlist':
-            playlist = True
-        else:
-            usage()
-
-    if playlist:
-        for title, url in get_list(args[0]):
-            echo(title, url)
-            #continue
-            for i in range(3):
-                try:
-                    get_one(url, args[1])
-                #except KeyboardInterrupt:
-                #    raise
-                #except socket.ConnectionResetError as e:
-                except ConnectionResetError as e:
-                    echo(e)
-                except Exception: # as e:
-                    raise
-                else:
-                    break
-    else:
-        get_one(args[0], args[1])
+    start(DRAMA8)

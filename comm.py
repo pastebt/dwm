@@ -90,6 +90,18 @@ class DWM(object):
         from you_get.common import download_urls
         download_urls(urls, title, ext, totalsize, dstdir)
 
+    def get_one(self, page_url, target_dir):
+        try:
+            title, ext, urls, size = self.query_info(page_url)
+        except self.ExistsError as e:
+            echo(e)
+            return
+        self.download_urls(title, ext, urls, size, target_dir)
+
+    def get_list(self, page_url):
+        raise Exception("Not Implement Yet")
+    
+
 
 def get_kind_size(u):
     url = u
@@ -210,6 +222,45 @@ def match1(text, *patterns):
             if match:
                 ret.append(match.group(1))
         return ret
+
+
+def usage():
+    echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
+    sys.exit(1)
+
+
+def start(kls):
+    args = sys.argv[1:]
+    if len(args) < 2:
+        usage()
+
+    playlist = False
+    while args[0][:2] == '--':
+        opt = args.pop(0)
+        if opt == '--playlist':
+            playlist = True
+        else:
+            usage()
+
+    k = kls()
+    if playlist:
+        for title, url in k.get_list(args[0]):
+            echo(title, url)
+            #continue
+            for i in range(3):
+                try:
+                    k.get_one(url, args[1])
+                #except KeyboardInterrupt:
+                #    raise
+                #except socket.ConnectionResetError as e:
+                except ConnectionResetError as e:
+                    echo(e)
+                except Exception: # as e:
+                    raise
+                else:
+                    break
+    else:
+        k.get_one(args[0], args[1])
 
 
 if __name__ == '__main__':
