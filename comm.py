@@ -86,20 +86,43 @@ class DWM(object):
         download_urls(urls, title, ext, totalsize, dstdir)
 
 
-def get_kind_size(url):
-    url_parts = urlparse.urlsplit(url)
-    conn = httplib.HTTPConnection(url_parts[1])
-    # print url_parts
-    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-    conn.request("HEAD", q)
-    resp = conn.getresponse()
-    # echo(resp.status, resp.reason)
-    # echo("data1 =", resp.read())
-    conn.close()
-    # echo(resp.getheaders())
+def get_kind_size(u):
+    url = u
+    while url:
+        url_parts = urlparse.urlsplit(url)
+        if url_parts[0] == 'https':
+            conn = httplib.HTTPSConnection(url_parts[1])
+        else:
+            conn = httplib.HTTPConnection(url_parts[1])
+        # print url_parts
+        q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
+        #print h
+        conn.request("HEAD", q) #, "", h)
+        resp = conn.getresponse()
+        #echo("data1 =", resp.read())
+        conn.close()
+        #echo(resp.getheaders())
+        #echo(resp.status, resp.reason)
+        #if resp.status == 302:
+        url = resp.getheader('Location', '')
     size = int(resp.getheader('Content-Length', '0'))
     kind = resp.getheader('Content-Type', '')
     return kind, size
+
+#def get_kind_size(url):
+#    url_parts = urlparse.urlsplit(url)
+#    conn = httplib.HTTPConnection(url_parts[1])
+#    # print url_parts
+#    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
+#    conn.request("HEAD", q)
+#    resp = conn.getresponse()
+#    # echo(resp.status, resp.reason)
+#    # echo("data1 =", resp.read())
+#    conn.close()
+#    # echo(resp.getheaders())
+#    size = int(resp.getheader('Content-Length', '0'))
+#    kind = resp.getheader('Content-Type', '')
+#    return kind, size
 
 
 def get_total_size_st(urllist):

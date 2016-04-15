@@ -11,8 +11,6 @@ from subprocess import Popen, PIPE
 
 try:
     from HTMLParser import HTMLParser
-    import httplib
-    import urlparse
     p3 = False
 except ImportError:
     from html.parser import HTMLParser
@@ -22,82 +20,25 @@ import comm
 from comm import DWM, match1, echo
 
 
-
 class DRAMA8(DWM):
     def query_info(self, url):
         p = Popen(["./phantomjs", "dwm.js", "300", url], stdout=PIPE)
         html = p.stdout.read()
+        hutf = html.decode('utf8')
         p.wait()
-        #print html
-        m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", html)
+        #echo(html)
+        m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", hutf)
         if not m:
             return None
         url = m.groups()[0]
         url = HTMLParser().unescape(url)
-        print url
+        #print url
+        m = re.search("<title>([^<>]+)</title>", hutf)
+        title = m.groups()[0]
         k, size = self.get_total_size([url])
-        return "TITLE", k, [url], size
+        #print title, k, [url], size
+        return title, "mp4", [url], size
         #raise self.ExistsError()
-
-
-def get_kind_size0(url):
-    # step 1
-    hd = {'Referer': 'http://vjs.zencdn.net/4.12/video-js.swf', 'DNT': 1}
-    url_parts = urlparse.urlsplit(url)
-    conn = httplib.HTTPConnection(url_parts[1])
-    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-    conn.request("HEAD", q) #, "", hd)
-    resp = conn.getresponse()
-    echo("data1 =", resp.read())
-    conn.close()
-    echo(resp.status, resp.reason)
-    echo(resp.getheaders())
-
-    print 'step 2'
-    url = resp.getheader('Location', '')
-    print url
-    url_parts = urlparse.urlsplit(url)
-    print url_parts[0]
-    conn = httplib.HTTPSConnection(url_parts[1])
-    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-    #hd = {'Referer': 'http://vjs.zencdn.net/4.12/video-js.swf', 'DNT': 1,
-    #      'Connection': 'keep-alive',   }
-          #'Host': url_parts[1], }
-    conn.request("HEAD", q) #, "", hd)
-    resp = conn.getresponse()
-    echo("data1 =", resp.read())
-    conn.close()
-    echo(resp.status, resp.reason)
-    echo(resp.getheaders())
- 
-    return '', 1
-
-
-def get_kind_size(u):
-    url = u
-    while url:
-        url_parts = urlparse.urlsplit(url)
-        if url_parts[0] == 'https':
-            conn = httplib.HTTPSConnection(url_parts[1])
-        else:
-            conn = httplib.HTTPConnection(url_parts[1])
-        # print url_parts
-        q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-        #print h
-        conn.request("HEAD", q) #, "", h)
-        resp = conn.getresponse()
-        #echo("data1 =", resp.read())
-        conn.close()
-        #echo(resp.getheaders())
-        #echo(resp.status, resp.reason)
-        #if resp.status == 302:
-        url = resp.getheader('Location', '')
-    size = int(resp.getheader('Content-Length', '0'))
-    kind = resp.getheader('Content-Type', '')
-    return kind, size
-
-
-comm.get_kind_size = get_kind_size
 
 
 def get_one(page_url, target_dir):
@@ -108,6 +49,8 @@ def get_one(page_url, target_dir):
         echo(e)
         return
     #l.download_urls(title, ext, urls, size, target_dir)
+    p = Popen(["wget", "-O", title + "." + ext, urls[0]])
+    p.wait()
 
 
 def usage():
