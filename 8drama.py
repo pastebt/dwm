@@ -30,6 +30,7 @@ class DRAMA8(DWM):
         #echo(html)
         m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", hutf)
         if not m:
+            echo(html)
             return None
         url = m.groups()[0]
         url = HTMLParser().unescape(url)
@@ -37,17 +38,12 @@ class DRAMA8(DWM):
         m = re.search("<title>([^<>]+)</title>", hutf)
         title = m.groups()[0]
         title = title.split("|")[0].strip()
-        k, size = self.get_total_size([url])
-        #print title, k, [url], size
         t = k.split("/")[1]
+        self.check_exists(title, t)
+        k, size = self.get_total_size([url])
         return title, t, [url], size
-        #raise self.ExistsError()
 
     def download_urls(self, title, ext, urls, totalsize):
-        outfn = os.path.join(self.out_dir, title + "." + ext)
-        if os.path.exists(outfn):
-            echo(outfn, "exists")
-            return
         echo("download", outfn)
         #return
         #p = Popen(["wget", "-nv", "--show-progress", "-O", outfn, urls[0]])

@@ -110,9 +110,10 @@ class LETV(DWM):
         # print(ext, us)
         # echo("us[0, 1]", us[0], us[1])
         # echo(len(us))
-        fn = "%s.%s" % (title, ext)
-        if os.path.exists("%s.%s" % (title, ext)):
-            raise self.ExistsError(fn)
+        #fn = "%s.%s" % (title, ext)
+        #if os.path.exists("%s.%s" % (title, ext)):
+        #    raise self.ExistsError(fn)
+        self.check_exists(title, ext)
         k, size = self.get_total_size(us)
         return title, ext, us, size
 

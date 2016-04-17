@@ -83,6 +83,15 @@ class DWM(object):
         else:
             return data
 
+    def check_exists(self, title, ext):
+        if self.info_only:
+            return
+        outfn = os.path.join(self.out_dir, title + "." + ext)
+        if os.path.exists(outfn):
+            #echo(outfn, "exists")
+            #return
+            raise ExistsError(outfn + " exists")
+
     def get_total_size(self, urllist):
         if len(urllist) > 9:
             k, s = get_total_size_mt(urllist)
@@ -102,7 +111,11 @@ class DWM(object):
         except self.ExistsError as e:
             echo(e)
             return
-        if not self.info_only:
+        if self.info_only:
+            echo(title, ext)
+            for url in urls:
+                echo(url)
+        else:
             self.download_urls(title, ext, urls, size)
 
     def get_list(self, page_url):
@@ -244,14 +257,14 @@ def start(kls):
             if a[2:] == 'playlist':
                 playlist = True
             elif a[2:] == 'info_only':
-                cls.info_only = True
+                kls.info_only = True
             else:
                 usage()
         else:
             args.append(a)
         
     if len(args) == 2:
-        cls.out_dir = args[1]
+        kls.out_dir = args[1]
     elif len(args) < 1 or len(args) > 2:
         usage()
 
