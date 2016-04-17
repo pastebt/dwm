@@ -4,10 +4,10 @@ import os
 import sys
 try:
     from httplib import HTTPConnection
-    from urllib import quote
+    from urllib import quote, unquote
 except ImportError:
     from http.client import HTTPConnection
-    from urllib.parse import quote
+    from urllib.parse import quote, unquote
 
 from comm import echo
 
@@ -15,13 +15,13 @@ from comm import echo
 class UpFile(object):
     def __init__(self, filename, name, bun=""):
         self.s = 0
-        self.f = open(filename)
+        self.f = open(filename, "r+b")
         pre = "--%s\r\n" % bun
         pre = '%sContent-Disposition: form-data; name="%s"' % (pre, name)
         pre = '%s; filename="%s"\r\n' % (pre, os.path.basename(filename))
         pre = '%sContent-Type: text/plain\r\n\r\n' % pre
-        self.pre = pre
-        self.end = "\r\n--%s--" % bun
+        self.pre = pre.encode("utf8")
+        self.end = ("\r\n--%s--" % bun).encode("ascii")
         self.tal = 0
         self.cnt = 0
 
@@ -50,7 +50,7 @@ class UpFile(object):
 
 def get(dst):
     conn = HTTPConnection("10.0.0.7", 8080)
-    print(repr(dst))
+    echo(repr(dst))
     conn.request("GET", dst)
     resp = conn.getresponse()
     echo(resp.read().decode('utf8'))
@@ -69,7 +69,7 @@ def post_one(fn, dst):
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
                "Content-Length": str(fo.size())
              }
-    conn.request("POST", dst.decode('utf8'), fo, headers)
+    conn.request("POST", dst, fo, headers)
     resp = conn.getresponse()
     #print
     echo(resp.status, resp.reason)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)
-    dst = quote(sys.argv[1])
+    dst = quote(unquote(sys.argv[1]))
     if len(sys.argv) < 3:
         get(dst)
     else:
