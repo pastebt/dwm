@@ -5,6 +5,7 @@
 #./phantomjs htl.js 300 http://8drama.com/122804/
 #http://8drama.net/ipobar_.php?sign=251438194e51429438981c908a9a1da179242edc4e51&id=gq$$UEN3a0tGazJSeTAyTURROUtEbEdSVkE3TmpGTk95ZEpNaXhFU1RRMlJFRklQQ1UxSnpoUVlHQUtZQW89$$drama&type=html5
 
+import os
 import re
 import sys
 from subprocess import Popen, PIPE
@@ -43,7 +44,13 @@ class DRAMA8(DWM):
         #raise self.ExistsError()
 
     def download_urls(self, title, ext, urls, totalsize, dstdir):
-        p = Popen(["wget", "-O", title + "." + ext, urls[0]])
+        outfn = os.path.join(dstdir, title + "." + ext)
+        if os.path.exists(outfn):
+            echo(outfn, "exists")
+            return
+        echo("download", outfn)
+        #return
+        p = Popen(["wget", "-O", outfn, urls[0]])
         p.wait()
         
 
