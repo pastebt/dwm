@@ -43,13 +43,14 @@ class DRAMA8(DWM):
         return title, t, [url], size
         #raise self.ExistsError()
 
-    def download_urls(self, title, ext, urls, totalsize, dstdir):
-        outfn = os.path.join(dstdir, title + "." + ext)
+    def download_urls(self, title, ext, urls, totalsize):
+        outfn = os.path.join(self.out_dir, title + "." + ext)
         if os.path.exists(outfn):
             echo(outfn, "exists")
             return
         echo("download", outfn)
         #return
+        #p = Popen(["wget", "-nv", "--show-progress", "-O", outfn, urls[0]])
         p = Popen(["wget", "-O", outfn, urls[0]])
         p.wait()
         

@@ -21,6 +21,9 @@ except ImportError:
     from urllib2 import HTTPRedirectHandler, Request
     from urllib2 import build_opener
 
+    class ConnectionResetError(Exception):
+        pass
+
     def echo(*args):
         # sys.stdout.write(" ".join(map(str, args)) + "\n")
         for arg in args:
@@ -39,6 +42,9 @@ USER_AGENT += 'Gecko/20100101 Firefox/33.0'
 class DWM(object):
     class ExistsError(Exception):
         pass
+
+    out_dir = './'
+    info_only = False
 
     def __init__(self):
         global USER_AGENT
@@ -85,18 +91,19 @@ class DWM(object):
         echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
-    def download_urls(self, title, ext, urls, totalsize, dstdir):
+    def download_urls(self, title, ext, urls, totalsize):
         sys.path.insert(1, '../you-get/src')
         from you_get.common import download_urls
-        download_urls(urls, title, ext, totalsize, dstdir)
+        download_urls(urls, title, ext, totalsize, self.out_dir)
 
-    def get_one(self, page_url, target_dir):
+    def get_one(self, url):
         try:
-            title, ext, urls, size = self.query_info(page_url)
+            title, ext, urls, size = self.query_info(url)
         except self.ExistsError as e:
             echo(e)
             return
-        self.download_urls(title, ext, urls, size, target_dir)
+        if not self.info_only:
+            self.download_urls(title, ext, urls, size)
 
     def get_list(self, page_url):
         raise Exception("Not Implement Yet")
@@ -225,22 +232,28 @@ def match1(text, *patterns):
 
 
 def usage():
-    echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
+    echo('Usage:', sys.argv[0], '[--playlist] [--info_only] source_url [output_dir]')
     sys.exit(1)
 
 
 def start(kls):
-    args = sys.argv[1:]
-    if len(args) < 2:
-        usage()
-
+    args = []
     playlist = False
-    while args[0][:2] == '--':
-        opt = args.pop(0)
-        if opt == '--playlist':
-            playlist = True
+    for a in sys.argv[1:]:
+        if a[:2] == '--':
+            if a[2:] == 'playlist':
+                playlist = True
+            elif a[2:] == 'info_only':
+                cls.info_only = True
+            else:
+                usage()
         else:
-            usage()
+            args.append(a)
+        
+    if len(args) == 2:
+        cls.out_dir = args[1]
+    elif len(args) < 1 or len(args) > 2:
+        usage()
 
     k = kls()
     if playlist:
@@ -249,7 +262,7 @@ def start(kls):
             #continue
             for i in range(3):
                 try:
-                    k.get_one(url, args[1])
+                    k.get_one(url)
                 #except KeyboardInterrupt:
                 #    raise
                 #except socket.ConnectionResetError as e:
@@ -260,7 +273,7 @@ def start(kls):
                 else:
                     break
     else:
-        k.get_one(args[0], args[1])
+        k.get_one(args[0])
 
 
 if __name__ == '__main__':
