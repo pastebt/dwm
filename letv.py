@@ -55,7 +55,9 @@ class LETV(DWM):
         html = self.get_html(url)
         hutf = html.decode('utf8')
 
-        if re.match(r'http://www.letv.com/ptv/vplay/(\d+).html', url):
+        if re.match(r'http://www.le.com/ptv/vplay/(\d+).html', url):
+            vid = match1(url, r'http://www.le.com/ptv/vplay/(\d+).html')
+        elif re.match(r'http://www.letv.com/ptv/vplay/(\d+).html', url):
             vid = match1(url, r'http://www.letv.com/ptv/vplay/(\d+).html')
         else:
             vid = match1(hutf, r'vid="(\d+)"')
@@ -67,6 +69,7 @@ class LETV(DWM):
         u = 'http://api.letv.com/mms/out/video/playJson?'
         u = u + ("id=%s&platid=1&splatid=101&format=1" % vid)
         u = u + ("&tkey=%d&domain=www.letv.com" % tkey)
+        #u = u + ("&tkey=%d&domain=www.le.com" % tkey)
         # echo("u =", u)
         data = self.get_html(u)
         # print data
@@ -76,6 +79,7 @@ class LETV(DWM):
 
         stream_id = None
         kwargs = {}
+        #echo(info)
         support_stream_id = info["playurl"]["dispatch"].keys()
         # si = kwargs.get("stream_id", "")
         si = kwargs.get("stream_id", "720p")
@@ -146,6 +150,34 @@ class MyHTMLParser(HTMLParser):
         self.urllist = []
 
     def handle_starttag(self, tag, attrs):
+        # python3 letv.py --playlist http://www.le.com/tv/10009472.html
+        # 猎手
+        #echo(tag)
+        if tag != 'a':
+            return
+        if len(attrs) != 3:
+            return
+        ats = dict(attrs)
+        if ats.get('target') != '_blank':
+            return
+        u = ats.get('href')
+        if not re.match(r'http://www.letv.com/ptv/vplay/(\d+).html', u):
+            return
+        #echo(u)
+
+        T = ats.get('title')
+        if p3:
+            t = T
+        else:
+            t = T.encode('utf8')
+        if not re.match('^猎人\d\d$', t):
+            return
+        #echo(t)
+
+        self.urllist.append([t, u])
+
+
+    def handle_starttag1(self, tag, attrs):
         # python3 letv.py --playlist http://www.letv.com/tv/10003313.html .
         # 女医明妃传
         if tag != 'a':
