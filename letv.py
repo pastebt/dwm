@@ -126,7 +126,11 @@ class LETV(DWM):
         #echo(html)
         hutf = html.decode('utf8')
         #echo(hutf)
-        m = MyHTMLParser()
+        m = re.search("""title: "([^'"]+)",//视频名称""", hutf[:2000])
+        if m:
+            #echo(m.groups())
+            t = m.groups()[0]
+        m = MyHTMLParser(t)
         m.feed(hutf[1000:])
         #echo(m.urllist)
         #return []
@@ -144,9 +148,10 @@ class LETV(DWM):
 
 
 class MyHTMLParser(HTMLParser):
-    def __init__(self):
+    def __init__(self, name):
         HTMLParser.__init__(self)
         #self.p = 0
+        self.name = name
         self.urllist = []
 
     def handle_starttag(self, tag, attrs):
@@ -170,7 +175,8 @@ class MyHTMLParser(HTMLParser):
             t = T
         else:
             t = T.encode('utf8')
-        if not re.match('^猎人\d\d$', t):
+        #if not re.match('^猎人\d\d$', t):
+        if not re.match('^%s\d\d$' % self.name, t):
             return
         #echo(t)
 
