@@ -38,6 +38,7 @@ class DRAMA8(DWM):
         m = re.search("<title>([^<>]+)</title>", hutf)
         title = m.groups()[0]
         title = title.split("|")[0].strip()
+        title = self.align_title_num(title)
         k, size = self.get_total_size([url])
         t = k.split("/")[1]
         self.check_exists(title, t)
@@ -57,6 +58,7 @@ class DRAMA8(DWM):
         hutf = html.decode('utf8')
         m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
                       hutf)
+        self.align_num = len(str(len(m)))
         for u, t in m:
             yield t, u
         #echo(m.groups())

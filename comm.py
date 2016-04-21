@@ -46,6 +46,7 @@ class DWM(object):
 
     out_dir = './'
     info_only = False
+    align_num = 0
 
     def __init__(self):
         global USER_AGENT
@@ -92,6 +93,13 @@ class DWM(object):
             #echo(outfn, "exists")
             #return
             raise ExistsError(outfn + " exists")
+
+    def align_title_num(self, t):
+        if self.align_num < 2:
+            return t
+        ns = re.split("(\d+)", t, 1)
+        return ("%%s%%0%dd%%s" % self.align_num) % (ns[0], int(ns[1]), ns[2])
+
 
     def get_total_size(self, urllist):
         if len(urllist) > 9:
