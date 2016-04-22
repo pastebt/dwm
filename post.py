@@ -5,10 +5,11 @@ import sys
 try:
     from httplib import HTTPConnection
     from urllib import quote, unquote
+    from urlparse import urlparse
     py3 = False
 except ImportError:
     from http.client import HTTPConnection
-    from urllib.parse import quote, unquote
+    from urllib.parse import quote, unquote, urlparse
     py3 = True
 
 from comm import echo
@@ -55,8 +56,23 @@ class UpFile(object):
         return ""
 
 
-def get(dst):
-    conn = HTTPConnection("10.0.0.7", 8080)
+def make_conn(url):
+    res = urlparse(url)
+    nl = res.netloc
+    if not nl:
+        return None, url
+    nls = nl.split(":")
+    h = nls[0]
+    if len(nls) > 1:
+        p = int(nls[1])
+    else:
+        p = 80
+    conn = HTTPConnection(h, p)
+    return conn, res.path
+
+
+def get(conn, dst):
+    #conn = HTTPConnection("10.0.0.7", 8080)
     echo(repr(dst))
     conn.request("GET", dst)
     resp = conn.getresponse()
@@ -68,9 +84,9 @@ def post(dst, fns):
         post_one(fn, dst)
 
 
-def post_one(fn, dst):
+def post_one(fn, conn, dst):
     echo(fn)
-    conn = HTTPConnection("10.0.0.7", 8080)
+    #conn = HTTPConnection(ip, port)
     bun = "-----------------12123135---61b3e9bf8df4ee45---------------"
     fo = UpFile(fn, 'attachment', bun)
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
@@ -86,8 +102,11 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)
-    dst = quote(unquote(sys.argv[1]))
+    conn, dst = make_conn(sys.argv[1])
+    dst = quote(unquote(dst))
+    if not conn:
+        conn = HTTPConnection('10.0.0.7', 8080)
     if len(sys.argv) < 3:
-        get(dst)
+        get(conn, dst)
     else:
-        post(dst, sys.argv[2:])
+        post(dst, conn, sys.argv[2:])
