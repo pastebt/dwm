@@ -79,9 +79,9 @@ def get(conn, dst):
     echo(resp.read().decode('utf8'))
 
 
-def post(dst, fns):
+def post(conn, dst, fns):
     for fn in fns:
-        post_one(fn, dst)
+        post_one(fn, conn, dst)
 
 
 def post_one(fn, conn, dst):
@@ -109,4 +109,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         get(conn, dst)
     else:
-        post(dst, conn, sys.argv[2:])
+        post(conn, dst, sys.argv[2:])
