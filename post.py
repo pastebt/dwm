@@ -5,22 +5,29 @@ import sys
 try:
     from httplib import HTTPConnection
     from urllib import quote, unquote
+    py3 = False
 except ImportError:
     from http.client import HTTPConnection
     from urllib.parse import quote, unquote
+    py3 = True
 
 from comm import echo
 
 
 class UpFile(object):
     def __init__(self, filename, name, bun=""):
+        global py3
+
         self.s = 0
         self.f = open(filename, "r+b")
         pre = "--%s\r\n" % bun
         pre = '%sContent-Disposition: form-data; name="%s"' % (pre, name)
         pre = '%s; filename="%s"\r\n' % (pre, os.path.basename(filename))
         pre = '%sContent-Type: text/plain\r\n\r\n' % pre
-        self.pre = pre.encode("utf8")
+        if py3:
+            self.pre = pre.encode("utf8")
+        else:
+            self.pre = pre
         self.end = ("\r\n--%s--" % bun).encode("ascii")
         self.tal = 0
         self.cnt = 0
