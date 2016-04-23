@@ -56,19 +56,19 @@ class UpFile(object):
         return ""
 
 
-def make_conn(url):
+def make_host_port(url):
     res = urlparse(url)
     nl = res.netloc
     if not nl:
-        return None, url
+        return "10.0.0.7", 8080, url
     nls = nl.split(":")
     h = nls[0]
     if len(nls) > 1:
         p = int(nls[1])
     else:
         p = 80
-    conn = HTTPConnection(h, p)
-    return conn, res.path
+    #conn = HTTPConnection(h, p)
+    return h, p, res.path
 
 
 def get(conn, dst):
@@ -79,8 +79,9 @@ def get(conn, dst):
     echo(resp.read().decode('utf8'))
 
 
-def post(conn, dst, fns):
+def post(h, p, dst, fns):
     for fn in fns:
+        conn = HTTPConnection(h, p)
         post_one(fn, conn, dst)
 
 
@@ -102,11 +103,10 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)
-    conn, dst = make_conn(sys.argv[1])
+    h, p, dst = make_host_port(sys.argv[1])
     dst = quote(unquote(dst))
-    if not conn:
-        conn = HTTPConnection('10.0.0.7', 8080)
     if len(sys.argv) < 3:
+        conn = HTTPConnection(h, p)
         get(conn, dst)
     else:
-        post(conn, dst, sys.argv[2:])
+        post(h, p, dst, sys.argv[2:])
