@@ -4,6 +4,8 @@ import os
 import re
 import sys
 import zlib
+import argparse
+
 try:
     from queue import Queue
     import http.client as httplib
@@ -253,12 +255,12 @@ def match1(text, *patterns):
         return ret
 
 
-def usage():
+def usage1():
     echo('Usage:', sys.argv[0], '[--playlist] [--info_only] source_url [output_dir]')
     sys.exit(1)
 
 
-def start(kls):
+def start1(kls):
     args = []
     playlist = False
     for a in sys.argv[1:]:
@@ -298,7 +300,35 @@ def start(kls):
         k.get_one(args[0])
 
 
+def start(kls):
+    p = argparse.ArgumentParser(description='Download Web Movie') #, add_help=False)
+    p.add_argument('url', metavar='URL', type=str, action='store',
+                   help='an integer for the accumulator')
+    p.add_argument('-p', '--playlist', action='store_true',
+                   help='url is playlist or not')
+    p.add_argument('-i', '--info_only', action='store_true',
+                   help='show information only')
+    p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
+                   help='align number', default=0)
+    p.add_argument('-o', '--output', metavar='path|url', action='store',
+                   help='where download file go', default='.')
+    args = p.parse_args()
+    #print args
+    kls.out_dir = args.output
+    kls.info_only = args.info_only
+    kls.align_num = args.align_num
+    k = kls()
+    if args.playlist:
+        echo(args.url)
+        for title, url in k.get_list(args.url):
+            echo(title, url)
+            k.get_one(url)
+    else:
+        k.get_one(args.url)
+
+
 if __name__ == '__main__':
-    d = DWM()
-    html = d.get_html("http://www.bilibili.com/video/av2060396/")
-    print(html)
+    #d = DWM()
+    #html = d.get_html("http://www.bilibili.com/video/av2060396/")
+    #print(html)
+    start(DWM)
