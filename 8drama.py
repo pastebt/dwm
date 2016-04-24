@@ -39,6 +39,7 @@ class DRAMA8(DWM):
         title = m.groups()[0]
         title = title.split("|")[0].strip()
         title = self.align_title_num(title)
+        #title = '_'.join(title.split('/'))
         k, size = self.get_total_size([url])
         t = k.split("/")[1]
         self.check_exists(title, t)

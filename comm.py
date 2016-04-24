@@ -40,6 +40,14 @@ except ImportError:
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
 USER_AGENT += 'Gecko/20100101 Firefox/33.0'
+DEBUG = False
+
+
+def debug(*args):
+    global DEBUG
+    if not DEBUG:
+        return
+    echo(*args)    
 
 
 class DWM(object):
@@ -97,9 +105,10 @@ class DWM(object):
             raise ExistsError(outfn + " exists")
 
     def align_title_num(self, t):
+        t2 = '_'.join(t.split('/'))
         if self.align_num < 2:
-            return t
-        ns = re.split("(\d+)", t, 1)
+            return t2
+        ns = re.split("(\d+)", t2, 1)
         return ("%%s%%0%dd%%s" % self.align_num) % (ns[0], int(ns[1]), ns[2])
 
 
@@ -137,6 +146,7 @@ class DWM(object):
 def get_kind_size(u):
     url = u
     while url:
+        debug(url)
         url_parts = urlparse.urlsplit(url)
         if url_parts[0] == 'https':
             conn = httplib.HTTPSConnection(url_parts[1])
@@ -301,6 +311,7 @@ def start1(kls):
 
 
 def start(kls):
+    global DEBUG
     p = argparse.ArgumentParser(description='Download Web Movie') #, add_help=False)
     p.add_argument('url', metavar='URL', type=str, action='store',
                    help='an integer for the accumulator')
@@ -312,8 +323,11 @@ def start(kls):
                    help='align number', default=0)
     p.add_argument('-o', '--output', metavar='path|url', action='store',
                    help='where download file go', default='.')
+    p.add_argument('--debug', action='store_true',
+                   help='display debug message')
     args = p.parse_args()
     #print args
+    DEBUG = args.debug
     kls.out_dir = args.output
     kls.info_only = args.info_only
     kls.align_num = args.align_num
