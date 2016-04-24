@@ -102,7 +102,7 @@ class DWM(object):
         if os.path.exists(outfn):
             #echo(outfn, "exists")
             #return
-            raise ExistsError(outfn + " exists")
+            raise self.ExistsError(outfn + " exists")
 
     def align_title_num(self, t):
         t2 = '_'.join(t.split('/'))
