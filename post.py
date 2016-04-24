@@ -1,6 +1,7 @@
 #! /usr/bin/pyhton
 
 import os
+import re
 import sys
 try:
     from httplib import HTTPConnection
@@ -21,9 +22,13 @@ class UpFile(object):
 
         self.s = 0
         self.f = open(filename, "r+b")
+        #fn = '_'.join(os.path.basename(filename).split('"'))
+        fn = os.path.basename(filename)
+        fn = "_".join(re.split('''\?|\:|\|''', fn))
+        fn = "'".join(re.split('"', fn))
         pre = "--%s\r\n" % bun
         pre = '%sContent-Disposition: form-data; name="%s"' % (pre, name)
-        pre = '%s; filename="%s"\r\n' % (pre, os.path.basename(filename))
+        pre = '%s; filename="%s"\r\n' % (pre, fn)
         pre = '%sContent-Type: text/plain\r\n\r\n' % pre
         if py3:
             self.pre = pre.encode("utf8")
