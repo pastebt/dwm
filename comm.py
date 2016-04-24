@@ -146,7 +146,7 @@ class DWM(object):
 def get_kind_size(u):
     url = u
     while url:
-        debug(url)
+        debug('get_kind_size, url =', url)
         url_parts = urlparse.urlsplit(url)
         if url_parts[0] == 'https':
             conn = httplib.HTTPSConnection(url_parts[1])
@@ -166,21 +166,6 @@ def get_kind_size(u):
     size = int(resp.getheader('Content-Length', '0'))
     kind = resp.getheader('Content-Type', '')
     return kind, size
-
-#def get_kind_size(url):
-#    url_parts = urlparse.urlsplit(url)
-#    conn = httplib.HTTPConnection(url_parts[1])
-#    # print url_parts
-#    q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-#    conn.request("HEAD", q)
-#    resp = conn.getresponse()
-#    # echo(resp.status, resp.reason)
-#    # echo("data1 =", resp.read())
-#    conn.close()
-#    # echo(resp.getheaders())
-#    size = int(resp.getheader('Content-Length', '0'))
-#    kind = resp.getheader('Content-Type', '')
-#    return kind, size
 
 
 def get_total_size_st(urllist):
@@ -265,69 +250,26 @@ def match1(text, *patterns):
         return ret
 
 
-def usage1():
-    echo('Usage:', sys.argv[0], '[--playlist] [--info_only] source_url [output_dir]')
-    sys.exit(1)
-
-
-def start1(kls):
-    args = []
-    playlist = False
-    for a in sys.argv[1:]:
-        if a[:2] == '--':
-            if a[2:] == 'playlist':
-                playlist = True
-            elif a[2:] == 'info_only':
-                kls.info_only = True
-            else:
-                usage()
-        else:
-            args.append(a)
-        
-    if len(args) == 2:
-        kls.out_dir = args[1]
-    elif len(args) < 1 or len(args) > 2:
-        usage()
-
-    k = kls()
-    if playlist:
-        for title, url in k.get_list(args[0]):
-            echo(title, url)
-            #continue
-            for i in range(3):
-                try:
-                    k.get_one(url)
-                #except KeyboardInterrupt:
-                #    raise
-                #except socket.ConnectionResetError as e:
-                except ConnectionResetError as e:
-                    echo(e)
-                except Exception: # as e:
-                    raise
-                else:
-                    break
-    else:
-        k.get_one(args[0])
-
-
 def start(kls):
     global DEBUG
-    p = argparse.ArgumentParser(description='Download Web Movie') #, add_help=False)
+    p = argparse.ArgumentParser(description='Download Web Movie')
+    #, add_help=False)
     p.add_argument('url', metavar='URL', type=str, action='store',
-                   help='an integer for the accumulator')
+                   help='url of movie')
     p.add_argument('-p', '--playlist', action='store_true',
                    help='url is playlist or not')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
     p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
                    help='align number', default=0)
-    p.add_argument('-o', '--output', metavar='path|url', action='store',
-                   help='where download file go', default='.')
+    p.add_argument('-o', '--output', metavar='dir|url', action='store',
+                   help='where download file go, dir or url to post',
+                   default='.')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
-    #print args
     DEBUG = args.debug
+    debug(args)
     kls.out_dir = args.output
     kls.info_only = args.info_only
     kls.align_num = args.align_num
