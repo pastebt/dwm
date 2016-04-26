@@ -278,7 +278,10 @@ def start(kls):
         echo(args.url)
         for title, url in k.get_list(args.url):
             echo(title, url)
-            k.get_one(url)
+            try:
+                k.get_one(url)
+            except Exception as e:
+                echo(e)
     else:
         k.get_one(args.url)
 
