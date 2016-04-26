@@ -30,8 +30,10 @@ class DRAMA8(DWM):
         #echo(html)
         m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", hutf)
         if not m:
-            echo(html)
-            return None
+            m = re.search("\<source\s* src=\"(http://8drama.com/ggpic.php[^<> ]+)\"\s* type", hutf)
+            if not m:
+                echo(html)
+                return None
         url = m.groups()[0]
         url = HTMLParser().unescape(url)
         #print url

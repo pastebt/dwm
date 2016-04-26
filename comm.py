@@ -32,6 +32,8 @@ except ImportError:
         for arg in args:
             if isinstance(arg, unicode):
                 sys.stdout.write(arg.encode("utf8"))
+            elif isinstance(arg, Exception):
+                sys.stdout.write(unicode(arg).encode("utf8"))
             else:
                 sys.stdout.write(str(arg))
             sys.stdout.write(" ")
@@ -100,8 +102,6 @@ class DWM(object):
             return
         outfn = os.path.join(self.out_dir, title + "." + ext)
         if os.path.exists(outfn):
-            #echo(outfn, "exists")
-            #return
             raise self.ExistsError(outfn + " exists")
 
     def align_title_num(self, t):
