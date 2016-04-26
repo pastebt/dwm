@@ -18,7 +18,7 @@ except ImportError:
     p3 = True
 
 #import comm
-from comm import DWM, echo, start
+from comm import DWM, echo, start, debug
 
 
 class DRAMA8(DWM):
@@ -28,15 +28,21 @@ class DRAMA8(DWM):
         hutf = html.decode('utf8')
         p.wait()
         #echo(html)
-        m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", hutf)
+        #m = re.search("\<source\s* src=\"(http://8drama.net/ipobar_.php[^<> ]+)\"\s* type", hutf)
+        #if not m:
+        #    m = re.search("\<source\s* src=\"(http://8drama.com/ggpic.php[^<> ]+)\"\s* type", hutf)
+        #    if not m:
+        #        echo(html)
+        #        return None
+        m = re.search("""\<source src="(http\://8drama\."""
+                      """(net/ipobar_|com/ggpic)"""
+                      """\.php[^<> ]+)" type""", hutf)
         if not m:
-            m = re.search("\<source\s* src=\"(http://8drama.com/ggpic.php[^<> ]+)\"\s* type", hutf)
-            if not m:
-                echo(html)
-                return None
-        url = m.groups()[0]
+            echo(html)
+            return None
+        url = m.group(1)
         url = HTMLParser().unescape(url)
-        #print url
+        debug("query_info, url = " + url)
         m = re.search("<title>([^<>]+)</title>", hutf)
         title = m.groups()[0]
         title = title.split("|")[0].strip()
