@@ -262,6 +262,8 @@ def start(kls):
                    help='show information only')
     p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
                    help='align number', default=0)
+    p.add_argument('--playlist_top', type=int, metavar='#', action='store',
+                   help='align number', default=0)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
@@ -276,7 +278,11 @@ def start(kls):
     k = kls()
     if args.playlist:
         echo(args.url)
+        cnt = 0
         for title, url in k.get_list(args.url):
+            cnt = cnt + 1
+            if cnt > args.playlist_top > 0:
+                break
             echo(title, url)
             k.get_one(url)
     else:
