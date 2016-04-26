@@ -284,7 +284,10 @@ def start(kls):
             if cnt > args.playlist_top > 0:
                 break
             echo(title, url)
-            k.get_one(url)
+            try:
+                k.get_one(url)
+            except Exception as e:
+                echo(e)
     else:
         k.get_one(args.url)
 
