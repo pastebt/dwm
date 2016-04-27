@@ -11,6 +11,7 @@ import random
 try:
     from HTMLParser import HTMLParser
     p3 = False
+    raise Exception("you need py3")
 except ImportError:
     from html.parser import HTMLParser
     p3 = True
