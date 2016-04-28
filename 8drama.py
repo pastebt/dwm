@@ -60,10 +60,11 @@ class DRAMA8(DWM):
         #return
         #p = Popen(["wget", "-nv", "--show-progress", "-O", outfn, urls[0]])
         #p = Popen(["wget", "-O", outfn, urls[0]])
-        #p = Popen(["wget", "-c", "-O", dwnfn, urls[0]])
-        p = Popen(["wget", "-O", dwnfn, urls[0]])
+        p = Popen(["wget", "-c", "-O", dwnfn, urls[0]])
+        #p = Popen(["wget", "-O", dwnfn, urls[0]])
         p.wait()
-        os.rename(dwnfn, outfn)
+        if os.stat(dwnfn).st_size == totalsize:
+            os.rename(dwnfn, outfn)
 
     def get_list(self, page_url):
         html = self.get_html(page_url)
