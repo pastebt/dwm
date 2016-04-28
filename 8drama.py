@@ -56,11 +56,14 @@ class DRAMA8(DWM):
     def download_urls(self, title, ext, urls, totalsize):
         outfn = os.path.join(self.out_dir, title + "." + ext)
         echo("download", outfn)
+        dwnfn = outfn + ".dwm"
         #return
         #p = Popen(["wget", "-nv", "--show-progress", "-O", outfn, urls[0]])
-        p = Popen(["wget", "-O", outfn, urls[0]])
+        #p = Popen(["wget", "-O", outfn, urls[0]])
+        #p = Popen(["wget", "-c", "-O", dwnfn, urls[0]])
+        p = Popen(["wget", "-O", dwnfn, urls[0]])
         p.wait()
-        
+        os.rename(dwnfn, outfn)
 
     def get_list(self, page_url):
         html = self.get_html(page_url)
