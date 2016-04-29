@@ -112,6 +112,6 @@ if __name__ == '__main__':
     dst = quote(unquote(dst))
     if len(sys.argv) < 3:
         conn = HTTPConnection(h, p)
-        get(conn, dst)
+        get(conn, dst + "?who=cmd")
     else:
-        post(h, p, dst, sys.argv[2:])
+        post(h, p, dst + "?who=poster", sys.argv[2:])
