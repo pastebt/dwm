@@ -97,7 +97,7 @@ class LETV(DWM):
             else:
                 sids = sorted(support_stream_id, key=lambda i: int(i[1:]))
                 stream_id = sids[-1]
-
+        echo("stream_id =", stream_id)
         u2 = info["playurl"]["domain"][0]
         u2 = u2 + info["playurl"]["dispatch"][stream_id][0]
         ext = info["playurl"]["dispatch"][stream_id][1].split('.')[-1]
