@@ -5,6 +5,7 @@ import re
 import sys
 import zlib
 import argparse
+from time import sleep
 
 try:
     from queue import Queue
@@ -284,10 +285,15 @@ def start(kls):
             if cnt > args.playlist_top > 0:
                 break
             echo(title, url)
-            try:
-                k.get_one(url)
-            except Exception as e:
-                echo(e)
+            for i in range(2):
+                try:
+                    k.get_one(url)
+                except Exception as e:
+                    echo(type(e), e, "will try again ...")
+                    sleep(5)
+                    continue
+                else:
+                    break
     else:
         k.get_one(args.url)
 
