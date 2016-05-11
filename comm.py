@@ -5,6 +5,7 @@ import re
 import sys
 import zlib
 import argparse
+import subprocess
 from time import sleep
 
 try:
@@ -124,7 +125,14 @@ class DWM(object):
     def download_urls(self, title, ext, urls, totalsize):
         sys.path.insert(1, '../you-get/src')
         from you_get.common import download_urls
-        download_urls(urls, title, ext, totalsize, self.out_dir)
+        try:
+            download_urls(urls, title, ext, totalsize, self.out_dir)
+        except subprocess.CalledProcessError as sc:
+            if "avconv" not in str(sc):
+                raise sc
+            # failed to merge because avconv disable concat protocol
+            from merge import merge
+            merge(os.path.join(self.out_dir, title), ext, len(urls))
 
     def get_one(self, url):
         try:
@@ -290,8 +298,9 @@ def start(kls):
                     k.get_one(url)
                 except Exception as e:
                     echo(type(e), e, "will try again ...")
-                    sleep(5)
-                    continue
+                    if len(str(e)) < 100:
+                        sleep(5)
+                        continue
                 else:
                     break
     else:
