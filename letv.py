@@ -138,16 +138,6 @@ class LETV(DWM):
         return m.urllist
 
 
-#def get_one(page_url, target_dir):
-#    l = LETV()
-#    try:
-#        title, ext, urls, size = l.query_info(page_url)
-#    except l.ExistsError as e:
-#        echo(e)
-#        return
-#    l.download_urls(title, ext, urls, size, target_dir)
-
-
 class MyHTMLParser(HTMLParser):
     def __init__(self, name):
         HTMLParser.__init__(self)
@@ -220,39 +210,5 @@ class MyHTMLParser(HTMLParser):
     #        self.p = 0
 
 
-#def usage():
-#    echo('Usage:', sys.argv[0], '[--playlist] source_url target_dir')
-#    sys.exit(1)
-
-
 if __name__ == '__main__':
     start(LETV)
-#    args = sys.argv[1:]
-#    if len(args) < 2:
-#        usage()
-#
-#    playlist = False
-#    while args[0][:2] == '--':
-#        opt = args.pop(0)
-#        if opt == '--playlist':
-#            playlist = True
-#        else:
-#            usage()
-#
-#    if playlist:
-#        for title, url in get_list(args[0]):
-#            echo(title, url)
-#            for i in range(3):
-#                try:
-#                    get_one(url, args[1])
-#                #except KeyboardInterrupt:
-#                #    raise
-#                #except socket.ConnectionResetError as e:
-#                except ConnectionResetError as e:
-#                    echo(e)
-#                except Exception: # as e:
-#                    raise
-#                else:
-#                    break
-#    else:
-#        get_one(args[0], args[1])
