@@ -39,21 +39,24 @@ def merge1(name, ext, cnt):
 
 def merge(name, ext, cnt, clean=False):
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts - > aa.ts
-    cmd = ["avconv", "-i", "-", "-y", "-c", "copy", "%s.%s" % (name, ext)]
-    p = Popen(cmd, stdin=PIPE)
     fs = []
     for i in range(cnt):
-        fs.append("%s[%02d].%s.ts"% (name, i, ext))
+        fs.append("%s[%02d].%s"% (name, i, ext))
+
+    cmd = ["avconv", "-i", "-", "-y", "-c", "copy", "%s.%s" % (name, ext)]
+    p = Popen(cmd, stdin=PIPE)
     for f in fs:
-        fobj = open(f, "r+b")
+        fobj = open(f + ".ts", "r+b")
         shutil.copyfileobj(fobj, p.stdin)
     p.stdin.close()
     p.wait()
     if p.returncode != 0:
         raise CalledProcessError(p.returncode, cmd)
+
     if clean:
         for f in fs:
             os.remove(f)
+            os.remove(f + ".ts")
 
 
 def usage():

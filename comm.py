@@ -132,7 +132,7 @@ class DWM(object):
                 raise sc
             # failed to merge because avconv disable concat protocol
             from merge import merge
-            merge(os.path.join(self.out_dir, title), ext, len(urls))
+            merge(os.path.join(self.out_dir, title), ext, len(urls), True)
 
     def get_one(self, url):
         try:
@@ -296,11 +296,13 @@ def start(kls):
             for i in range(2):
                 try:
                     k.get_one(url)
+                except subprocess.CalledProcessError as e:
+                    echo(e)
+                    return
                 except Exception as e:
                     echo(type(e), e, "will try again ...")
-                    if len(str(e)) < 100:
-                        sleep(5)
-                        continue
+                    sleep(5)
+                    continue
                 else:
                     break
     else:
