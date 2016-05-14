@@ -5,4 +5,4 @@ Download Web Movies, init code from you-get
 
 letv
 
-8drama
+8drama, need phantomjs, http://phantomjs.org/download.html
