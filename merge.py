@@ -60,18 +60,19 @@ def merge(name, ext, cnt, clean=False):
 
 
 def usage():
-    echo('Usage:', sys.argv[0], "name url_num")
+    echo('Usage:', sys.argv[0], "name ext url_num")
     sys.exit(1)
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         usage()
     try:
-        i = int(sys.argv[2])
+        i = int(sys.argv[3])
     except:
         usage()
-    merge(sys.argv[1], "mp4", i)
+    #merge(sys.argv[1], "mp4", i)
+    merge(sys.argv[1], sys.argv[2], i)
 
 
 if __name__ == '__main__':
