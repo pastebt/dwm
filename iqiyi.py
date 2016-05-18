@@ -15,17 +15,18 @@ class IQIYI(DWM):
         from you_get.extractors.iqiyi import Iqiyi
         i = Iqiyi(url)
         i.prepare()
-        #echo(i.stream_urls)
 
-        #try:
         i.streams_sorted = [dict([('id', stream_type['id'])] + list(i.streams[stream_type['id']].items())) for stream_type in Iqiyi.stream_types if stream_type['id'] in i.streams]
-        #except:
-        #    i.streams_sorted = [dict([('itag', stream_type['itag'])] + list(i.streams[stream_type['itag']].items())) for stream_type in i.__class__.stream_types if stream_type['itag'] in i.streams]
-        #echo(i.streams_sorted)
         i.extract()
-        echo(i.streams_sorted)
-        echo(i.streams)
-        return
+        #echo(i.streams_sorted)
+        stream_id = i.streams_sorted[0]['id']
+        echo(stream_id)
+        echo(i.title)
+        #echo(i.streams)
+        urls = i.streams[stream_id]['src']
+        ext = i.streams[stream_id]['container']
+        total_size = i.streams[stream_id]['size']
+        return i.title, ext, urls, total_size
 
     def get_list(self, page_url):
         p = Popen(["./phantomjs", "dwm.js", "600", page_url], stdout=PIPE)

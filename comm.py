@@ -122,6 +122,10 @@ class DWM(object):
         echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
+    def use_dwm_merge(self, urls, title, ext):
+        from merge import merge
+        merge(os.path.join(self.out_dir, title), ext, len(urls), True)
+
     def download_urls(self, title, ext, urls, totalsize):
         sys.path.insert(1, '../you-get/src')
         from you_get.common import download_urls
@@ -131,8 +135,13 @@ class DWM(object):
             if "avconv" not in str(sc):
                 raise sc
             # failed to merge because avconv disable concat protocol
-            from merge import merge
-            merge(os.path.join(self.out_dir, title), ext, len(urls), True)
+            #from merge import merge
+            #merge(os.path.join(self.out_dir, title), ext, len(urls), True)
+            self.use_dwm_merge(urls, title, ext)
+        except RuntimeError as r:
+            if "reraise" not in str(r):
+                raise r
+            self.use_dwm_merge(urls, title, ext)
 
     def get_one(self, url):
         try:
