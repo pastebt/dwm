@@ -26,7 +26,9 @@ class IQIYI(DWM):
         urls = i.streams[stream_id]['src']
         ext = i.streams[stream_id]['container']
         total_size = i.streams[stream_id]['size']
-        return i.title, ext, urls, total_size
+        title = self.align_title_num(i.title)
+        self.check_exists(title, ext)
+        return title, ext, urls, total_size
 
     def get_list(self, page_url):
         p = Popen(["./phantomjs", "dwm.js", "600", page_url], stdout=PIPE)
@@ -40,6 +42,7 @@ class IQIYI(DWM):
         m = MyHTMLParser("")
         m.feed(c)
         #echo(m.urllist)
+        self.align_num = len(str(len(m.urllist)))
         return m.urllist
 
 
