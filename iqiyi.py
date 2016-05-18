@@ -11,6 +11,20 @@ from comm import DWM, match1, echo, start
 class IQIYI(DWM):
     def query_info(self, url):
         # title, ext, urls, totalsize
+        sys.path.insert(1, '../you-get/src')
+        from you_get.extractors.iqiyi import Iqiyi
+        i = Iqiyi(url)
+        i.prepare()
+        #echo(i.stream_urls)
+
+        #try:
+        i.streams_sorted = [dict([('id', stream_type['id'])] + list(i.streams[stream_type['id']].items())) for stream_type in Iqiyi.stream_types if stream_type['id'] in i.streams]
+        #except:
+        #    i.streams_sorted = [dict([('itag', stream_type['itag'])] + list(i.streams[stream_type['itag']].items())) for stream_type in i.__class__.stream_types if stream_type['itag'] in i.streams]
+        #echo(i.streams_sorted)
+        i.extract()
+        echo(i.streams_sorted)
+        echo(i.streams)
         return
 
     def get_list(self, page_url):
@@ -24,8 +38,8 @@ class IQIYI(DWM):
         c = hutf.split("<!--视频列表区域 -->")[1]
         m = MyHTMLParser("")
         m.feed(c)
-        echo(m.urllist)
-        return []
+        #echo(m.urllist)
+        return m.urllist
 
 
 class MyHTMLParser(HTMLParser):
