@@ -61,6 +61,7 @@ class DWM(object):
     out_dir = './'
     info_only = False
     align_num = 0
+    dwn_skip = 0
 
     def __init__(self):
         global USER_AGENT
@@ -142,6 +143,34 @@ class DWM(object):
             if "reraise" not in str(r):
                 raise r
             self.use_dwm_merge(urls, title, ext)
+
+    def wget_urls(self, title, ext, urls, tsize):
+        cnt = 0
+        for url in urls:
+            if cnt >= self.dwn_skip:
+                self.wget_one_url("%s[%02d]" % (title, cnt),
+                                  ext, url, len(urls))
+            cnt = cnt + 1
+
+    def wget_one_url(self, title, ext, url, unum):
+        outfn = os.path.join(self.out_dir, title + "." + ext)
+        if os.path.exists(outfn):
+            echo("skip", outfn)
+            return
+        else:
+            echo("download", outfn, "/", unum)
+            dwnfn = outfn + ".dwm"
+            p = subprocess.Popen(["wget", 
+                                  #"--wait", "30",
+                                  "--tries=10",
+                                  "--read-timeout=30",
+                                  "-c",
+                                  "-O", dwnfn,
+                                  url])
+            p.wait()
+            #if os.stat(dwnfn).st_size == totalsize:
+            if p.returncode == 0:
+                os.rename(dwnfn, outfn)
 
     def get_one(self, url):
         try:
@@ -282,6 +311,8 @@ def start(kls):
                    help='align number', default=0)
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='align number', default=0)
+    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
+                   help='wget_skip', default=-1)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
@@ -293,6 +324,9 @@ def start(kls):
     kls.out_dir = args.output
     kls.info_only = args.info_only
     kls.align_num = args.align_num
+    if args.wget_skip >= 0:
+        kls.download_urls = DWM.wget_urls
+        kls.dwn_skip = args.wget_skip
     k = kls()
     if args.playlist:
         echo(args.url)
