@@ -43,23 +43,28 @@ def merge(name, ext, cnt, clean=False):
     for i in range(cnt):
         fs.append("%s[%02d].%s"% (name, i, ext))
 
-    cmd = ["avconv", "-i", "-", "-y", "-c", "copy", "%s.%s" % (name, ext)]
+    cmd = ["avconv", "-v", "error", "-i", "-", "-y", "-c", "copy",
+           "%s.%s" % (name, ext)]
     p = Popen(cmd, stdin=PIPE)
     for f in fs:
+        echo("merge", f, "/", cnt)
         try:
             fobj = open(f + ".ts", "r+b")
             s = None
         except IOError:
-            smd = ["avconv", "-i", f, "-c", "copy", "-f", "mpegts",
-                   "-bsf", "h264_mp4toannexb", "-"] # > aa.ts]
+            smd = ["avconv", 
+                   #'-loglevel', #'quiet', "error",
+                   "-v", "error",
+                   "-i", f, "-c", "copy",
+                   "-f", "mpegts", "-bsf", "h264_mp4toannexb", "-"]
             s = Popen(smd, stdout=PIPE)
             fobj = s.stdout
         shutil.copyfileobj(fobj, p.stdin)
         if s:
             s.wait()
-            if p.returncode != 0:
-                echo("p.returncode =", p.returncode)
-            #    raise CalledProcessError(s.returncode, smd)
+            if s.returncode != 0:
+                #echo("s.returncode =", s.returncode)
+                raise CalledProcessError(s.returncode, smd)
     p.stdin.close()
     p.wait()
     if p.returncode != 0:
