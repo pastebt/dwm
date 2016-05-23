@@ -123,9 +123,9 @@ class DWM(object):
         echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
-    def use_dwm_merge(self, urls, title, ext):
+    def use_dwm_merge(self, urls, title, ext, clean=True):
         from merge import merge
-        merge(os.path.join(self.out_dir, title), ext, len(urls), True)
+        merge(os.path.join(self.out_dir, title), ext, len(urls), clean)
 
     def download_urls(self, title, ext, urls, totalsize):
         sys.path.insert(1, '../you-get/src')
@@ -151,6 +151,7 @@ class DWM(object):
                 self.wget_one_url("%s[%02d]" % (title, cnt),
                                   ext, url, len(urls))
             cnt = cnt + 1
+        self.use_dwm_merge(urls, title, ext, False)
 
     def wget_one_url(self, title, ext, url, unum):
         outfn = os.path.join(self.out_dir, title + "." + ext)

@@ -38,7 +38,7 @@ def merge1(name, ext, cnt):
 
 
 def merge(name, ext, cnt, clean=False):
-    # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts - > aa.ts
+    # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
     fs = []
     for i in range(cnt):
         fs.append("%s[%02d].%s"% (name, i, ext))
@@ -46,8 +46,20 @@ def merge(name, ext, cnt, clean=False):
     cmd = ["avconv", "-i", "-", "-y", "-c", "copy", "%s.%s" % (name, ext)]
     p = Popen(cmd, stdin=PIPE)
     for f in fs:
-        fobj = open(f + ".ts", "r+b")
+        try:
+            fobj = open(f + ".ts", "r+b")
+            s = None
+        except IOError:
+            smd = ["avconv", "-i", f, "-c", "copy", "-f", "mpegts",
+                   "-bsf", "h264_mp4toannexb", "-"] # > aa.ts]
+            s = Popen(smd, stdout=PIPE)
+            fobj = s.stdout
         shutil.copyfileobj(fobj, p.stdin)
+        if s:
+            s.wait()
+            if p.returncode != 0:
+                echo("p.returncode =", p.returncode)
+            #    raise CalledProcessError(s.returncode, smd)
     p.stdin.close()
     p.wait()
     if p.returncode != 0:
