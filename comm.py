@@ -108,7 +108,7 @@ class DWM(object):
             raise self.ExistsError(outfn + " exists")
 
     def align_title_num(self, t):
-        t2 = '_'.join(t.split('/'))
+        t2 = '-'.join(t.split('/'))
         if self.align_num < 2:
             return t2
         ns = re.split("(\d+)", t2, 1)
@@ -145,6 +145,9 @@ class DWM(object):
             self.use_dwm_merge(urls, title, ext)
 
     def wget_urls(self, title, ext, urls, tsize):
+        if len(urls) == 1:
+            self.wget_one_url(title, ext, urls[0], 1)
+            return
         cnt = 0
         for url in urls:
             if cnt >= self.dwn_skip:
