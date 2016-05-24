@@ -166,7 +166,7 @@ class DWM(object):
             dwnfn = outfn + ".dwm"
             p = subprocess.Popen(["wget", 
                                   #"--wait", "30",
-                                  "--tries=10",
+                                  "--tries=50",
                                   "--read-timeout=30",
                                   "-c",
                                   "-O", dwnfn,
