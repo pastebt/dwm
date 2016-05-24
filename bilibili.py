@@ -11,9 +11,13 @@ class BILIBILI(DWM):
     appkey = '8e9fc618fbd41e28'
 
     def query_info(self, url):
+        h, p = self.get_h_p(url)
         html = self.get_html(url)
         hutf = html.decode('utf8')
-        m = re.search('''<div class="v-title"><h1 title="([^<>]+)"''', hutf)
+        m = re.search("<option value='/%s/index_\d+.html'>"
+                        "([^<>]+)</option>" % p, hutf)
+        if not m:
+            m = re.search('<div class="v-title"><h1 title="([^<>]+)"', hutf)
         title = m.group(1)
         title = self.align_title_num(title)
         #echo(title.encode('utf8'))
@@ -35,22 +39,25 @@ class BILIBILI(DWM):
         for s, u in ms:
             totalsize += int(s)
             urls.append(u)
-        #print total
-        #print urls
-        #print ext
         return title, ext, urls, totalsize
 
-    def try_playlist(self, ispl, url):
+    def get_h_p(self, url):
         # http://www.bilibili.com/video/av4197196/
         m = re.match("(https?://[^/]+)/(video/av\d+)", url)
-        if !m:
-            raise Exception("Unsupport bilibili")
-        h, i = m.group(1), m.group(2)
-        print h, i
-        sys.exit(0)
+        if not m:
+            raise Exception("Unsupport bilibili url format")
+        return m.group(1), m.group(2)
+
+    def try_playlist(self, ispl, url):
+        h, p = self.get_h_p(url)
+        #print h, p
         html = self.get_html(url)
         hutf = html.decode('utf8')
-        pl = re.findall("<option value='(/%s/index_\d+.html)'>([^<>]+)</option>" , hutf)
+        pl = re.findall("<option value='(/%s/index_\d+.html)'>"
+                        "([^<>]+)</option>" % p, hutf)
+        #print pl
+        return [(self.align_title_num(t), h + u) for u, t in pl]
+        #sys.exit(0)
 
 
 if __name__ == '__main__':
