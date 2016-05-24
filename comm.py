@@ -189,6 +189,11 @@ class DWM(object):
         else:
             self.download_urls(title, ext, urls, size)
 
+    def try_playlist(self, ispl, url):
+        if ispl:
+            return self.get_list(url)
+        return None
+
     def get_list(self, page_url):
         raise Exception("Not Implement Yet")
     
@@ -332,10 +337,11 @@ def start(kls):
         kls.download_urls = DWM.wget_urls
         kls.dwn_skip = args.wget_skip
     k = kls()
-    if args.playlist:
+    pl = k.try_playlist(args.playlist, args.url)
+    if pl:
         echo(args.url)
         cnt = 0
-        for title, url in k.get_list(args.url):
+        for title, url in pl: #k.get_list(args.url):
             cnt = cnt + 1
             if cnt > args.playlist_top > 0:
                 break

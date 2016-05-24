@@ -72,8 +72,9 @@ class DRAMA8(DWM):
         m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
                       hutf)
         self.align_num = len(str(len(m)))
-        for u, t in m:
-            yield t, u
+        #for u, t in m:
+        #    yield t, u
+        return [(t, u) for u, t in m]
         #echo(m.groups())
         #print m
         #yield ""
