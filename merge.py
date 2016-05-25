@@ -40,6 +40,7 @@ def merge1(name, ext, cnt):
 def merge(name, ext, cnt, clean=False):
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
     outfn = "%s.%s" % (name, ext)
+    mrgfn = "%s.mrg.%s" % (name, ext)
     if os.path.exists(outfn):
         echo(outfn, "exists")
         return
@@ -52,7 +53,7 @@ def merge(name, ext, cnt, clean=False):
            "-i", "-",
            "-y",
            "-c", "copy",
-           outfn + ".mrg"]
+           mrgfn]
     p = Popen(cmd, stdin=PIPE)
     for f in fs:
         echo("merge", f, "/", cnt)
@@ -80,7 +81,7 @@ def merge(name, ext, cnt, clean=False):
     p.wait()
     if p.returncode != 0:
         raise CalledProcessError(p.returncode, cmd)
-    os.rename(outfn + ".mrg", outfn)
+    os.rename(mrgfn, outfn)
 
     if clean:
         for f in fs:
