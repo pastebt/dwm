@@ -40,9 +40,10 @@ class BILIBILI(DWM):
         html = self.get_html('http://interface.bilibili.com/playurl?appkey=' +
                              self.appkey + '&cid=' + cid)
         #echo(html)
+        hutf = html.decode('utf8')
         ms = re.findall('<durl>\s+<order>\d+</order>\s+'
                        '<length>\d+</length>\s+<size>(\d+)</size>\s+'
-                       '<url><\!\[CDATA\[([^<>]+)]]></url>', html, re.M)
+                       '<url><\!\[CDATA\[([^<>]+)]]></url>', hutf, re.M)
         ext = ms[0][1].split('?')[0][-3:]
         totalsize = 0
         urls = []
@@ -53,7 +54,7 @@ class BILIBILI(DWM):
 
     def get_h_p(self, url):
         # http://www.bilibili.com/video/av4197196/
-        m = re.match("(https?://[^/]+)/(video/av\d+)", url.decode('utf8'))
+        m = re.match("(https?://[^/]+)/(video/av\d+)", url)
         if not m:
             raise Exception("Unsupport bilibili url format")
         return m.group(1), m.group(2)
