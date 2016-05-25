@@ -166,7 +166,7 @@ class DWM(object):
             dwnfn = outfn + ".dwm"
             p = subprocess.Popen(["wget", 
                                   #"--wait", "30",
-                                  "--tries=50",
+                                  #"--tries=50",
                                   "--read-timeout=30",
                                   "-c",
                                   "-O", dwnfn,
@@ -276,6 +276,14 @@ def get_total_size_mt(urllist, tn=10):
     # echo("")
     # echo("size =", size, "cnt =", cnt)
     return k, size
+
+
+def search_first(text, *patterns):
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match
+    return None
 
 
 def match1(text, *patterns):

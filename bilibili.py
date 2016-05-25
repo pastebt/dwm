@@ -4,7 +4,7 @@
 import re
 import sys
 
-from comm import DWM, echo, start, debug
+from comm import DWM, echo, start, debug, search_first
 
 
 class BILIBILI(DWM):
@@ -14,10 +14,20 @@ class BILIBILI(DWM):
         h, p = self.get_h_p(url)
         html = self.get_html(url)
         hutf = html.decode('utf8')
-        m = re.search("<option value='/%s/index_\d+.html'>"
-                        "([^<>]+)</option>" % p, hutf)
-        if not m:
-            m = re.search('<div class="v-title"><h1 title="([^<>]+)"', hutf)
+        #m = re.search("<option value='/%s/index_\d+.html' selected>"
+        #              "([^<>]+)</option>" % p, hutf)
+        #if not m:
+        #    m = re.search("<option value='/%s/index_\d+.html'>"
+        #                  "([^<>]+)</option>" % p, hutf)
+        #    if not m:
+        #        m = re.search('<div class="v-title"><h1 title="([^<>]+)"',
+        #                       hutf)
+        m = search_first(hutf,
+                         "<option value='/%s/index_\d+.html' selected>"
+                         "([^<>]+)</option>" % p,
+                         "<option value='/%s/index_\d+.html'>"
+                         "([^<>]+)</option>" % p,
+                         '<div class="v-title"><h1 title="([^<>]+)"')
         title = m.group(1)
         title = self.align_title_num(title)
         #echo(title.encode('utf8'))
@@ -43,7 +53,7 @@ class BILIBILI(DWM):
 
     def get_h_p(self, url):
         # http://www.bilibili.com/video/av4197196/
-        m = re.match("(https?://[^/]+)/(video/av\d+)", url)
+        m = re.match("(https?://[^/]+)/(video/av\d+)", url.decode('utf8'))
         if not m:
             raise Exception("Unsupport bilibili url format")
         return m.group(1), m.group(2)

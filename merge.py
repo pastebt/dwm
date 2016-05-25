@@ -39,12 +39,20 @@ def merge1(name, ext, cnt):
 
 def merge(name, ext, cnt, clean=False):
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
+    outfn = "%s.%s" % (name, ext)
+    if os.path.exists(outfn):
+        echo(outfn, "exists")
+        return
     fs = []
     for i in range(cnt):
         fs.append("%s[%02d].%s"% (name, i, ext))
 
-    cmd = ["avconv", "-v", "error", "-i", "-", "-y", "-c", "copy",
-           "%s.%s" % (name, ext)]
+    cmd = ["avconv",
+           "-v", "error",
+           "-i", "-",
+           "-y",
+           "-c", "copy",
+           outfn + ".mrg"]
     p = Popen(cmd, stdin=PIPE)
     for f in fs:
         echo("merge", f, "/", cnt)
@@ -55,8 +63,11 @@ def merge(name, ext, cnt, clean=False):
             smd = ["avconv", 
                    #'-loglevel', #'quiet', "error",
                    "-v", "error",
-                   "-i", f, "-c", "copy",
-                   "-f", "mpegts", "-bsf", "h264_mp4toannexb", "-"]
+                   "-i", f,
+                   "-c", "copy",
+                   "-f", "mpegts",
+                   "-bsf", "h264_mp4toannexb",
+                   "-"]
             s = Popen(smd, stdout=PIPE)
             fobj = s.stdout
         shutil.copyfileobj(fobj, p.stdin)
@@ -69,6 +80,7 @@ def merge(name, ext, cnt, clean=False):
     p.wait()
     if p.returncode != 0:
         raise CalledProcessError(p.returncode, cmd)
+    os.rename(outfn + ".mrg", outfn)
 
     if clean:
         for f in fs:
