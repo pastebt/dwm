@@ -64,8 +64,13 @@ class BILIBILI(DWM):
         #print h, p
         html = self.get_html(url)
         hutf = html.decode('utf8')
-        pl = re.findall("<option value='(/%s/index_\d+.html)'>"
-                        "([^<>]+)</option>" % p, hutf)
+        m = re.search("<option value='(/%s/index_\d+.html)' selected>"
+                      "([^<>]+)</option>" % p, hutf)
+        if m:
+            pl = [(m.group(1), m.group(2))]
+        else:
+            pl = re.findall("<option value='(/%s/index_\d+.html)'>"
+                            "([^<>]+)</option>" % p, hutf)
         #print pl
         return [(self.align_title_num(t), h + u) for u, t in pl]
         #sys.exit(0)
