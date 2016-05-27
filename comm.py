@@ -327,7 +327,9 @@ def start(kls):
     p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
                    help='align number', default=0)
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
-                   help='align number', default=0)
+                   help='only get top # of playlist', default=0)
+    p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
+                   help='skip # in playlist', default=0)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
                    help='wget_skip', default=-1)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
@@ -353,6 +355,8 @@ def start(kls):
             cnt = cnt + 1
             if cnt > args.playlist_top > 0:
                 break
+            if cnt < args.playlist_skip:
+                continue
             echo(title, url)
             for i in range(2):
                 try:

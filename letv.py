@@ -82,7 +82,7 @@ class LETV(DWM):
         kwargs = {}
         #echo(info)
         support_stream_id = info["playurl"]["dispatch"].keys()
-        # si = kwargs.get("stream_id", "")
+        #si = kwargs.get("stream_id", "")
         si = kwargs.get("stream_id", "720p")
         if si and si.lower() in support_stream_id:
             stream_id = si
