@@ -169,6 +169,8 @@ class DWM(object):
                                   #"--tries=50",
                                   "--read-timeout=30",
                                   "-c",
+                                  "--no-use-server-timestamps",
+                                  "-S", 
                                   "-O", dwnfn,
                                   url])
             p.wait()
