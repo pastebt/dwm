@@ -222,13 +222,14 @@ def get_kind_size(u):
         #if resp.status == 302:
         url = resp.getheader('Location', '')
     size = int(resp.getheader('Content-Length', '0'))
-    kind = resp.getheader('Content-Type', '').split("-")[1]
+    kind = resp.getheader('Content-Type', '') #.split("-")[1]
     return kind, size
 
 
 def get_total_size_st(urllist):
     size = 0
     cnt = 0
+    k = "ext"
     echo("total %d" % len(urllist))
     for url in urllist:
         k, s = get_kind_size(url)
