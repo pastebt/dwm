@@ -366,10 +366,10 @@ def start(kls):
                 except subprocess.CalledProcessError as e:
                     echo(e)
                     return
-                except Exception as e:
-                    echo(type(e), e, "will try again ...")
-                    sleep(5)
-                    continue
+                #except Exception as e:
+                #    echo(type(e), e, "will try again ...")
+                #    sleep(5)
+                #    continue
                 else:
                     break
     else:

@@ -8,7 +8,8 @@ from comm import DWM, echo, start, debug, search_first
 
 
 class BILIBILI(DWM):
-    appkey = '8e9fc618fbd41e28'
+    #appkey = '8e9fc618fbd41e28'
+    appkey = 'f3bb208b3d081dc8'
 
     def query_info(self, url):
         h, p = self.get_h_p(url)
@@ -44,6 +45,9 @@ class BILIBILI(DWM):
         ms = re.findall('<durl>\s+<order>\d+</order>\s+'
                        '<length>\d+</length>\s+<size>(\d+)</size>\s+'
                        '<url><\!\[CDATA\[([^<>]+)]]></url>', hutf, re.M)
+        if len(hutf) < 200:
+            echo(hutf)
+            echo(ms)
         ext = ms[0][1].split('?')[0][-3:]
         totalsize = 0
         urls = []
