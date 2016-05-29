@@ -40,20 +40,23 @@ class BILIBILI(DWM):
 
         html = self.get_html('http://interface.bilibili.com/playurl?appkey=' +
                              self.appkey + '&cid=' + cid)
-        #echo(html)
         hutf = html.decode('utf8')
         ms = re.findall('<durl>\s+<order>\d+</order>\s+'
                        '<length>\d+</length>\s+<size>(\d+)</size>\s+'
                        '<url><\!\[CDATA\[([^<>]+)]]></url>', hutf, re.M)
-        if len(hutf) < 200:
-            echo(hutf)
-            echo(ms)
-        ext = ms[0][1].split('?')[0][-3:]
-        totalsize = 0
-        urls = []
-        for s, u in ms:
-            totalsize += int(s)
-            urls.append(u)
+        if ms:
+            ext = ms[0][1].split('?')[0][-3:]
+            totalsize = 0
+            urls = []
+            for s, u in ms:
+                totalsize += int(s)
+                urls.append(u)
+        else:
+            ms = re.findall('<durl>\s+<order>\d+</order>\s+'
+                            '<length>\d+</length>\s+'
+                            '<url><\!\[CDATA\[([^<>]+)]]></url>', hutf, re.M)
+            urls = ms[:]
+            ext, totalsize = self.get_total_size(urls)
         return title, ext, urls, totalsize
 
     def get_h_p(self, url):

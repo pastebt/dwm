@@ -170,7 +170,7 @@ class DWM(object):
                                   "--read-timeout=30",
                                   "-c",
                                   "--no-use-server-timestamps",
-                                  "-S", 
+                                  #"-S", 
                                   "-O", dwnfn,
                                   url])
             p.wait()
@@ -222,7 +222,7 @@ def get_kind_size(u):
         #if resp.status == 302:
         url = resp.getheader('Location', '')
     size = int(resp.getheader('Content-Length', '0'))
-    kind = resp.getheader('Content-Type', '')
+    kind = resp.getheader('Content-Type', '').split("-")[1]
     return kind, size
 
 
