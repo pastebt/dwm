@@ -323,8 +323,8 @@ def start(kls):
     #, add_help=False)
     p.add_argument('url', metavar='URL', type=str, action='store',
                    help='url of movie')
-    p.add_argument('-p', '--playlist', action='store_true',
-                   help='url is playlist or not')
+    #p.add_argument('-p', '--playlist', action='store_true',
+    #               help='url is playlist or not')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
     p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
@@ -332,9 +332,9 @@ def start(kls):
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
-                   help='skip # in playlist', default=0)
+                   help='skip # in playlist', default=-1)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
-                   help='wget_skip', default=-1)
+                   help='wget skip # urls in list', default=-1)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
@@ -350,7 +350,8 @@ def start(kls):
         kls.download_urls = DWM.wget_urls
         kls.dwn_skip = args.wget_skip
     k = kls()
-    pl = k.try_playlist(args.playlist, args.url)
+    pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,
+                        args.url)
     if pl:
         echo(args.url)
         cnt = 0
