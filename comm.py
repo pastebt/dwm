@@ -138,6 +138,7 @@ class DWM(object):
             # failed to merge because avconv disable concat protocol
             #from merge import merge
             #merge(os.path.join(self.out_dir, title), ext, len(urls), True)
+            echo("")
             self.use_dwm_merge(urls, title, ext)
         except RuntimeError as r:
             if "reraise" not in str(r):

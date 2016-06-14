@@ -71,7 +71,8 @@ class DRAMA8(DWM):
         hutf = html.decode('utf8')
         m = re.findall("""<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<""",
                       hutf)
-        self.align_num = len(str(len(m)))
+        if self.align_num == 0:
+            self.align_num = len(str(len(m)))
         #for u, t in m:
         #    yield t, u
         return [(t, u) for u, t in m]
