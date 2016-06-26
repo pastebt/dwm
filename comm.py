@@ -61,7 +61,8 @@ class DWM(object):
     out_dir = './'
     info_only = False
     align_num = 0
-    dwn_skip = 0
+    dwn_skip = None
+    is_playlist = False
 
     def __init__(self):
         global USER_AGENT
@@ -215,6 +216,7 @@ def get_kind_size(u):
         q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
         #print h
         conn.request("HEAD", q) #, "", h)
+        #conn.request("GET", q) #, "", h)
         resp = conn.getresponse()
         #echo("data1 =", resp.read())
         conn.close()
@@ -355,6 +357,7 @@ def start(kls):
                         args.url)
     if pl:
         echo(args.url)
+        k.is_playlist = True
         cnt = 0
         for title, url in pl: #k.get_list(args.url):
             cnt = cnt + 1
