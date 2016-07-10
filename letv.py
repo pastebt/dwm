@@ -122,7 +122,7 @@ class LETV(DWM):
         #if os.path.exists("%s.%s" % (title, ext)):
         #    raise self.ExistsError(fn)
         self.check_exists(title, ext)
-        if self.dwm_skip is not None:
+        if self.dwn_skip is not None:
             if self.info_only:
                 k, size = self.get_total_size(us)
             else:
