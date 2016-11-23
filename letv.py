@@ -82,8 +82,11 @@ class LETV(DWM):
         kwargs = {}
         #echo(info)
         support_stream_id = info["playurl"]["dispatch"].keys()
-        # si = kwargs.get("stream_id", "")
-        si = kwargs.get("stream_id", "720p")
+        si = kwargs.get("stream_id", "")
+        if self.is_playlist:
+            si = kwargs.get("stream_id", "720p")
+        else:
+            si = kwargs.get("stream_id", "")
         if si and si.lower() in support_stream_id:
             stream_id = si
         else:
@@ -119,7 +122,13 @@ class LETV(DWM):
         #if os.path.exists("%s.%s" % (title, ext)):
         #    raise self.ExistsError(fn)
         self.check_exists(title, ext)
-        k, size = self.get_total_size(us)
+        if self.dwn_skip is not None:
+            if self.info_only:
+                k, size = self.get_total_size(us)
+            else:
+                size = "SKIP"
+        else:
+            k, size = self.get_total_size(us)
         return title, ext, us, size
 
     def get_list(self, page_url):

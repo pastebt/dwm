@@ -58,8 +58,8 @@ def merge(name, ext, cnt, clean=False):
     for f in fs:
         echo("merge", f, "/", cnt)
         try:
-            fobj = open(f + ".ts", "r+b")
             s = None
+            fobj = open(f + ".ts", "r+b")
         except IOError:
             smd = ["avconv", 
                    #'-loglevel', #'quiet', "error",
@@ -67,13 +67,14 @@ def merge(name, ext, cnt, clean=False):
                    "-i", f,
                    "-c", "copy",
                    "-f", "mpegts",
-                   "-bsf", "h264_mp4toannexb",
+                   #"-bsf", "h264_mp4toannexb",
                    "-"]
             s = Popen(smd, stdout=PIPE)
             fobj = s.stdout
         shutil.copyfileobj(fobj, p.stdin)
         if s:
             s.wait()
+            s.stdout.close()
             if s.returncode != 0:
                 #echo("s.returncode =", s.returncode)
                 raise CalledProcessError(s.returncode, smd)
