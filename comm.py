@@ -165,6 +165,7 @@ class DWM(object):
             echo("download", outfn, "/", unum)
             dwnfn = outfn + ".dwm"
             p = subprocess.Popen(["wget", 
+                                  "-U", USER_AGENT,
                                   #"--wait", "30",
                                   #"--tries=50",
                                   "--read-timeout=30",
