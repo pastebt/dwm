@@ -15,11 +15,12 @@ class DYB(DWM):     #dianyingbar
         self.extra_headers = {'Referer': "http://bodekuai.duapp.com/ckplayer/ckplayer.swf"}
 
     def query_info(self, url):
+        # http://www.dianyingbar.com/9111.html
         # get xml
         html = self.get_html(url)
         hutf = html.decode('utf8')
         ret = re.findall("videoarr.push\('YKYun\.php\?id\=([^\(\)]+)'\)", hutf)
-        print(ret[0])
+        #print(ret[0])
         url = "http://bodekuai.duapp.com/api/yUrl.php?id=" + ret[0]
         # get flv part list
         html = self.get_html(url)
@@ -28,7 +29,7 @@ class DYB(DWM):     #dianyingbar
                          "<size>(\d+)</size>"
                          "<seconds>\d+</seconds></video>",
                          hutf)
-        print(ret)
+        #print(ret)
         urls = []
         total_size = 0
         for u, s in ret:
