@@ -115,7 +115,6 @@ class DWM(object):
         ns = re.split("(\d+)", t2, 1)
         return ("%%s%%0%dd%%s" % self.align_num) % (ns[0], int(ns[1]), ns[2])
 
-
     def get_total_size(self, urllist):
         if len(urllist) > 9:
             k, s = get_total_size_mt(urllist)
@@ -181,12 +180,14 @@ class DWM(object):
             if p.returncode == 0:
                 os.rename(dwnfn, outfn)
 
-    def get_one(self, url):
+    def get_one(self, url, t="UnknownTitle"):
         try:
             title, ext, urls, size = self.query_info(url)
         except self.ExistsError as e:
             echo(e)
             return
+        if not title:
+            title = t
         if self.info_only:
             echo(title, ext)
             for url in urls:
@@ -342,11 +343,15 @@ def start(kls):
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
+    p.add_argument('-t', '--title', metavar='TITLE', action='store',
+                   help='movie name if you want to define it',
+                   default='Unknown')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
     DEBUG = args.debug
     debug(args)
+    kls.title = args.title
     kls.out_dir = args.output
     kls.info_only = args.info_only
     kls.align_num = args.align_num
@@ -369,7 +374,7 @@ def start(kls):
             echo(title, url)
             for i in range(2):
                 try:
-                    k.get_one(url)
+                    k.get_one(url, title)
                 except subprocess.CalledProcessError as e:
                     echo(e)
                     return
