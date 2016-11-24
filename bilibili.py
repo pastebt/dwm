@@ -3,27 +3,21 @@
 
 import re
 import sys
+import hashlib
 
 from comm import DWM, echo, start, debug, search_first
 
 
-class BILIBILI(DWM):
-    #appkey = '8e9fc618fbd41e28'
-    appkey = 'f3bb208b3d081dc8'
+appkey = 'f3bb208b3d081dc8'
+SECRETKEY_MINILOADER = '1c15888dc316e05a15fdd0a02ed6584f'
 
+
+class BILIBILI(DWM):
     def query_info(self, url):
         # http://www.bilibili.com/video/av2812495/
         h, p = self.get_h_p(url)
         html = self.get_html(url)
         hutf = html.decode('utf8')
-        #m = re.search("<option value='/%s/index_\d+.html' selected>"
-        #              "([^<>]+)</option>" % p, hutf)
-        #if not m:
-        #    m = re.search("<option value='/%s/index_\d+.html'>"
-        #                  "([^<>]+)</option>" % p, hutf)
-        #    if not m:
-        #        m = re.search('<div class="v-title"><h1 title="([^<>]+)"',
-        #                       hutf)
         m = search_first(hutf,
                          "<option value='/%s/index_\d+.html' selected>"
                          "([^<>]+)</option>" % p,
@@ -39,8 +33,12 @@ class BILIBILI(DWM):
         cid = m.group(1)
         echo("cid =", cid)
 
-        html = self.get_html('http://interface.bilibili.com/playurl?appkey=' +
-                             self.appkey + '&cid=' + cid)
+        #html = self.get_html('http://interface.bilibili.com/playurl?appkey=' +
+        #                     self.appkey + '&cid=' + cid)
+        surl = self.sign_url(cid)
+        html = self.get_html(surl)
+        #echo(html)
+        #return
         hutf = html.decode('utf8')
         ms = re.findall('<durl>\s+<order>\d+</order>\s+'
                        '<length>\d+</length>\s+<size>(\d+)</size>\s+'
@@ -62,6 +60,12 @@ class BILIBILI(DWM):
             #ext = k.split('-')[1]
             ext = "flv"
         return title, ext, urls, totalsize
+
+    def sign_url(self, cid):
+        #sign_this = hashlib.md5(bytes('cid={cid}&from=miniplay&player=1{SECRETKEY_MINILOADER}'.format(cid = cid, SECRETKEY_MINILOADER = SECRETKEY_MINILOADER), 'utf-8')).hexdigest()
+        s = 'cid=%s&from=miniplay&player=1%s' % (cid, SECRETKEY_MINILOADER)
+        sign_this = hashlib.md5(s.encode('utf8')).hexdigest()
+        return 'http://interface.bilibili.com/playurl?&cid=' + cid + '&from=miniplay&player=1' + '&sign=' + sign_this
 
     def get_h_p(self, url):
         # http://www.bilibili.com/video/av4197196/
