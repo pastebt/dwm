@@ -12,6 +12,7 @@ class BILIBILI(DWM):
     appkey = 'f3bb208b3d081dc8'
 
     def query_info(self, url):
+        # http://www.bilibili.com/video/av2812495/
         h, p = self.get_h_p(url)
         html = self.get_html(url)
         hutf = html.decode('utf8')
