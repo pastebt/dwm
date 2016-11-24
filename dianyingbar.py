@@ -28,14 +28,18 @@ class DYB(DWM):     #dianyingbar
         for u, s in ret:
             urls.append(u)
             total_size += int(s)
-        k, s = get_kind_size(urls[0])
-        k = k.split('/')[-1]
+        if urls:
+            k, s = get_kind_size(urls[0])
+            k = k.split('/')[-1]
+        else:
+            k = ''
         #echo(k)
         #return
         return None, k, urls, total_size
 
     def try_playlist(self, ispl, url):
         # http://www.dianyingbar.com/9111.html
+        # http://www.dianyingbar.com/3970.html
         # get xml
         html = self.get_html(url)
         hutf = html.decode('utf8')

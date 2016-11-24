@@ -1,1 +1,8 @@
 wget -O html.html http://www.letv.com/ptv/vplay/1811329.html
+
+python3 letv.py --playlist_top 2 'http://www.le.com/tv/10021329.html'
+
+python3 letv.py --playlist_skip 11 --playlist_top 23 'http://www.le.com/tv/10021329.html'
+
+#avconv -i gf1.avi -acodec mp3 -vcodec h264 out.mp4
+avconv -i gf1.avi -acodec mp3 -vcodec copy out.mp4

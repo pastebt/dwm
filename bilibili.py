@@ -57,7 +57,9 @@ class BILIBILI(DWM):
                             '<url><\!\[CDATA\[([^<>]+)]]></url>', hutf, re.M)
             urls = ms[:]
             k, totalsize = self.get_total_size(urls)
-            ext = k.split('-')[1]
+            #print "k=[%s]" % k
+            #ext = k.split('-')[1]
+            ext = "flv"
         return title, ext, urls, totalsize
 
     def get_h_p(self, url):

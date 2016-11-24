@@ -186,6 +186,9 @@ class DWM(object):
         except self.ExistsError as e:
             echo(e)
             return
+        if not urls:
+            echo("Empty urls")
+            return
         if not title:
             title = t
         if self.info_only:
