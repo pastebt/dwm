@@ -64,13 +64,15 @@ class DWM(object):
     dwn_skip = None
     is_playlist = False
 
-    def __init__(self):
+    def __init__(self, proxy=None):
         global USER_AGENT
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()
-        self.opener = build_opener(self.redirh, self.cookie)
-        # self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
-        # self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        if proxy is None:
+            self.opener = build_opener(self.redirh, self.cookie)
+        else:
+            self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         self.extra_headers = {"User-Agent": USER_AGENT}
 
     def get_html(self, url):

@@ -20,7 +20,7 @@ from comm import DWM, start, echo, match1
 #http://v.youku.com/v_show/id_XNTk2NjMwMDQ4.html?spm=a2h0j.8261147.reload_1.1~3!10~DL~DT~A
 class YOUKU(DWM):
     def __init__(self):
-        DWM.__init__(self)
+        DWM.__init__(self, 1)
         ip = "220.181.111.%d" % random.randint(1, 254)
         self.extra_headers = {'X-Forwarded-For': ip, 'Client-IP': ip}
 
