@@ -19,3 +19,9 @@ https://www.pluralsight.com/blog/tutorials/how-to-install-windows-7-on-a-mac
 
 
 http://www.bilibili.com/video/av2812495/
+
+http://list.youku.com/show/id_z4c2e9500f2c311e2a705.html
+
+python bilibili.py -o s8 --wget_skip 0 http://www.bilibili.com/video/av3306283/
+python bilibili.py -o s9 --wget_skip 0 http://www.bilibili.com/video/av3349866/
+python bilibili.py -o s10 --wget_skip 0 http://www.bilibili.com/video/av3349901/
