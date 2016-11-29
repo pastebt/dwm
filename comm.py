@@ -68,14 +68,18 @@ class DWM(object):
         global USER_AGENT
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()
+        self.rawopen = build_opener(self.redirh, self.cookie)
         if proxy is None:
-            self.opener = build_opener(self.redirh, self.cookie)
-        else:
-            self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+            self.opener = self.rawopen
+        elif proxy == 'auto':
+            # proxy.uku.im:8888
+            #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
+            #self.proxyh = ProxyHandler({'http': "proxy.uku.im:8888"})
+            self.proxyh = ProxyHandler({'http': "https://secure.uku.im:8443"})
             self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         self.extra_headers = {"User-Agent": USER_AGENT}
 
-    def get_html(self, url):
+    def get_html(self, url, raw=False):
         '''
         Date: Mon, 13 Apr 2015 05:35:05 GMT
         Content-Type: text/html
@@ -86,7 +90,10 @@ class DWM(object):
         X-Cache: HIT from us-newyork-ubi.hdslb.com
         '''
         req = Request(url, headers=self.extra_headers)
-        rep = self.opener.open(req)
+        if raw:
+            rep = self.rawopen.open(req)
+        else:
+            rep = self.opener.open(req)
         hds = rep.info()
         # print(repr(info))
         data = rep.read()
