@@ -15,6 +15,7 @@ try:
     from urllib.request import HTTPCookieProcessor, ProxyHandler
     from urllib.request import HTTPRedirectHandler, Request
     from urllib.request import build_opener
+    py3 = True
 
     def echo(*args):
         sys.stdout.write(" ".join(map(str, args)) + "\n")
@@ -25,6 +26,7 @@ except ImportError:
     from urllib2 import HTTPCookieProcessor, ProxyHandler
     from urllib2 import HTTPRedirectHandler, Request
     from urllib2 import build_opener
+    py3 = False
 
     class ConnectionResetError(Exception):
         pass
@@ -370,6 +372,8 @@ def start(kls):
     if args.wget_skip >= 0:
         kls.download_urls = DWM.wget_urls
         kls.dwn_skip = args.wget_skip
+    elif not py3 and not kls.info_only:
+        raise Exception("you need py3 while using you-get download, or you can set --wget_skip 0")
     k = kls()
     pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,
                         args.url)
