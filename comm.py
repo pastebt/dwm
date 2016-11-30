@@ -79,7 +79,7 @@ class DWM(object):
             self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         self.extra_headers = {"User-Agent": USER_AGENT}
 
-    def get_html(self, url, raw=False):
+    def get_html(self, url, raw=False, data=None):
         '''
         Date: Mon, 13 Apr 2015 05:35:05 GMT
         Content-Type: text/html
@@ -91,9 +91,9 @@ class DWM(object):
         '''
         req = Request(url, headers=self.extra_headers)
         if raw:
-            rep = self.rawopen.open(req)
+            rep = self.rawopen.open(req, data)
         else:
-            rep = self.opener.open(req)
+            rep = self.opener.open(req, data)
         hds = rep.info()
         # print(repr(info))
         data = rep.read()
