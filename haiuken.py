@@ -25,9 +25,12 @@ class HYG(DWM):     #http://haiuken.com/ 海宇根
         hutf = html.decode('utf8', 'ignore')
         m = MyHtmlParser(tidy=False)
         m.feed(hutf)
-        title = m.select("head title")[0].text
-        if title.startswith("Theatre - "):
-            title = title[10:]
+        if self.title == "Unknown":
+            title = m.select("head title")[0].text
+            if title.startswith("Theatre - "):
+                title = title[10:]
+        else:
+            title = self.title
         echo(title)
 
         ret = m.select(".bg2 .tmpl img")
