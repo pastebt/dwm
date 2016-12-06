@@ -6,23 +6,25 @@ import sys
 #from subprocess import Popen, PIPE
 #from html.parser import HTMLParser
 
-from comm import DWM, match1, echo, start, get_kind_size
+from comm import DWM, match1, echo, start, get_kind_size, USER_AGENT
 
 
 class DYB(DWM):     #dianyingbar
     def __init__(self):
+        # http://www.dianyingbar.com/10085.html
         DWM.__init__(self)
-        self.extra_headers = {'Referer': "http://bodekuai.duapp.com/ckplayer/ckplayer.swf"}
+        self.extra_headers = {"User-Agent": USER_AGENT,
+                              'Referer': "http://bodekuai.duapp.com/ckplayer/ckplayer.swf"}
 
     def query_info(self, url):
         # get flv part list
         html = self.get_html(url)
-        hutf = html.decode('utf8')
+        hutf = html.decode('utf8', 'ignore')
         ret = re.findall("<video><file><\!\[CDATA\[([^<>]+)\]\]></file>"
                          "<size>(\d+)</size>"
                          "<seconds>\d+</seconds></video>",
                          hutf)
-        #print(ret)
+        print(ret)
         urls = []
         total_size = 0
         for u, s in ret:
@@ -42,7 +44,7 @@ class DYB(DWM):     #dianyingbar
         # http://www.dianyingbar.com/3970.html
         # get xml
         html = self.get_html(url)
-        hutf = html.decode('utf8')
+        hutf = html.decode('utf8', 'ignore')
         ret = re.findall("videoarr.push\('YKYun\.php\?id\=([^\(\)]+)'\)", hutf)
         #print(ret[0])
         t = self.title
