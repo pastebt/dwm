@@ -29,3 +29,5 @@ python bilibili.py -o s10 --wget_skip 0 http://www.bilibili.com/video/av3349901/
 http://haiuken.com/theatre/3KEp/
 http://haiuken.com/theatre/2cfS/    功夫
 http://haiuken.com/theatre/7EIK/
+
+http://www.dianyingbar.com/8924.html
