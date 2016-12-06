@@ -88,7 +88,9 @@ function should_wait(page) {
     if (has_script > 0 && html_content.length < 100) {
         return true;
     }
-    return false;
+    //return false;
+    //return true;
+    return tmo_sec < 0
 }
 
 
@@ -126,7 +128,7 @@ if (args.length != 3 && args.length != 4) {
 
 var tmo_sec = args[1];
 var req_url = args[2];
-var tmo = setTimeout(pageTimeoutFunc, tmo_sec * 1000);
+var tmo = setTimeout(pageTimeoutFunc, Math.abs(tmo_sec) * 1000);
 var page = require('webpage').create();
 //page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Safari/537.4';
 page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.101 Safari/537.36';
