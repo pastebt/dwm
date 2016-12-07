@@ -1,4 +1,4 @@
-// HtmlTextLink.js
+// dwm.js
 
 var need_show = false;
 var html_content = "";
@@ -86,12 +86,12 @@ function load_finished(status) {
 
 
 /*
- * dwm.js timeout_sec url [referer] [post_data]
+ * dwm.js timeout_sec url [referer [post_data]]
  */
 
 var args = require('system').args;
 if (args.length < 3 || args.length > 5) {
-    console.log("Usage: " + args[0] + " timeout_sec url [referer] [post_data]");
+    console.log("Usage: " + args[0] + " timeout_sec url [referer [post_data]]");
     phantom.exit(0);
 }
 
@@ -99,7 +99,6 @@ var tmo_sec = args[1];
 var req_url = args[2];
 var tmo = setTimeout(pageTimeoutFunc, Math.abs(tmo_sec) * 1000);
 var page = require('webpage').create();
-//page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Safari/537.4';
 page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.101 Safari/537.36';
 if (args.length == 4) {
     page.customHeaders = {'Referer': args[3]};
