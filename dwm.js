@@ -27,46 +27,22 @@ var pageTimeoutFunc = function() {
 };
 
 
-//function get_boundary() {
-//    var d = new Date();
-//    return "===dwm_proxy_boundary==="
-//           + d.getTime().toPrecision(20)
-//           + Math.random().toPrecision(10)
-//           + Math.random().toPrecision(10)
-//           + "==="
-//}
-
-
 function out_line(data) {
     console.log(data)
 }
 
 
 function done_loading() {
-    //final_url = page.url;
-    //var bd = get_boundary();
-    //// output data
-    //out_line(bd);
     out_line(html_content);
-    //out_line(bd);
-    //out_line(text_content);
-    //out_line(bd);
-    //out_line('quote_final_url:: ' + encodeURIComponent(final_url));
-    //out_line(link_content);
 }
 
 
 function should_wait(page) {
     var has_refresh = page.evaluate(function () {
         var ms = document.getElementsByTagName('meta');
-        //return ms.length;
         for (var i=0; i<ms.length; ++i ) {
             var m = ms.item(i);
             if (m.httpEquiv.toLowerCase() == 'refresh') {
-                // content="92;URL=word_anchor.html"
-                // return 92
-                // content=";URL=word_anchor.html"
-                // return 0
                 var t = parseInt(m.content);
                 return isNaN(t) ? 0 : t;
             }
@@ -88,8 +64,6 @@ function should_wait(page) {
     if (has_script > 0 && html_content.length < 100) {
         return true;
     }
-    //return false;
-    //return true;
     return tmo_sec < 0
 }
 
@@ -111,18 +85,13 @@ function load_finished(status) {
 };
 
 
-//function popup(msg) {
-//    text_content = text_content + "\n" + msg + "\n";
-//}
-
-
 /*
- * dwm.js timeout_sec url
+ * dwm.js timeout_sec url [referer] [post_data]
  */
 
 var args = require('system').args;
-if (args.length != 3 && args.length != 4) {
-    console.log("Usage: " + args[0] + " timeout_sec url [referer]");
+if (args.length < 3 || args.length > 5) {
+    console.log("Usage: " + args[0] + " timeout_sec url [referer] [post_data]");
     phantom.exit(0);
 }
 
@@ -137,14 +106,12 @@ if (args.length == 4) {
 }
 page.settings.loadImages = false;
 page.onLoadFinished = load_finished;
-//page.onConfirm = popup;
-//page.onAlert = popup;
-//page.onPrompt = function(msg, defaultVal) {
-//    popup(msg);
-//    return defaultVal;
-//};
 page.onLoadStarted = function() {
     need_show = true;
 }
-page.open(req_url);
+if (args.length == 5) {
+    page.open(req_url, 'POST', args[4]);
+} else {
+    page.open(req_url);
+}
 

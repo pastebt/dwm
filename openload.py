@@ -18,9 +18,16 @@ from mybs import MyHtmlParser, select
 
 class MSU(DWM):     #http://moviesunusa.net/
     def query_info(self, url):
-        url2 = 'http://moviesunusa.net/%E7%8E%8B%E5%86%A0-%E7%AC%AC1%E5%AD%A3-%E7%AC%AC7%E9%9B%86-s1-ep7/'
-        #p = Popen(["./phantomjs", "dwm.js", "-20", url], stdout=PIPE)
-        p = Popen(["./phantomjs", "--cookies-file", "msu_cookie.txt", "msu.js", "-30", url], stdout=PIPE)
+        # first we need pass DDoS protection by CloudFlare
+        login_url = 'http://moviesunusa.net/wp-login.php'
+        #./phantomjs --cookies-file msu_cookie.txt dwm.js -20 http://moviesunusa.net/wp-login.php
+        p = Popen(["./phantomjs", "--cookies-file", "msu_cookie.txt",
+                   "dwm.js", "-20", login_url], stdout=PIPE)
+        # then we try to login
+        url = 'http://moviesunusa.net/%E7%8E%8B%E5%86%A0-%E7%AC%AC1%E5%AD%A3-%E7%AC%AC7%E9%9B%86-s1-ep7/'
+        post_data = 'log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to=http%3A%2F%2Fmoviesunusa.net%2F%25E7%258E%258B%25E5%2586%25A0-%25E7%25AC%25AC1%25E5%25AD%25A3-%25E7%25AC%25AC7%25E9%259B%2586-s1-ep7%2F'
+        p = Popen(["./phantomjs", "--cookies-file", "msu_cookie.txt", "dwm.js",
+                   "-30", login_url, url, post_data], stdout=PIPE)
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
@@ -90,5 +97,5 @@ class OpenLoad(DWM):     # http://openload.co/
         
 
 if __name__ == '__main__':
-    #start(MSU)
-    start(OpenLoad)
+    start(MSU)
+    #start(OpenLoad)
