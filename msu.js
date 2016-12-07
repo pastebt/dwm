@@ -136,10 +136,13 @@ if (args.length == 4) {
     page.customHeaders = {'Referer': args[3]};
 }
 page.customHeaders = {
+'Content-Type': 'application/x-www-form-urlencoded',
 'Origin': 'http://moviesunusa.net',
 'Upgrade-Insecure-Requests': '1',
 'Referer': 'http://moviesunusa.net/%E7%8E%8B%E5%86%A0-%E7%AC%AC1%E5%AD%A3-%E7%AC%AC7%E9%9B%86-s1-ep7/',
-'Cookie': '__cfduid=d0c7e2535af6bdca7cd83086ddfe3b7551481050670; cf_clearance=7a179f19ca34688bdc51bf85051feb43291f4401-1481050674-31536000; innity.crtg=; __AF=00dffeeb-5135-4f8c-b283-47c450195285; _ga=GA1.2.1191992591.1481050680; _gat=1',
+'DNT': '1',
+//'Cookie': '__cfduid=d0c7e2535af6bdca7cd83086ddfe3b7551481050670; cf_clearance=7a179f19ca34688bdc51bf85051feb43291f4401-1481050674-31536000; innity.crtg=; __AF=00dffeeb-5135-4f8c-b283-47c450195285; _ga=GA1.2.1191992591.1481050680; _gat=1',
+//'Cookie': '__cfduid=da5ff986b88faab3c7de6076b859c23751481076634; cf_clearance=d0b0f5bb2af1aa5062094ebd91b2a25355d725c4-1481076638-31536000; innity.dingo.freq.569f4fad1c51b1be33a9bb6d=1; innity.dingo.cks.adnxs=1; _gat=1; __AF=2bad2ad2-6189-4b20-bc6e-efe67f74c07e; _ga=GA1.2.1653176836.1481076644; wordpress_test_cookie=WP+Cookie+check; wordpress_logged_in_a5b64ad7442ae4da2d093cd3469428ca=sun03%7C1481249543%7C6CTZO6RpCe3p3yL71YhcIWEOwosUMErKouRyRmjajOU%7C0ef8a20efce082ed1292528d32361c55401b4c7305c493ae2a0199b906c79c81'
 };
 page.settings.loadImages = false;
 page.onLoadFinished = load_finished;
@@ -152,7 +155,7 @@ page.onLoadFinished = load_finished;
 page.onLoadStarted = function() {
     need_show = true;
 }
-// http://moviesunusa.net/wp-login.php
+req_url = 'http://moviesunusa.net/wp-login.php';
 page.open(req_url, 'POST',
 'log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to=http%3A%2F%2Fmoviesunusa.net%2F%25E7%258E%258B%25E5%2586%25A0-%25E7%25AC%25AC1%25E5%25AD%25A3-%25E7%25AC%25AC7%25E9%259B%2586-s1-ep7%2F'
 );
