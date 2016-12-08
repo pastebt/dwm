@@ -355,7 +355,7 @@ def start(kls):
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
                    help='skip # in playlist', default=-1)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
-                   help='wget skip # urls in list', default=-1)
+                   help='wget skip # urls in list', default=0)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
