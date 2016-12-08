@@ -1,74 +1,70 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import os
 import re
 import sys
 import json
+import base64
 from subprocess import Popen, PIPE
 try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
-
-import base64
+ 
 
 from comm import DWM, match1, echo, start, get_kind_size
 from mybs import MyHtmlParser, select
 
 
 class MSU(DWM):     #http://moviesunusa.net/
-    def query_info(self, url):
+    cookie_fn = "msu_cookie.txt"
+    login_url = 'http://moviesunusa.net/wp-login.php'
+
+    def __init__(self):
+        DWM.__init__(self)
+        # remove cookie_fn
+        os.remove(self.cookie_fn)
+
+    def get_cookie(self):
+        if os.path.exists(self.cookie_fn):
+            return
         # first we need pass DDoS protection by CloudFlare
-        login_url = 'http://moviesunusa.net/wp-login.php'
-        #./phantomjs --cookies-file msu_cookie.txt dwm.js -20 http://moviesunusa.net/wp-login.php
-        p = Popen(["./phantomjs", "--cookies-file", "msu_cookie.txt",
-                   "dwm.js", "-20", login_url], stdout=PIPE)
+        echo("Wait 10 seconds ...")
+        p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
+                   "dwm.js", "-10", self.login_url], stdout=PIPE)
+        p.stdout.read()
+        p.wait()
+
+    def query_info(self, url):
+        self.get_cookie()
         # then we try to login
-        url = 'http://moviesunusa.net/%E7%8E%8B%E5%86%A0-%E7%AC%AC1%E5%AD%A3-%E7%AC%AC7%E9%9B%86-s1-ep7/'
-        post_data = 'log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to=http%3A%2F%2Fmoviesunusa.net%2F%25E7%258E%258B%25E5%2586%25A0-%25E7%25AC%25AC1%25E5%25AD%25A3-%25E7%25AC%25AC7%25E9%259B%2586-s1-ep7%2F'
-        p = Popen(["./phantomjs", "--cookies-file", "msu_cookie.txt", "dwm.js",
-                   "-30", login_url, url, post_data], stdout=PIPE)
+        #url = 'http://moviesunusa.net/%E7%8E%8B%E5%86%A0-%E7%AC%AC1%E5%AD%A3-%E7%AC%AC7%E9%9B%86-s1-ep7/'
+        #post_data = 'log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to=http%3A%2F%2Fmoviesunusa.net%2F%25E7%258E%258B%25E5%2586%25A0-%25E7%25AC%25AC1%25E5%25AD%25A3-%25E7%25AC%25AC7%25E9%259B%2586-s1-ep7%2F'
+        post_data = "log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to="
+        post_data = post_data + urllib.quote(url)
+        p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
+                   "dwm.js", "20", self.login_url, url, post_data],
+                  stdout=PIPE)
+        echo("Wait 20 seconds ...")
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
-        echo(hutf)
-        return
+        #echo(hutf)
+        #
+        #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
+        #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
+        urls = match1(hutf, '\<iframe src="(https://openload.co/embed/\S+)" ',
+          '\<meta name="og:url" content="(https://openload.co/embed/\S+)"\>')
+        echo(urls)
 
-        #url = 'http://moviesunusa.net/wp-login.php'
-        #html = self.get_html(url, data='log=sun03&pwd=sun&wp-submit=Login+%E2%86%92&redirect_to=http%3A%2F%2Fmoviesunusa.net%2F%25E7%258E%258B%25E5%2586%25A0-%25E7%25AC%25AC1%25E5%25AD%25A3-%25E7%25AC%25AC7%25E9%259B%2586-s1-ep7%2F'.encode('utf8'))
-        #echo(html)
-        return
-        hutf = html.decode('utf8', 'ignore')
-
-        m = MyHtmlParser(tidy=False)
-        m.feed(hutf)
-        if self.title == "Unknown":
-            title = m.select("head title")[0].text
-            if title.startswith("Theatre - "):
-                title = title[10:]
-        else:
-            title = self.title
+        title = match1(hutf, '<meta name="description" content="([^<>]+)">')
         echo(title)
 
-        ret = m.select(".bg2 .tmpl img")
-        ips = json.dumps([r['src'].split("://")[1].split('/')[0] for r in ret])
-        #echo(ips)
-
-        d = {"xEvent": "UIMovieComments.Error",
-             "xJson": ips}
-        html = self.get_html("http://haiuken.com/ajax/theatre/%s/" % vid,
-                             data=urllib.urlencode(d).encode("utf8"))
-        ret = json.loads(html.decode('utf8'))
-        url = base64.b64decode(ret['Data']['Error'].encode('utf8'))
-        #echo(url)
-
-        urls = [url.decode('utf8')]
-        #echo(urls)
-        k, total_size = get_kind_size(urls[0])
-        k = k.split('/')[-1]
-        #echo(k)
-        echo(total_size)
-        return title, k, urls, total_size
+        #return title, k, urls, total_size
+        ol = OpenLoad()
+        ol.title = title
+        return ol.query_info(urls[0])
 
 
 class OpenLoad(DWM):     # http://openload.co/
