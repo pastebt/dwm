@@ -9,8 +9,9 @@ try:
 except ImportError:
     import urllib
  
-from comm import DWM, match1, echo, start
 from openload import OpenLoad
+from mybs import MyHtmlParser
+from comm import DWM, match1, echo, start
 
 
 class MSU(DWM):     #http://moviesunusa.net/
@@ -67,31 +68,29 @@ class MSU(DWM):     #http://moviesunusa.net/
         ol.title = title
         return ol.query_info(urls[0])
 
+    def try_playlist(self, ispl, url):
+        p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
+                   "dwm.js", "-10", url], stdout=PIPE)
+        echo("Wait 10 seconds ...")
+        html = p.stdout.read()
+        p.wait()
+        hutf = html.decode('utf8', 'ignore')
+        #echo(hutf)
+        #return 1
+        #hutf = open("a.html").read()
+        mp = MyHtmlParser(tidy=False)
+        mp.feed(hutf)
+        # body > div.mh-container > div.mh-wrapper.clearfix > div > div > article > div.entry.clearfix > div > div > font > ul > li:nth-child(1) > strong > a
+        nodes = mp.select("div.yarpp-related > div > font > ul > li > strong > a")
+        urls = []
+        for n in nodes:
+            if n['rel'] == 'bookmark':
+                urls.append((n['title'], n['href']))
+        urls = [x for x in reversed(urls)]
+        for t, u in urls:
+            echo(t, u)
+        return urls
 
-#class OpenLoad(DWM):     # http://openload.co/
-#    def __init__(self):
-#        DWM.__init__(self)
-#        self.extra_headers['Referer'] = 'https://vjs.zencdn.net/swf/5.1.0/video-js.swf'
-#
-#    def query_info(self, url):
-#        # https://openload.co/embed/isCWWnlsZLE/
-#        # <span id="streamurl">isCWWnlsZLE~1481138074~208.91.0.0~g617lYdo</span>
-#        p = Popen(["./phantomjs", "dwm.js", "300", url], stdout=PIPE)
-#        html = p.stdout.read()
-#        hutf = html.decode('utf8')
-#        p.wait()
-#        #vid = match1(url, r'haiuken.com/theatre/([^/]+)/')
-#        m = re.search('''<span id="streamurl">([^<>]+)</span>''', hutf)
-#        vid = m.groups()[0]
-#        echo(vid)
-#        url = "https://openload.co/stream/%s?mime=true" % vid
-#
-#        # https://openload.co/stream/isCWWnlsZLE~1481139117~208.91.0.0~mcLfSy5C?mime=true
-#        # video/mp4 584989307
-#        k, tsize = get_kind_size(url)
-#        k = k.split('/')[-1]
-#        return self.title, k, [url], tsize
-        
 
 if __name__ == '__main__':
     start(MSU)
