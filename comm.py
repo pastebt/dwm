@@ -217,6 +217,8 @@ class DWM(object):
     def get_list(self, page_url):
         raise Exception("Not Implement Yet")
     
+    def clean_up(self):
+        pass
 
 
 def get_kind_size(u):
@@ -402,6 +404,7 @@ def start(kls):
                     break
     else:
         k.get_one(args.url)
+    k.clean_up()
 
 
 if __name__ == '__main__':
