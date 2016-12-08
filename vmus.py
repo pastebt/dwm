@@ -29,11 +29,11 @@ class VMUS(DWM):     #http://vmus.co/
         post_data = post_data + urllib.quote(url)
         p = Popen(["./phantomjs", "dwm.js", "100", self.login_url, url, post_data],
                   stdout=PIPE)
-        echo("Wait ...")
+        echo("Wait query_info phantomjs ...")
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
-        echo(hutf)
+        #echo(hutf)
         #
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
@@ -49,28 +49,29 @@ class VMUS(DWM):     #http://vmus.co/
         ol.title = title
         return ol.query_info(urls[0])
 
-    #def try_playlist(self, ispl, url):
-    #    p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
-    #               "dwm.js", "-10", url], stdout=PIPE)
-    #    echo("Wait 10 seconds ...")
-    #    html = p.stdout.read()
-    #    p.wait()
-    #    hutf = html.decode('utf8', 'ignore')
-    #    #echo(hutf)
-    #    #return 1
-    #    #hutf = open("a.html").read()
-    #    mp = MyHtmlParser(tidy=False)
-    #    mp.feed(hutf)
-    #    # body > div.mh-container > div.mh-wrapper.clearfix > div > div > article > div.entry.clearfix > div > div > font > ul > li:nth-child(1) > strong > a
-    #    nodes = mp.select("div.yarpp-related > div > font > ul > li > strong > a")
-    #    urls = []
-    #    for n in nodes:
-    #        if n['rel'] == 'bookmark':
-    #            urls.append((n['title'], n['href']))
-    #    urls = [x for x in reversed(urls)]
-    #    for t, u in urls:
-    #        echo(t, u)
-    #    return urls
+    def try_playlist(self, ispl, url):
+        # http://vmus.co/category/%E9%80%A3%E8%BC%89%E4%B8%AD/%E7%AC%AC%E4%B8%80%E5%AD%A3/%E6%AF%92%E6%A2%9Fnarcos/
+        p = Popen(["./phantomjs", "dwm.js", "200", url], stdout=PIPE)
+        echo("Wait try_playlist phantomjs ...")
+        html = p.stdout.read()
+        p.wait()
+        hutf = html.decode('utf8', 'ignore')
+        #echo(hutf)
+        mp = MyHtmlParser(tidy=False)
+        mp.feed(hutf)
+        # #post-24821 > h2 > a #content
+        nodes = mp.select("#content > article > h2 > a")
+        #echo(nodes)
+        urls = []
+        for n in nodes:
+            if n['rel'] == 'bookmark':
+                urls.append((n.text, n['href']))
+        urls = [x for x in reversed(urls)]
+        for t, u in urls:
+            echo(t, u)
+        if urls:
+            return urls
+        return None
 
 
 if __name__ == '__main__':

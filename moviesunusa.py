@@ -89,7 +89,9 @@ class MSU(DWM):     #http://moviesunusa.net/
         urls = [x for x in reversed(urls)]
         for t, u in urls:
             echo(t, u)
-        return urls
+        if urls:
+            return urls
+        return None
 
 
 if __name__ == '__main__':
