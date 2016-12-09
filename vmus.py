@@ -42,8 +42,8 @@ class VMUS(DWM):     #http://vmus.co/
           '\<meta name="og:url" content="(https://openload.co/embed/\S+)"\>')
         echo(urls)
 
-        title = match1(hutf, '<meta name="description" content="([^<>]+)">')
-        echo(title)
+        title = match1(hutf, '<meta property="og:title" content="([^<>]+)"')
+        echo("vmus query_info title=", title)
 
         #return title, k, urls, total_size
         ol = OpenLoad()
