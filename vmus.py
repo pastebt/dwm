@@ -61,12 +61,18 @@ class VMUS(DWM):     #http://vmus.co/
         mp.feed(hutf)
         # #post-24821 > h2 > a #content
         nodes = mp.select("#content > article > h2 > a")
-        #echo(nodes)
         urls = []
         for n in nodes:
             if n['rel'] == 'bookmark':
                 urls.append((n.text, n['href']))
         urls = [x for x in reversed(urls)]
+        if not urls:
+            # http://vmus.co/%E7%BE%85%E9%A6%AC%E7%9A%84%E6%A6%AE%E8%80%80-rome/
+            # #post-2644 > div.entry.clearfix > p:nth-child(11) > a:nth-child(1)
+            nodes = mp.select("#content article div.entry p a")
+            for n in nodes:
+                urls.append((n.text, n['href']))
+        #urls.sort()
         for t, u in urls:
             echo(t, u)
         if urls:

@@ -1,5 +1,6 @@
 
 import re
+import sys
 import cgi
 from itertools import chain
 from gettext import gettext
@@ -7,6 +8,8 @@ try:
     from HTMLParser import HTMLParser
 except ImportError:
     from html.parser import HTMLParser
+
+from comm import echo
 
 
 """
@@ -367,3 +370,18 @@ def MyBS(fin):
 ##print str(next(select("a", mp.root_node.descendants())))
 #ns = select("a", mp.root_node.descendants())
 #print map(str, ns)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        echo('Usage: ', sys.argv[0], 'selector html_file')
+        sys.exit(1)
+
+    html = open(sys.argv[2]).read().decode('utf8', 'ignore')
+    mp = MyHtmlParser(tidy=False)
+    mp.feed(html)
+    nodes = mp.select(sys.argv[1])
+    echo(nodes)
+    for n in nodes:
+        echo(n.tag, n.text)
+
