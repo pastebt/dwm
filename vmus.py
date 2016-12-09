@@ -27,12 +27,13 @@ class VMUS(DWM):     #http://vmus.co/
         post_data = "log=%s&pwd=%s&wp-submit=" % (up, up)
         post_data = post_data + "%E5%85%8D%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5%28%E6%96%B9%E6%B3%95%E8%AB%8B%E8%A6%8B%E4%B8%8A%E6%96%B9%E8%AA%AA%E6%98%8E%29+%C2%BB&redirect_to="
         post_data = post_data + urllib.quote(url)
-        p = Popen(["./phantomjs", "dwm.js", "60", self.login_url, url, post_data],
-                  stdout=PIPE)
-        echo("Wait query_info phantomjs 60 sec ...")
-        html = p.stdout.read()
+        #p = Popen(["./phantomjs", "dwm.js", "60", self.login_url, url, post_data],
+        #          stdout=PIPE)
+        #echo("Wait query_info phantomjs 60 sec ...")
+        #html = p.stdout.read()
+        #p.wait()
+        html = self.get_html(self.login_url, postdata=post_data)
         hutf = html.decode('utf8')
-        p.wait()
         #echo(hutf)
         #
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
@@ -51,10 +52,11 @@ class VMUS(DWM):     #http://vmus.co/
 
     def try_playlist(self, ispl, url):
         # http://vmus.co/category/%E9%80%A3%E8%BC%89%E4%B8%AD/%E7%AC%AC%E4%B8%80%E5%AD%A3/%E6%AF%92%E6%A2%9Fnarcos/
-        p = Popen(["./phantomjs", "dwm.js", "60", url], stdout=PIPE)
-        echo("Wait try_playlist phantomjs 60 sec ...")
-        html = p.stdout.read()
-        p.wait()
+        #p = Popen(["./phantomjs", "dwm.js", "60", url], stdout=PIPE)
+        #echo("Wait try_playlist phantomjs 60 sec ...")
+        #html = p.stdout.read()
+        #p.wait()
+        html = self.get_html(url)
         hutf = html.decode('utf8', 'ignore')
         #echo(hutf)
         mp = MyHtmlParser(tidy=False)
