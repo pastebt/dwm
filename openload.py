@@ -31,7 +31,7 @@ class OpenLoad(DWM):     # http://openload.co/
         k, tsize = get_kind_size(url)
         k = k.split('/')[-1]
         return self.title, k, [url], tsize
-        
+
 
 if __name__ == '__main__':
     start(OpenLoad)

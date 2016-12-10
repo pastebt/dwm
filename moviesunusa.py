@@ -32,7 +32,7 @@ class MSU(DWM):     #http://moviesunusa.net/
         if os.path.exists(self.cookie_fn):
             return
         # first we need pass DDoS protection by CloudFlare
-        echo("Wait 10 seconds ...")
+        echo("Get Cookie Wait 10 seconds ...")
         p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
                    "dwm.js", "-10", self.login_url], stdout=PIPE)
         p.stdout.read()
@@ -48,7 +48,7 @@ class MSU(DWM):     #http://moviesunusa.net/
         p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
                    "dwm.js", "20", self.login_url, url, post_data],
                   stdout=PIPE)
-        echo("Wait 20 seconds ...")
+        echo("Query Info Wait 20 seconds ...")
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
@@ -69,9 +69,11 @@ class MSU(DWM):     #http://moviesunusa.net/
         return ol.query_info(urls[0])
 
     def try_playlist(self, ispl, url):
+        if re.search("-s\d+-ep\d+", url, re.I):
+            return None
         p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
                    "dwm.js", "-10", url], stdout=PIPE)
-        echo("Wait 10 seconds ...")
+        echo("Try Playlist Wait 10 seconds ...")
         html = p.stdout.read()
         p.wait()
         hutf = html.decode('utf8', 'ignore')
