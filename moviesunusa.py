@@ -56,8 +56,8 @@ class MSU(DWM):     #http://moviesunusa.net/
         #
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
-        urls = match1(hutf, '\<iframe src="(https://openload.co/embed/\S+)" ',
-          '\<meta name="og:url" content="(https://openload.co/embed/\S+)"\>')
+        urls = match1(hutf, '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
+          '\<meta name="og:url" content="(https://openload.(c|i)o/embed/\S+)"\>')
         echo(urls)
 
         title = match1(hutf, '<meta name="description" content="([^<>]+)">')
