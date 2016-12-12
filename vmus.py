@@ -71,14 +71,34 @@ class VMUS(DWM):     #http://vmus.co/
         if not urls:
             # http://vmus.co/%E7%BE%85%E9%A6%AC%E7%9A%84%E6%A6%AE%E8%80%80-rome/
             # #post-2644 > div.entry.clearfix > p:nth-child(11) > a:nth-child(1)
-            nodes = mp.select("#content article div.entry p a")
+            #nodes = mp.select("#content article div.entry p a")
+            #for n in nodes:
+            #    urls.append((n.text, n['href']))
+
+            # http://vmus.co/11-22-63/  has extra entry need filter out
+            # mybs return result did not follow order
+            phrs = mp.select("#content article div.entry")
+            nodes = phrs[0].children
+            h = False
             for n in nodes:
-                urls.append((n.text, n['href']))
+                #echo('n.tag=', n.tag)
+                if n.tag == 'hr':
+                    h = True
+                    continue
+                if n.tag != 'p':
+                    continue
+                if not h:
+                    continue
+                na = n.select('a')
+                for a in na:
+                    urls.append((a.text, a['href']))
+
         #urls.sort()
         for t, u in urls:
             echo(t, u)
         if urls:
             return urls
+        echo("urls =", urls)
         return None
 
 
