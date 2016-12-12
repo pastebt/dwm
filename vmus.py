@@ -77,22 +77,34 @@ class VMUS(DWM):     #http://vmus.co/
 
             # http://vmus.co/11-22-63/  has extra entry need filter out
             # mybs return result did not follow order
-            phrs = mp.select("#content article div.entry")
-            nodes = phrs[0].children
+            #phrs = mp.select("#content article div.entry")
+            #nodes = phrs[0].children
+            #h = False
+            #for n in nodes:
+            #    #echo('n.tag=', n.tag)
+            #    if n.tag == 'hr':
+            #        h = True
+            #        continue
+            #    if n.tag != 'p':
+            #        continue
+            #    if not h:
+            #        continue
+            #    na = n.select('a')
+            #    for a in na:
+            #        urls.append((a.text, a['href']))
+            phrs = mp.select("#content article div.entry hr,p")
             h = False
-            for n in nodes:
+            for n in phrs:
                 #echo('n.tag=', n.tag)
                 if n.tag == 'hr':
                     h = True
-                    continue
-                if n.tag != 'p':
                     continue
                 if not h:
                     continue
                 na = n.select('a')
                 for a in na:
                     urls.append((a.text, a['href']))
-
+ 
         #urls.sort()
         for t, u in urls:
             echo(t, u)

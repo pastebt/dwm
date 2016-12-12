@@ -75,7 +75,8 @@ def select_one(act, sel, elms):
         return (c for e in elms for c in e.children)
 
     if act == '':
-        return (e for e in elms if e.tag == sel)
+        #return (e for e in elms if e.tag == sel)
+        return (e for e in elms if e.tag in sel.split(',')) # this will keep order
     if act == '.':
         #return (e for e in elms if e.get('class') == sel)
         return (e for e in elms if sel in e.get('class', '').split())
@@ -110,9 +111,11 @@ def select(sel, get_elems):
     # because we should support "element,element",
     # source elements should reset, and we are using iter-list,
     # so we should use function who will give a iter as return
-    #sels = re.split("([\.\#\[\: ,\>])", sel)
-    sels = re.split("([\.\#\[\:]|\s*,\s*|\s*\>\s*| +)", sel)
-    #sels = re.split("([\.\#\:]|\s*,\s*|\s*\>\s*|\[.+\]|\s+)", sel)
+    ##sels = re.split("([\.\#\[\: ,\>])", sel)
+    sel = ",".join(re.split("\s*,\s*", sel))
+    sels = re.split("([\.\#\[\:]|\s*\>\s*| +)", sel)
+    #sels = re.split("([\.\#\[\:]|\s*,\s*|\s*\>\s*| +)", sel)
+    ##sels = re.split("([\.\#\:]|\s*,\s*|\s*\>\s*|\[.+\]|\s+)", sel)
     #print sels
     es = get_elems()
     act = sel = ''
@@ -124,10 +127,11 @@ def select(sel, get_elems):
         if s in ".#[:":
             act = s
             continue
-        if s.strip() == ',':
-            ret.append(es)
-            es = get_elems()
-        elif act == '[' and s[-1] != ']':
+        #if s.strip() == ',':
+        #    ret.append(es)
+        #    es = get_elems()
+        #elif act == '[' and s[-1] != ']':
+        if act == '[' and s[-1] != ']':
             # handle "a [name='a b']"
             sel = sel + s
             continue
