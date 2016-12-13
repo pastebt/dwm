@@ -45,10 +45,14 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
         #https://api.ourder.com/video/ssl/YkcrefHandler.ashx?id=xxx
         r = urlparse(self.get_html_url)
         q = parse_qs(r.query)
-        vid = q['id'][0]
-        echo(vid)
-        #return
-        url = 'https://api.ourder.com/video/ssl/YkcrefHandler.ashx?id=' + vid
+        if '/video/ssl/https.html' in self.get_html_url:
+            vid = q['id'][0]
+            echo(vid)
+            #return
+            url = 'https://api.ourder.com/video/ssl/YkcrefHandler.ashx?id=' + vid
+        elif '/video/ssl/videoplayer.html' in self.get_html_url:
+            #http://api.ourder.com/video/ssl/videoplayer.html?url=http://v.youku.com/v_show/id_XMTQ1MDM1MDc3Ng==.html?from=y1.12-96
+            url = q['url'][0]
 
         k, total_size = get_kind_size(url)
         k = k.split('/')[-1]

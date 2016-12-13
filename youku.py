@@ -163,7 +163,7 @@ class YOUKU(DWM):
                 echo(i['server'])
                 urls.append(i['server'])
         #echo(urls)
-        size = self.get_total_size(urls)
+        k, size = self.get_total_size(urls)
         return title, ext, urls, size
  
 

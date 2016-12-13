@@ -209,9 +209,11 @@ class DWM(object):
         if not title:
             title = t
         if self.info_only:
-            echo(title, ext)
             for url in urls:
                 echo(url)
+            echo("title =", title, ext)
+            echo("Size:\t%.2f MiB (%d Bytes)" % (
+                  round(size / 1048576.0, 2), size))
         else:
             self.download_urls(title, ext, urls, size)
 
