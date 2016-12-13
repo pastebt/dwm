@@ -65,6 +65,7 @@ class DWM(object):
     align_num = 0
     dwn_skip = None
     is_playlist = False
+    get_html_url = ''
 
     def __init__(self, proxy=None):
         global USER_AGENT
@@ -96,6 +97,7 @@ class DWM(object):
             rep = self.rawopen.open(req, postdata)
         else:
             rep = self.opener.open(req, postdata)
+        self.get_html_url = rep.geturl()
         hds = rep.info()
         # print(repr(info))
         data = rep.read()
@@ -112,7 +114,7 @@ class DWM(object):
         else:
             return data
 
-    def get_hutf(*param):
+    def get_hutf(self, *param):
         return self.get_html(*param).decode('utf8', 'ignore')
 
     def check_exists(self, title, ext):
