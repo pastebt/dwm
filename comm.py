@@ -381,7 +381,7 @@ def start(kls):
     elif not py3 and not kls.info_only:
         raise Exception("you need py3 while using you-get download, or you can set --wget_skip 0")
     k = kls()
-    if args.playlist_skip == 'all':
+    if args.playlist_skip == -2:
         pl = None
     else:
         pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,

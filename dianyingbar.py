@@ -20,6 +20,7 @@ class DYB(DWM):     #dianyingbar
         # get flv part list
         html = self.get_html(url)
         hutf = html.decode('utf8', 'ignore')
+        echo(hutf)
         ret = re.findall("<video><file><\!\[CDATA\[([^<>]+)\]\]></file>"
                          "<size>(\d+)</size>"
                          "<seconds>\d+</seconds></video>",
@@ -55,6 +56,10 @@ class DYB(DWM):     #dianyingbar
                        "http://bodekuai.duapp.com/api/yUrl.php?id=" + r))
         echo(pl)
         return pl
+
+
+# failed
+# http://www.dianyingbar.com/11151.html
 
 
 if __name__ == '__main__':
