@@ -53,6 +53,10 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
         elif '/video/ssl/videoplayer.html' in self.get_html_url:
             #http://api.ourder.com/video/ssl/videoplayer.html?url=http://v.youku.com/v_show/id_XMTQ1MDM1MDc3Ng==.html?from=y1.12-96
             url = q['url'][0]
+            if 'youku' in url:
+                from youku import YOUKU
+                y = YOUKU()
+                return y.query_info(url)
 
         k, total_size = get_kind_size(url)
         k = k.split('/')[-1]
