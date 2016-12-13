@@ -56,9 +56,6 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
 
         k, total_size = get_kind_size(url)
         k = k.split('/')[-1]
-        #echo(k)
-        echo(total_size)
-
         return title, k, [url], total_size
 
 
