@@ -11,6 +11,8 @@ import base64
 import random
 import struct
 
+from urlparse import urlparse
+
 from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start
 
@@ -224,12 +226,11 @@ class QQ(DWM):  # v.qq.com
                              postdata=urllib.urlencode(params))
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
-        vkey = {
+        return {
             'filename': mp.select('filename')[0].text,
             'br': float(mp.select('br')[0].text),
             'key': mp.select('key')[0].text
         }
-        return vkey
 
     def getvclip(self, url, vid, vt, resolution, idx):
         rand = random.random()
@@ -261,7 +262,7 @@ class QQ(DWM):  # v.qq.com
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
     
-        vclip = {
+        return {
             'filename': mp.select('vi>fn')[0].text,
             'br': float(mp.select('vi>br')[0].text),
             'fmt': mp.select('vi>fmt')[0].text,
@@ -269,9 +270,6 @@ class QQ(DWM):  # v.qq.com
             'md5': mp.select('vi>md5')[0].text,
             'fs': int(mp.select('vi>fs')[0].text)
         }
-    
-        return vclip
-
 
     def query_info(self, url):
         #url = 'https://v.qq.com/x/cover/ijilh0frmu96sbf/x0017evzp6n.html'
@@ -399,6 +397,19 @@ class QQ(DWM):  # v.qq.com
             'guid': PLAYER_GUID
         }
         return '%s?%s' % (url, urllib.urlencode(params))
+
+    def try_playlist(self, ispl, url):
+        res = urlparse(url)
+        pre = "%s://%s" % (res.scheme, res.netloc)
+        echo("pre =", pre)
+        hutf = self.get_hutf(url)
+        urls = []
+        for node in SelStr('a[_stat="videolist:click"]', hutf):
+            if 'title' in node:
+                u = (node['title'], pre + node['href'])
+                echo(*u)
+                urls.append(u)
+        return urls
  
 
 if __name__ == '__main__':

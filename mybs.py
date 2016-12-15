@@ -124,20 +124,22 @@ def select(sel, get_elems):
         if not s:   # s may == ''
             act = ''
             continue
-        if s in ".#[:":
+        if s in ".#[":
             act = s
             continue
-        #if s.strip() == ',':
-        #    ret.append(es)
-        #    es = get_elems()
-        #elif act == '[' and s[-1] != ']':
+        if s == ':':
+            if act == '[':
+                # handle a[_stat="videolist:click"]
+                sel = sel + s
+                continue
+            else:
+                act = s
         if act == '[' and s[-1] != ']':
-            # handle "a [name='a b']"
+            # handle "a[name='a b']"
             sel = sel + s
             continue
-        else:
-            es = select_one(act, sel + s, es)
-            #print 'act = [%s], s = [%s]' % (act, s)
+        es = select_one(act, sel + s, es)
+        #print 'act = [%s], s = [%s]' % (act, s)
         act = sel = ''
     ret.append(es)
     return [y for y in chain(*ret)]
@@ -393,5 +395,5 @@ if __name__ == '__main__':
     nodes = mp.select(sys.argv[1])
     echo(nodes)
     for n in nodes:
-        echo(n.tag, n.text)
+        echo(n.tag, n.text.strip())
 
