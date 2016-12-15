@@ -114,8 +114,8 @@ class DWM(object):
         else:
             return data
 
-    def get_hutf(self, *param):
-        return self.get_html(*param).decode('utf8', 'ignore')
+    def get_hutf(self, *param, **dd):
+        return self.get_html(*param, **dd).decode('utf8', 'ignore')
 
     def check_exists(self, title, ext):
         if self.info_only:

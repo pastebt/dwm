@@ -362,6 +362,12 @@ def MyBS(fin):
     return mp.root_node
 
 
+def SelStr(sel, data):
+    mp = MyHtmlParser(tidy=False)
+    mp.feed(data)
+    return mp.select(sel)
+
+
 #mp = MyHtmlParser()
 #mp.feed("""<html><head></head><body>
 #           <a a='1'  b='2'>12&gt;</ a></body></html>""")
