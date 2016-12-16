@@ -382,8 +382,8 @@ class QQ(DWM):  # v.qq.com
                     urls.append(self.make_url(cdn_url, key, vclip['br'],
                                               vclip['fmt'], vclip['fs']))
         echo("urls =", urls)
-        k, tsize = self.get_total_size(urls)
-        return title, k, urls, tsize
+        #k, tsize = self.get_total_size(urls)
+        return title, video_type, urls, None
 
     def make_url(self, url, vkey, br, fmt, size, sp=0):
         params = {

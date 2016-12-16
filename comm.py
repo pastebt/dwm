@@ -209,6 +209,12 @@ class DWM(object):
         if not title:
             title = t
         if self.info_only:
+            if ext is None or size is None:
+                e, s = self.get_total_size(urls)
+                if ext is None:
+                    ext = e
+                if size is None:
+                    size = s
             for url in urls:
                 echo(url)
             echo("title =", title, ext)
