@@ -55,12 +55,12 @@ class DYB(DWM):     #dianyingbar
         for vid in ret:
             url = 'https://vipwobuka.dianyingbar.com:998/api/yUrl.php?id=%s&type=mp4' % vid
             #self.extra_headers['Referer'] = 'https://vipwobuka.dianyingbar.com:998/ckplayer/YKYun.php?id=' + vid
-            k, s = get_kind_size(url)
-            tsize += s
+            #k, s = get_kind_size(url)
+            #tsize += s
             urls.append(url)
             break
-        echo("kind=", k[-3:], "size=", tsize, "title=", title)
-        return title, k[-3:], urls, tsize
+        echo("title=", title, 'mp4')
+        return title, 'mp4', urls, None
 
 
     def try_playlist(self, ispl, url):

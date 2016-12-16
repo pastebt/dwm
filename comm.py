@@ -140,6 +140,9 @@ class DWM(object):
         return k, s
 
     def use_dwm_merge(self, urls, title, ext, clean=True):
+        if self.no_merge:
+            echo("skip merge")
+            return
         from merge import merge
         merge(os.path.join(self.out_dir, title), ext, len(urls), clean)
 
@@ -376,6 +379,8 @@ def start(kls):
     p.add_argument('-t', '--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
                    default='Unknown')
+    p.add_argument('--no_merge', action='store_true',
+                   help='skip merge video pieces')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
@@ -391,6 +396,7 @@ def start(kls):
     elif not py3 and not kls.info_only:
         raise Exception("you need py3 while using you-get download, or you can set --wget_skip 0")
     k = kls()
+    k.no_merge = args.no_merge
     if args.playlist_skip == -2:
         pl = None
     else:

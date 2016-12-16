@@ -173,19 +173,19 @@ PLAYER_VERSION = '3.2.19.356'
 KLIB_VERSION = '2.0'
 
 
-def get_url(browser, page_url, working_dir=None):
-    page_data = None
-    if working_dir:
-        filehash = md5(page_url)
-        page_file = os.path.join(working_dir, filehash)
-        if os.path.exists(page_file):
-            page_data = open(page_file, 'rb').read()
-    if not page_data:
-        resp = browser.open(page_url)
-        page_data = resp.read()
-        if working_dir:
-            open(page_file, 'wb').write(page_data)
-    return html.fromstring(page_data)
+#def get_url(browser, page_url, working_dir=None):
+#    page_data = None
+#    if working_dir:
+#        filehash = md5(page_url)
+#        page_file = os.path.join(working_dir, filehash)
+#        if os.path.exists(page_file):
+#            page_data = open(page_file, 'rb').read()
+#    if not page_data:
+#        resp = browser.open(page_url)
+#        page_data = resp.read()
+#        if working_dir:
+#            open(page_file, 'wb').write(page_data)
+#    return html.fromstring(page_data)
 
 
 def to_dict(json_object):
@@ -347,6 +347,8 @@ class QQ(DWM):  # v.qq.com
             video_id = vi.select('vid')[0].text
     
             cdn_host = vi.select('ul>ui>url')[0].text
+            # this will much speed up
+            cdn_host = "http://videohy.tc.qq.com/vlive.qqvideo.tc.qq.com"
             vt = vi.select('ul>ui>vt')[0].text
             fn = vi.select('fn')[0].text
             fs = int(vi.select('fs')[0].text)
