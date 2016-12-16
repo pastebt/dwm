@@ -3,7 +3,11 @@
 
 import sys
 from subprocess import Popen, PIPE
-from html.parser import HTMLParser
+
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 
 from comm import DWM, match1, echo, start
 

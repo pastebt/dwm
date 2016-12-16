@@ -237,6 +237,10 @@ class DWM(object):
     def clean_up(self):
         pass
 
+    @classmethod
+    def can_do_it(cls, url):
+        return False
+
 
 def get_kind_size(u):
     url = u
@@ -386,6 +390,13 @@ def start(kls):
     args = p.parse_args()
     DEBUG = args.debug
     debug(args)
+
+    if not issubclass(kls, DWM):
+        kls = kls(args.url)
+        if kls is None:
+            echo("Not support ", args.url)
+            sys.exit(1)
+
     kls.title = args.title
     kls.out_dir = args.output
     kls.info_only = args.info_only
