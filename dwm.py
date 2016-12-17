@@ -5,6 +5,8 @@ import re
 import sys
 import imp
 
+# python -B
+sys.dont_write_bytecode = True
 from comm import start, echo
 
 

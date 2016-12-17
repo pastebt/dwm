@@ -235,7 +235,9 @@ class DWM(object):
         return None
 
     def get_playlist(self, page_url):
-        raise Exception("Not Implement Yet")
+        #raise Exception("Not Implement Yet")
+        echo("Playlist Not Implement")
+        return []
     
     def clean_up(self):
         pass
@@ -394,7 +396,11 @@ def start(kls):
     DEBUG = args.debug
     debug(args)
 
-    if getattr(kls, 'func_name', None): # if kls is a func
+    #echo(dir(kls))
+    #if getattr(kls, 'func_name', None): # if kls is a func
+    #if getattr(kls, '__call__', None): # if kls is a func
+    if not getattr(kls, 'query_info', None):
+        echo(kls)
         kls = kls(args.url)
         if kls is None:
             echo("Not support ", args.url)
