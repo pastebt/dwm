@@ -405,13 +405,10 @@ def start(kls):
         kls.download_urls = DWM.wget_urls
         kls.dwn_skip = args.wget_skip
     elif not py3 and not kls.info_only:
-        raise Exception("you need py3 while using you-get download, or you can set --wget_skip 0")
+        raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
     k = kls()
     k.no_merge = args.no_merge
-    if args.playlist_skip == -2:
-        pl = None
-    else:
-        pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,
+    pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,
                         args.url)
     if pl:
         echo(args.url)
@@ -436,7 +433,7 @@ def start(kls):
                 #    continue
                 else:
                     break
-    else:
+    elif pl is not None:
         k.get_one(args.url)
     k.clean_up()
 
