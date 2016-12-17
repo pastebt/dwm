@@ -391,7 +391,8 @@ def start(kls):
     DEBUG = args.debug
     debug(args)
 
-    if not issubclass(kls, DWM):
+    #if isinstance() and not issubclass(kls, DWM):
+    if getattr(kls, 'func_name', None):
         kls = kls(args.url)
         if kls is None:
             echo("Not support ", args.url)
