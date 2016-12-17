@@ -9,8 +9,8 @@ try:
 except ImportError:
     import urllib
  
-from openload import OpenLoad
 from mybs import MyHtmlParser
+from openload import OpenLoad
 from comm import DWM, match1, echo, start
 
 
@@ -68,32 +68,23 @@ class MSU(DWM):     #http://moviesunusa.net/
         ol.title = title
         return ol.query_info(urls[0])
 
-    def try_playlist(self, ispl, url):
+    def get_playlist(self, url):
         if re.search("-s\d+-ep\d+", url, re.I):
-            return None
+            return []
         p = Popen(["./phantomjs", "--cookies-file", self.cookie_fn,
                    "dwm.js", "-10", url], stdout=PIPE)
         echo("Try Playlist Wait 10 seconds ...")
         html = p.stdout.read()
         p.wait()
         hutf = html.decode('utf8', 'ignore')
-        #echo(hutf)
-        #return 1
-        #hutf = open("a.html").read()
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
-        # body > div.mh-container > div.mh-wrapper.clearfix > div > div > article > div.entry.clearfix > div > div > font > ul > li:nth-child(1) > strong > a
         nodes = mp.select("div.yarpp-related > div > font > ul > li > strong > a")
         urls = []
         for n in nodes:
             if n['rel'] == 'bookmark':
                 urls.append((n['title'], n['href']))
-        urls = [x for x in reversed(urls)]
-        for t, u in urls:
-            echo(t, u)
-        if urls:
-            return urls
-        return None
+        return [x for x in reversed(urls)]
 
 
 if __name__ == '__main__':

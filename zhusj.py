@@ -4,15 +4,14 @@
 import re
 import sys
 import json
+import base64
 try:
     import urllib.parse as urllib
 except ImportError:
     from urlparse import parse_qs, urlparse
 
-import base64
-
-from comm import DWM, match1, echo, start, get_kind_size
 from mybs import MyHtmlParser, select
+from comm import DWM, match1, echo, start, get_kind_size
 
 
 class ZSJ(DWM):     #http://www.zhusj.com/ 主视角

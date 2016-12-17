@@ -74,7 +74,7 @@ class BILIBILI(DWM):
             raise Exception("Unsupport bilibili url format")
         return m.group(1), m.group(2)
 
-    def get_list(self, url):
+    def get_playlist(self, url):
         h, p = self.get_h_p(url)
         #print h, p
         html = self.get_html(url)
@@ -91,7 +91,7 @@ class BILIBILI(DWM):
 
     @classmethod
     def can_do_it(cls, url):
-        return "bilibili.com/" in url
+        return ".bilibili.com/" in url
 
 
 if __name__ == '__main__':

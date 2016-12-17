@@ -19,7 +19,6 @@ except ImportError:
 from comm import DWM, match1, echo, start
 
 
-
 def decode_m3u8(data):
     version = data[0:5]
     if version.lower() == b'vc_01':
@@ -206,17 +205,6 @@ class MyHTMLParser(HTMLParser):
             return
 
         self.urllist.append([t, u])
-
-    #def handle_starttag(self, tag, attrs):
-    #    if tag == 'p' and len(attrs) == 1 and dict(attrs).get('class') == 'p1':
-    #        self.p = 1
-    #    if self.p and tag == 'a':
-    #        for k, v in attrs:
-    #            echo(k, v)
-
-    #def handle_endtag(self, tag):
-    #    if tag == 'p':
-    #        self.p = 0
 
 
 if __name__ == '__main__':

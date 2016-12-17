@@ -4,15 +4,14 @@
 import re
 import sys
 import json
+import base64
 try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
 
-import base64
-
-from comm import DWM, match1, echo, start, get_kind_size
 from mybs import MyHtmlParser, select
+from comm import DWM, match1, echo, start, get_kind_size
 
 
 class HYG(DWM):     #http://haiuken.com/ 海宇根

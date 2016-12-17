@@ -387,7 +387,7 @@ class QQ(DWM):  # v.qq.com
         }
         return '%s?%s' % (url, urllib.urlencode(params))
 
-    def try_playlist(self, ispl, url):
+    def get_playlist(self, url):
         res = urlparse(url)
         pre = "%s://%s" % (res.scheme, res.netloc)
         echo("pre =", pre)

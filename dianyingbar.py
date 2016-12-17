@@ -1,10 +1,7 @@
-#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 import re
 import sys
-#from subprocess import Popen, PIPE
-#from html.parser import HTMLParser
 
 from mybs import SelStr
 from comm import DWM, match1, echo, start, get_kind_size, USER_AGENT
@@ -41,7 +38,6 @@ class DYB(DWM):     #dianyingbar
         else:
             k = ''
         #echo(k)
-        #return
         return None, k, urls, total_size
 
     def qi2(self, hutf):
@@ -63,7 +59,7 @@ class DYB(DWM):     #dianyingbar
         return title, 'mp4', urls, None
 
 
-    def try_playlist(self, ispl, url):
+    def get_playlist(self, url):
         # http://www.dianyingbar.com/9111.html
         # http://www.dianyingbar.com/3970.html
         # get xml

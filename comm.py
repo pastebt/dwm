@@ -228,10 +228,13 @@ class DWM(object):
 
     def try_playlist(self, ispl, url):
         if ispl:
-            return self.get_list(url)
+            urls = self.get_playlist(url)
+            for t, u in urls:
+                echo(t, u)
+            return urls
         return None
 
-    def get_list(self, page_url):
+    def get_playlist(self, page_url):
         raise Exception("Not Implement Yet")
     
     def clean_up(self):
@@ -374,7 +377,7 @@ def start(kls):
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
-                   help='skip # in playlist', default=-1)
+                   help='skip # in playlist', default=-1315)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
                    help='wget skip # urls in list', default=0)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
@@ -408,7 +411,9 @@ def start(kls):
         raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
     k = kls()
     k.no_merge = args.no_merge
-    pl = k.try_playlist(args.playlist_skip >= 0 or args.playlist_top > 0,
+    pl = k.try_playlist(args.playlist_skip == -1315 or \
+                        args.playlist_skip > 0 or \
+                        args.playlist_top > 0,
                         args.url)
     if pl:
         echo(args.url)
@@ -433,7 +438,7 @@ def start(kls):
                 #    continue
                 else:
                     break
-    elif pl is not None:
+    elif pl is not None and args.playlist_skip != -1:
         k.get_one(args.url)
     k.clean_up()
 

@@ -50,7 +50,7 @@ class VMUS(DWM):     #http://vmus.co/
         ol.title = title
         return ol.query_info(urls[0])
 
-    def try_playlist(self, ispl, url):
+    def get_playlist(self, url):
         # http://vmus.co/category/%E9%80%A3%E8%BC%89%E4%B8%AD/%E7%AC%AC%E4%B8%80%E5%AD%A3/%E6%AF%92%E6%A2%9Fnarcos/
         #p = Popen(["./phantomjs", "dwm.js", "60", url], stdout=PIPE)
         #echo("Wait try_playlist phantomjs 60 sec ...")
@@ -87,14 +87,7 @@ class VMUS(DWM):     #http://vmus.co/
                 na = n.select('a')
                 for a in na:
                     urls.append((a.text, a['href']))
- 
-        #urls.sort()
-        for t, u in urls:
-            echo(t, u)
-        if urls:
-            return urls
-        echo("urls =", urls)
-        return None
+        return urls
 
 
 if __name__ == '__main__':
