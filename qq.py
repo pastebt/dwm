@@ -399,7 +399,11 @@ class QQ(DWM):  # v.qq.com
                 echo(*u)
                 urls.append(u)
         return urls
- 
+
+    @classmethod
+    def can_do_it(cls, url):
+        return '.qq.com/' in url 
+
 
 if __name__ == '__main__':
     start(QQ)

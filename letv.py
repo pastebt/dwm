@@ -125,6 +125,10 @@ class LETV(DWM):
         #raise
         return urls
 
+    @classmethod
+    def can_do_it(cls, url):
+        return '.letv.com/' in url or '.le.com/' in url
+
 
 if __name__ == '__main__':
     start(LETV)

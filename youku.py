@@ -164,7 +164,11 @@ class YOUKU(DWM):
         #echo(urls)
         k, size = self.get_total_size(urls)
         return title, ext, urls, size
- 
+
+    @classmethod
+    def can_do_it(cls, url):
+        return '.youku.com/' in url 
+
 
 if __name__ == '__main__':
     start(YOUKU)
