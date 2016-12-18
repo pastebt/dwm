@@ -34,7 +34,7 @@ def find_kls(url):
             for n in ret:
                 kls = getattr(m, n)
                 #echo(kls)
-                if kls.can_do_it(url):
+                if kls.can_handle_it(url):
                     return kls
     return None
 

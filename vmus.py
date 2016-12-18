@@ -16,6 +16,7 @@ from comm import DWM, match1, echo, start
 
 
 class VMUS(DWM):     #http://vmus.co/
+    handle_list = ['vmus']
     login_url = 'http://vmus.co/wp-login.php'
 
     def query_info(self, url):

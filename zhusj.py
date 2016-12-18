@@ -15,16 +15,14 @@ from comm import DWM, match1, echo, start, get_kind_size
 
 
 class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
+    handle_list = ['.zhusj.com/']
+
     def query_info(self, url):
         # http://www.zhusj.com/html/jq/3272.html?fromvsogou=1
-        #vid = match1(url, r'haiuken.com/theatre/([^/]+)/')
-        #echo("vid=", vid)
         html = self.get_html(url)
-        #echo(html)
         hutf = html.decode('utf8', 'ignore')
         # <iframe src="http://api.ourder.com/video/ssl/player.aspx?c=06141e1c5a4c1e3c303b360531053e4a32185a4c1b5a4c1b&w=640&h=380
         #echo(hutf)
-        #return
         m = MyHtmlParser(tidy=False)
         m.feed(hutf)
         ifs = m.select("iframe")
@@ -36,7 +34,6 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
         tn = m.select('div.crumbs span')[0]
         title = tn.text
         echo(title)
-        #return
 
         self.get_html(url)
         echo(self.get_html_url)
@@ -47,7 +44,6 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
         if '/video/ssl/https.html' in self.get_html_url:
             vid = q['id'][0]
             echo(vid)
-            #return
             url = 'https://api.ourder.com/video/ssl/YkcrefHandler.ashx?id=' + vid
         elif '/video/ssl/videoplayer.html' in self.get_html_url:
             #http://api.ourder.com/video/ssl/videoplayer.html?url=http://v.youku.com/v_show/id_XMTQ1MDM1MDc3Ng==.html?from=y1.12-96

@@ -8,10 +8,8 @@ import random
 import traceback
 try:
     from urllib import parse
-    #from urllib.request import build_opener
 except ImportError:
     import urllib as parse
-    #from urllib2 import build_opener
 
 from comm import DWM, start, echo, match1
 
@@ -21,6 +19,7 @@ from comm import DWM, start, echo, match1
 #http://list.youku.com/show/id_z4c2e9500f2c311e2a705.html
 #http://v.youku.com/v_show/id_XNTk2NjMwMDQ4.html?spm=a2h0j.8261147.reload_1.1~3!10~DL~DT~A
 class YOUKU(DWM):
+    handle_list = ['.youku.com/']
     stream_types = [
         ('mp4hd3', 'flv'),
         ('hd3',    'flv', '1080P'),
@@ -101,21 +100,12 @@ class YOUKU(DWM):
     def query_info(self, url):
         # return title, ext, urls, size
         vid = self.get_vid_from_url(url)
-        echo(vid)
-        #api_url = 'http://play.youku.com/play/get.json?vid=%s&ct=10' % vid
-        #html = self.get_html(api_url)
-        ##open("api10.html", "w+b").write(html)
-        #hutf = html.decode('utf8')
-        #meta = json.loads(hutf)
-        #data = meta['data']
-        ##echo(data)
+        echo("vid =",vid)
         api_url = 'http://play.youku.com/play/get.json?vid=%s&ct=12' % vid
         html = self.get_html(api_url)
-        #open("api12.html", "w+b").write(html)
         hutf = html.decode('utf8')
         meta = json.loads(hutf)
         data12 = meta['data']
-        #echo(data12)
 
         data = data12
         title = data['video']['title']
@@ -133,7 +123,6 @@ class YOUKU(DWM):
 
         urls = []
         streamfileid = stm['stream_fileid']
-        #self.opener = build_opener(self.redirh, self.cookie)
         for no, seg in enumerate(stm['segs'], 0):
             k = seg['key']
             if k == -1: raise # we hit the paywall; stop here
@@ -155,19 +144,12 @@ class YOUKU(DWM):
                     fileid    = fileid,
                     q         = q
                 )
-            #ksegs += [i['server'] for i in json.loads(get_content(u))]
-            #urls.append(u)
             html = self.get_html(u, True)
             for i in json.loads(html.decode("utf8")):
                 echo(i['server'])
                 urls.append(i['server'])
-        #echo(urls)
         k, size = self.get_total_size(urls)
         return title, ext, urls, size
-
-    @classmethod
-    def can_do_it(cls, url):
-        return '.youku.com/' in url 
 
 
 if __name__ == '__main__':

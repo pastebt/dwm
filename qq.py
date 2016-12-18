@@ -183,6 +183,8 @@ def to_dict(json_object):
 
 
 class QQ(DWM):  # v.qq.com
+    handle_list = ['.qq.com/']
+
     def __init__(self):
         DWM.__init__(self, 'auto')
         self.extra_headers['Referer'] = SWF_REFERER
@@ -399,10 +401,6 @@ class QQ(DWM):  # v.qq.com
                 echo(*u)
                 urls.append(u)
         return urls
-
-    @classmethod
-    def can_do_it(cls, url):
-        return '.qq.com/' in url 
 
 
 if __name__ == '__main__':

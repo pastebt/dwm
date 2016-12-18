@@ -10,11 +10,13 @@ try:
 except ImportError:
     import urllib
 
-from mybs import MyHtmlParser, select
+from mybs import MyHtmlParser
 from comm import DWM, match1, echo, start, get_kind_size
 
 
 class HYG(DWM):     #http://haiuken.com/ 海宇根
+    handle_list = ['/haiuken.com/']
+
     def query_info(self, url):
         # http://haiuken.com/theatre/2muu/
         vid = match1(url, r'haiuken.com/theatre/([^/]+)/')

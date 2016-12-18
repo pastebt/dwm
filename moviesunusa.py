@@ -15,6 +15,7 @@ from comm import DWM, match1, echo, start
 
 
 class MSU(DWM):     #http://moviesunusa.net/
+    handle_list = ['/moviesunusa.net/']
     cookie_fn = "msu_cookie.txt"
     login_url = 'http://moviesunusa.net/wp-login.php'
 

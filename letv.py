@@ -39,6 +39,8 @@ def calcTimeKey(t):
 
 
 class LETV(DWM):
+    handle_list = ['.letv.com/', '.le.com/']
+
     def __init__(self):
         DWM.__init__(self)
         ip = "220.181.111.%d" % random.randint(1, 254)
@@ -101,14 +103,6 @@ class LETV(DWM):
         m3u8 = self.get_html(info2["location"])
         m3u8_list = decode_m3u8(bytearray(m3u8))
         us = re.findall(r'^[^#][^\r]*', m3u8_list, re.MULTILINE)
-        #self.check_exists(title, ext)
-        #if self.dwn_skip is not None:
-        #    if self.info_only:
-        #        k, size = self.get_total_size(us)
-        #    else:
-        #        size = "SKIP"
-        #else:
-        #    k, size = self.get_total_size(us)
         return title, ext, us, None
 
     def get_playlist(self, page_url):
@@ -119,15 +113,8 @@ class LETV(DWM):
         for a in SelStr('div.list.active > dl > dt > a', hutf):
             i = a.select("img")[0]
             if 'title' in i:
-                #echo(i['title'])
                 urls.append((i['title'], a['href']))
-        #echo(urls)
-        #raise
         return urls
-
-    @classmethod
-    def can_do_it(cls, url):
-        return '.letv.com/' in url or '.le.com/' in url
 
 
 if __name__ == '__main__':

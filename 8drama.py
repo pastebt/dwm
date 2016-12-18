@@ -16,6 +16,8 @@ from comm import DWM, echo, start, debug
 
 
 class DRAMA8(DWM):
+    handle_list = ['/8drama.com/']
+
     def query_info(self, url):
         #./phantomjs htl.js 300 http://8drama.com/122804/
         #http://8drama.net/ipobar_.php?sign=251438194e51429438981c908a9a1da179242edc4e51&id=gq$$UEN3a0tGazJSeTAyTURROUtEbEdSVkE3TmpGTk95ZEpNaXhFU1RRMlJFRklQQ1UxSnpoUVlHQUtZQW89$$drama&type=html5

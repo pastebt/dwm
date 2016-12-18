@@ -8,6 +8,8 @@ from comm import DWM, match1, echo, start, get_kind_size
 
 
 class OpenLoad(DWM):     # http://openload.co/
+    handle_list = ['openload']
+
     def __init__(self):
         DWM.__init__(self)
         self.extra_headers['Referer'] = 'https://vjs.zencdn.net/swf/5.1.0/video-js.swf'

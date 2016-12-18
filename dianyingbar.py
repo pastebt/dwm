@@ -8,6 +8,8 @@ from comm import DWM, match1, echo, start, get_kind_size, USER_AGENT
 
 
 class DYB(DWM):     #dianyingbar
+    handle_list = ['.dianyingbar.com/']
+
     def __init__(self):
         # http://www.dianyingbar.com/10085.html
         DWM.__init__(self)

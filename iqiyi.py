@@ -14,6 +14,8 @@ from comm import DWM, match1, echo, start
 
 
 class IQIYI(DWM):
+    handle_list = [".iqiyi.com/"]
+
     def query_info(self, url):
         # title, ext, urls, totalsize
         sys.path.insert(1, '../you-get/src')
@@ -45,12 +47,8 @@ class IQIYI(DWM):
         #c = hutf.split("<!--视频列表区域 -->")[1]
         urls = [(a.text, a['href']) for a in SelStr('div.smalList > ul > li > a', hutf)]
         self.align_num = len(str(len(urls)))
-        echo(urls)
+        #echo(urls)
         return urls
-
-    @classmethod
-    def can_do_it(cls, url):
-        return ".iqiyi.com/" in url
 
 
 if __name__ == '__main__':

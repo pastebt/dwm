@@ -1,4 +1,3 @@
-#! /usr/bin/python
 # -*- coding: utf8 -*-
 
 import re
@@ -13,6 +12,8 @@ SECRETKEY_MINILOADER = '1c15888dc316e05a15fdd0a02ed6584f'
 
 
 class BILIBILI(DWM):
+    handle_list = [".bilibili.com/"]
+
     def query_info(self, url):
         # http://www.bilibili.com/video/av2812495/
         h, p = self.get_h_p(url)
@@ -76,7 +77,6 @@ class BILIBILI(DWM):
 
     def get_playlist(self, url):
         h, p = self.get_h_p(url)
-        #print h, p
         html = self.get_html(url)
         hutf = html.decode('utf8')
         m = re.search("<option value='(/%s/index_\d+.html)' selected>"
@@ -86,12 +86,7 @@ class BILIBILI(DWM):
         else:
             pl = re.findall("<option value='(/%s/index_\d+.html)'>"
                             "([^<>]+)</option>" % p, hutf)
-        #print pl
         return [(self.align_title_num(t), h + u) for u, t in pl]
-
-    @classmethod
-    def can_do_it(cls, url):
-        return ".bilibili.com/" in url
 
 
 if __name__ == '__main__':

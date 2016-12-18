@@ -61,10 +61,11 @@ class DWM(object):
         pass
 
     out_dir = './'
+    dwn_skip = None
     info_only = False
     align_num = 0
-    dwn_skip = None
     is_playlist = False
+    handle_list = []
     get_html_url = ''
 
     def __init__(self, proxy=None):
@@ -243,7 +244,10 @@ class DWM(object):
         pass
 
     @classmethod
-    def can_do_it(cls, url):
+    def can_handle_it(cls, url):
+        for h in cls.handle_list:
+            if h in url:
+                return True
         return False
 
 
