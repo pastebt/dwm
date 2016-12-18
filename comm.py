@@ -379,7 +379,8 @@ def start(kls):
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
-                   help='skip # in playlist', default=-1315)
+                   help='skip # in playlist, -1 means not try playlist',
+                   default=-1315)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
                    help='wget skip # urls in list', default=0)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
