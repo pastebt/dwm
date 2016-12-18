@@ -11,7 +11,7 @@ except ImportError:
 
 from comm import echo
 
-
+#http://www.w3schools.com/cssref/css_selectors.asp
 """
 .class              .intro
     Selects all elements with class="intro"
@@ -389,11 +389,12 @@ if __name__ == '__main__':
         echo('Usage: ', sys.argv[0], 'selector html_file')
         sys.exit(1)
 
-    html = open(sys.argv[2]).read().decode('utf8', 'ignore')
+    html = open(sys.argv[2]).read() #.decode('utf8', 'ignore')
     mp = MyHtmlParser(tidy=False)
     mp.feed(html)
     nodes = mp.select(sys.argv[1])
     echo(nodes)
     for n in nodes:
-        echo(n.tag, n.text.strip())
+        #echo(n.tag, n.text.strip())
+        echo(str(n))
 

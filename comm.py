@@ -400,7 +400,7 @@ def start(kls):
     #if getattr(kls, 'func_name', None): # if kls is a func
     #if getattr(kls, '__call__', None): # if kls is a func
     if not getattr(kls, 'query_info', None):
-        echo(kls)
+        #echo(kls)
         kls = kls(args.url)
         if kls is None:
             echo("Not support ", args.url)
