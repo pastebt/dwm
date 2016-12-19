@@ -4,7 +4,8 @@ import re
 import sys
 import hashlib
 
-from comm import DWM, echo, start, debug, search_first
+from mybs import SelStr
+from comm import DWM, echo, start, debug, search_first, match1
 
 
 appkey = 'f3bb208b3d081dc8'
@@ -75,7 +76,30 @@ class BILIBILI(DWM):
             raise Exception("Unsupport bilibili url format")
         return m.group(1), m.group(2)
 
+    def handle_sp_list(self, url):
+        # serial play list
+        urls = []
+        # http://www.bilibili.com/sp/维京传奇
+        # base.special.js line 25, loadBgmPage
+        # http://www.bilibili.com/sppage/bangumi-21542-913-1.html
+        # first find 21542
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        spid = search_first(hutf, 'var spid = "(\d+)";').group(1)
+        echo("spid=", spid)
+        for li in SelStr('ul#season_selector li', hutf):
+            data = self.get_hutf("http://www.bilibili.com/sppage/bangumi-%s-%s-1.html" % (
+                                 spid, li['season_id']))
+            for n in SelStr('div.season_list li a.t', data):
+                urls.append((n['title'].strip(),
+                            'http://www.bilibili.com' + n['href']))
+        for t, u in urls:
+            echo(t, u)
+        sys.exit(1)
+
     def get_playlist(self, url):
+        if "bilibili.com/sp/" in url:
+            self.handle_sp_list(url)
         h, p = self.get_h_p(url)
         html = self.get_html(url)
         hutf = html.decode('utf8')
