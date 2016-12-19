@@ -5,7 +5,7 @@ import sys
 import hashlib
 
 from mybs import SelStr
-from comm import DWM, echo, start, debug, search_first, match1
+from comm import DWM, echo, start, debug, search_first, match1, UTITLE, run
 
 
 appkey = 'f3bb208b3d081dc8'
@@ -61,6 +61,13 @@ class BILIBILI(DWM):
             #print "k=[%s]" % k
             #ext = k.split('-')[1]
             ext = "flv"
+        m = re.match("(\d+)、P(\d+)", title)
+        if m and m.group(1) == m.group(2):
+            n = int(m.group(1))
+            if self.title == UTITLE:
+                title = "%s[%02d]" % (cid, n)
+            else:
+                title = "%s[%02d]" % (self.title, n)
         return title, ext, urls, totalsize
 
     def sign_url(self, cid):
@@ -95,14 +102,16 @@ class BILIBILI(DWM):
                             'http://www.bilibili.com' + n['href']))
         for t, u in urls:
             echo(t, u)
+            b = BILIBILI()
+            b.title = t
+            run(b, self.parsed_args)
         sys.exit(1)
 
     def get_playlist(self, url):
         if "bilibili.com/sp/" in url:
             self.handle_sp_list(url)
         h, p = self.get_h_p(url)
-        html = self.get_html(url)
-        hutf = html.decode('utf8')
+        hutf = self.get_hutf(url)
         m = re.search("<option value='(/%s/index_\d+.html)' selected>"
                       "([^<>]+)</option>" % p, hutf)
         if m:

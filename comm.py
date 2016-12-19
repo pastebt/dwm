@@ -47,6 +47,7 @@ except ImportError:
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
 USER_AGENT += 'Gecko/20100101 Firefox/33.0'
 DEBUG = False
+UTITLE = "UnknownTitle"
 
 
 def debug(*args):
@@ -388,7 +389,7 @@ def start(kls):
                    default='.')
     p.add_argument('-t', '--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
-                   default='Unknown')
+                   default=UTITLE)
     p.add_argument('--no_merge', action='store_true',
                    help='skip merge video pieces')
     p.add_argument('--debug', action='store_true',
@@ -406,9 +407,9 @@ def start(kls):
         if kls is None:
             echo("Not support ", args.url)
             sys.exit(1)
-
     kls.title = args.title
     kls.out_dir = args.output
+    kls.no_merge = args.no_merge
     kls.info_only = args.info_only
     kls.align_num = args.align_num
     if args.wget_skip >= 0:
@@ -417,7 +418,11 @@ def start(kls):
     elif not py3 and not kls.info_only:
         raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
     k = kls()
-    k.no_merge = args.no_merge
+    k.parsed_args = args
+    run(k, args)
+
+
+def run(k, args):
     pl = k.try_playlist(args.playlist_skip == -1315 or \
                         args.playlist_skip > 0 or \
                         args.playlist_top > 0,

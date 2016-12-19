@@ -11,7 +11,7 @@ except ImportError:
     import urllib
 
 from mybs import MyHtmlParser
-from comm import DWM, match1, echo, start, get_kind_size
+from comm import DWM, match1, echo, start, get_kind_size, UTITLE
 
 
 class HYG(DWM):     #http://haiuken.com/ 海宇根
@@ -26,7 +26,7 @@ class HYG(DWM):     #http://haiuken.com/ 海宇根
         hutf = html.decode('utf8', 'ignore')
         m = MyHtmlParser(tidy=False)
         m.feed(hutf)
-        if self.title == "Unknown":
+        if self.title == UTITLE:
             title = m.select("head title")[0].text
             if title.startswith("Theatre - "):
                 title = title[10:]
