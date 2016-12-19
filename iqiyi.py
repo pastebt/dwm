@@ -1,13 +1,7 @@
-#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 import sys
 from subprocess import Popen, PIPE
-
-#try:
-#    from HTMLParser import HTMLParser
-#except ImportError:
-#    from html.parser import HTMLParser
 
 from mybs import SelStr
 from comm import DWM, match1, echo, start
@@ -39,15 +33,15 @@ class IQIYI(DWM):
 
     def get_playlist(self, page_url):
         # http://www.iqiyi.com/a_19rrhb9eet.html 太阳的后裔
-        echo("get_list phantomjs wait 600 ...")
-        p = Popen(["./phantomjs", "dwm.js", "600", page_url], stdout=PIPE)
+        echo("get_list phantomjs wait 200 ...")
+        p = Popen(["./phantomjs", "dwm.js", "200", page_url], stdout=PIPE)
         html = p.stdout.read()
         p.wait()
         hutf = html.decode("utf8")
         #c = hutf.split("<!--视频列表区域 -->")[1]
-        urls = [(a.text, a['href']) for a in SelStr('div.smalList > ul > li > a', hutf)]
+        urls = [(a.text, a['href'])
+                for a in SelStr('div.smalList > ul > li > a', hutf)]
         self.align_num = len(str(len(urls)))
-        #echo(urls)
         return urls
 
 
