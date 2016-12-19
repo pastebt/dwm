@@ -325,10 +325,6 @@ def get_total_size_mt(urllist, tn=10):
         k, s = qdst.get(False)
         size += s
         cnt += 1
-        # sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
-        # echo("%d / %d" % (cnt, len(urllist)))
-    # echo("")
-    # echo("size =", size, "cnt =", cnt)
     return k, size
 
 

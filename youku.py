@@ -74,11 +74,12 @@ class YOUKU(DWM):
     def __init__(self):
         DWM.__init__(self, "auto")
         ip = "220.181.111.%d" % random.randint(1, 254)
-        self.extra_headers = {#'X-Forwarded-For': ip,
+        #self.extra_headers = {#'X-Forwarded-For': ip,
                               #'Client-IP': ip,
-                              'Referer': 'http://static.youku.com/',
-                              'Cookie': '__ysuid={}'.format(time.time()),   # this is key!
-                              }
+        self.extra_headers['Referer'] = 'http://static.youku.com/'
+        self.extra_headers['X-Forwarded-For'] = ip,
+        # this is key!
+        self.extra_headers['Cookie'] = '__ysuid={}'.format(time.time())
 
     def get_vid_from_url(self, url):
         """Extracts video ID from URL.

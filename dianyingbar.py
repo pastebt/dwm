@@ -4,7 +4,7 @@ import re
 import sys
 
 from mybs import SelStr
-from comm import DWM, match1, echo, start, get_kind_size, USER_AGENT
+from comm import DWM, match1, echo, start, get_kind_size
 
 
 class DYB(DWM):     #dianyingbar
@@ -13,9 +13,8 @@ class DYB(DWM):     #dianyingbar
     def __init__(self):
         # http://www.dianyingbar.com/10085.html
         DWM.__init__(self)
-        self.extra_headers = {"User-Agent": USER_AGENT,
-                              'Upgrade-Insecure-Requests': '1',
-                              'Referer': "http://bodekuai.duapp.com/ckplayer/ckplayer.swf"}
+        self.extra_headers['Upgrade-Insecure-Requests'] = '1'
+        self.extra_headers['Referer'] = "http://bodekuai.duapp.com/ckplayer/ckplayer.swf"
 
     def query_info(self, url):
         # get flv part list
@@ -26,7 +25,7 @@ class DYB(DWM):     #dianyingbar
                          "<size>(\d+)</size>"
                          "<seconds>\d+</seconds></video>",
                          hutf)
-        print(ret)
+        #print(ret)
         if not ret:
             return self.qi2(hutf)
         urls = []
@@ -53,13 +52,10 @@ class DYB(DWM):     #dianyingbar
         for vid in ret:
             url = 'https://vipwobuka.dianyingbar.com:998/api/yUrl.php?id=%s&type=mp4' % vid
             #self.extra_headers['Referer'] = 'https://vipwobuka.dianyingbar.com:998/ckplayer/YKYun.php?id=' + vid
-            #k, s = get_kind_size(url)
-            #tsize += s
             urls.append(url)
             break
         echo("title=", title, 'mp4')
         return title, 'mp4', urls, None
-
 
     def get_playlist(self, url):
         # http://www.dianyingbar.com/9111.html
