@@ -3,6 +3,7 @@
 import re
 import sys
 import hashlib
+from copy import copy
 
 from mybs import SelStr
 from comm import DWM, echo, start, debug, search_first, match1, UTITLE, run
@@ -100,11 +101,23 @@ class BILIBILI(DWM):
             for n in SelStr('div.season_list li a.t', data):
                 urls.append((n['title'].strip(),
                             'http://www.bilibili.com' + n['href']))
+        args = copy(self.parsed_args)
+        sk = args.playlist_skip
+        args.playlist_skip = 0
+        tp = args.playlist_top
+        args.playlist_top = 0
+        cnt = 0
         for t, u in urls:
+            cnt = cnt + 1
+            if cnt > tp > 0:
+                break
+            if cnt < sk:
+                continue
             echo(t, u)
             b = BILIBILI()
             b.title = t
-            run(b, self.parsed_args)
+            args.url = u
+            run(b, args)
         sys.exit(1)
 
     def get_playlist(self, url):
