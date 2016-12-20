@@ -63,9 +63,10 @@ class BILIBILI(DWM):
             #ext = k.split('-')[1]
             ext = "flv"
         #echo("m title =[%s]" % title)
-        m = re.search(u"(\d+)、P(\d+)", title, re.U)
-        if m and m.group(1) == m.group(2):
-            n = int(m.group(1))
+        m = re.search(u"(\d+)、.+", title)
+        #if m and m.group(1) == m.group(2):
+        if m and BILIBILI.sp:
+            n = int(m.group(1)) - 1
             if self.title == UTITLE:
                 title = "%s[%02d]" % (cid, n)
             else:
@@ -125,6 +126,7 @@ class BILIBILI(DWM):
 
     def get_playlist(self, url):
         if "bilibili.com/sp/" in url:
+            BILIBILI.sp = True
             self.handle_sp_list(url)
         h, p = self.get_h_p(url)
         hutf = self.get_hutf(url)
