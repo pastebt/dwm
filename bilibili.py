@@ -62,13 +62,16 @@ class BILIBILI(DWM):
             #print "k=[%s]" % k
             #ext = k.split('-')[1]
             ext = "flv"
-        m = re.match("(\d+)、P(\d+)", title)
+        #echo("m title =[%s]" % title)
+        m = re.search(u"(\d+)、P(\d+)", title, re.U)
         if m and m.group(1) == m.group(2):
             n = int(m.group(1))
             if self.title == UTITLE:
                 title = "%s[%02d]" % (cid, n)
             else:
                 title = "%s[%02d]" % (self.title, n)
+        #else:
+        #    echo("m =", m)
         return title, ext, urls, totalsize
 
     def sign_url(self, cid):
@@ -103,7 +106,7 @@ class BILIBILI(DWM):
                             'http://www.bilibili.com' + n['href']))
         args = copy(self.parsed_args)
         sk = args.playlist_skip
-        args.playlist_skip = 0
+        args.playlist_skip = -1315
         tp = args.playlist_top
         args.playlist_top = 0
         cnt = 0
