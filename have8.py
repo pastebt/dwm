@@ -10,7 +10,6 @@ try:
 except ImportError:
     from urllib.parse import unquote, urlparse
  
-from mybs import SelStr
 from dailymotion import DM
 from comm import DWM, match1, echo, start
 
