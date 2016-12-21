@@ -138,7 +138,7 @@ class DWM(object):
             k, s = get_total_size_mt(urllist)
         else:
             k, s = get_total_size_st(urllist)
-        echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
+        #echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
     def use_dwm_merge(self, urls, title, ext, clean=True):
@@ -287,7 +287,7 @@ def get_total_size_st(urllist):
         k, s = get_kind_size(url)
         size += s
         cnt += 1
-        sys.stdout.write("%d / %d\r" % (cnt, len(urllist)))
+        sys.stdout.write(" %d / %d\r" % (cnt, len(urllist)))
         # echo("%d / %d" % (cnt, len(urllist)))
     echo("")
     # echo("size =", size)
@@ -380,7 +380,7 @@ def start(kls):
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
-                   help='skip # in playlist, -1 means not try playlist',
+                   help='skip # in playlist, -1 skip playlist, 0 playlist only',
                    default=-1315)
     p.add_argument('--wget_skip', type=int, metavar='#', action='store',
                    help='wget skip # urls in list', default=0)
@@ -451,7 +451,7 @@ def run(k, args):
                 else:
                     break
     #elif pl is not None and args.playlist_skip != -1:
-    else:
+    elif not pl and args.playlist_skip != 0:
         k.get_one(args.url)
     k.clean_up()
 
