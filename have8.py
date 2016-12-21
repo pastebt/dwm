@@ -45,10 +45,10 @@ class HAVE8(DWM):     # http://have8.com/
         #rurl = 'http://www.dailymotion.com/embed/video/k7alsxAgBgcMGaachYS?api=postMessage&autoplay=0&info=0'
         rurl = 'http://www.dailymotion.com/embed/video/%s?api=postMessage&autoplay=0&info=0' % vid
         hutf = self.get_hutf(rurl)
-        #echo(hutf)
+        echo(hutf)
         m = re.search('"ad_url":"([^"]+)"', hutf)
         aurl = m.groups()[0].replace('\\', '') + '&ps=658x435&ct=website&callback=jsonp_1482257169574_88239'
-        #echo(aurl)
+        echo(aurl)
         # "720":[{"type":"application\/x-mpegURL","url":"http:\/\/www.dailymotion.com\/cdn\/manifest\/video\/x2hpv0i.m3u8?auth=1482432896-2562-0fq84z9d-24047244e9a36f0f3fab8388642b74c1&include=720"},{"type":"video\/mp4","url":"http:\/\/www.dailymotion.com\/cdn\/H264-1280x720\/video\/x2hpv0i.mp4?auth=1482432896-2562-pvg451ll-4c251ca9aa8a1bf6f56c88d318eccd65"}]}
         m = re.search('/x-mpegURL","url":"([^"]+)"', hutf)
         vurl = m.groups()[0].replace('\\', '')

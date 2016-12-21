@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import ssl
+import sys
 import json
 import time
 import base64
@@ -11,6 +11,7 @@ try:
 except ImportError:
     import urllib as parse
 
+from mybs import SelStr
 from comm import DWM, start, echo, match1
 
 
@@ -151,6 +152,16 @@ class YOUKU(DWM):
                 urls.append(i['server'])
         k, size = self.get_total_size(urls)
         return title, ext, urls, size
+
+    def get_playlist(self, url):
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        urls = []
+        for a in SelStr('div.tvlists div.item a', hutf):
+            if not a.select("span.sn_ispreview"):
+                urls.append((a.text, a['href']))
+        #sys.exit(1)
+        return urls
 
 
 if __name__ == '__main__':
