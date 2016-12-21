@@ -58,6 +58,15 @@ class HAVE8(DWM):     # http://have8.com/
         # get m3u8 list
         hutf = self.get_hutf(vurl)
         echo(hutf)
+        mr = 0
+        mu = ''
+        for data in hutf.split('#EXT-X-STREAM-INF')[1:]:
+            lines = data.split('\n')
+            m = re.search('NAME="(\d+)"', lines[0])
+            r = int(m.group(1))
+            if r > mr:
+                mr, mu = r, lines[1].strip()
+        echo('mr =', mr, ', mu =', mu)
         sys.exit(1)
 
         #return self.title, k, [url], tsize
