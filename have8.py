@@ -25,6 +25,7 @@ def h8decode(a, b):
 
 class HAVE8(DWM):     # http://have8.com/
     #handle_list = ['openload']
+    #http://www.dailymotion.com/embed/video/k4BjypcByJGUTDl6Bvx
 
     def __init__(self):
         DWM.__init__(self)
