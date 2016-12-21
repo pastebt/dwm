@@ -341,8 +341,12 @@ class QQ(DWM):  # v.qq.com
             vt = vi.select('ul>ui>vt')[0].text
             fn = vi.select('fn')[0].text
             fs = int(vi.select('fs')[0].text)
-    
-            fc = int(vi.select('cl>fc')[0].text)
+            echo(str(vi))
+            # failed https://v.qq.com/x/cover/i200hs4ip5a6u7a.html
+            clfc = vi.select('cl>fc')
+            fc = 0
+            if clfc:
+                fc = int(clfc[0].text)
             echo('video_id=', video_id)
             echo('cdn_host=', cdn_host)
             echo('fc=', fc)

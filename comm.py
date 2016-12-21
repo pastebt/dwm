@@ -450,7 +450,8 @@ def run(k, args):
                 #    continue
                 else:
                     break
-    elif pl is not None and args.playlist_skip != -1:
+    #elif pl is not None and args.playlist_skip != -1:
+    else:
         k.get_one(args.url)
     k.clean_up()
 
