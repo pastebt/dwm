@@ -247,7 +247,8 @@ class DWM(object):
     @classmethod
     def can_handle_it(cls, url):
         for h in cls.handle_list:
-            if h in url:
+            #if h in url:
+            if re.search(h, url):
                 return True
         return False
 

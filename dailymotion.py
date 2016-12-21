@@ -33,7 +33,7 @@ class DM(DWM):     # http://www.dailymotion.com/embed/video/
                         mu = v['url']
                         ex = t[-3:]
         echo("ext=%s, mq=%s, url=%s" % (ex, mq, mu))
-        title = j['metadata']['title']
+        title = j['metadata']['title'].strip('.')
         return title, ex, [mu], None
         #sys.exit(1)
 
