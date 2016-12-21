@@ -3,7 +3,7 @@
 import os
 import re
 from subprocess import Popen, PIPE
- 
+
 from comm import DWM, match1, echo, start, get_kind_size
 
 
