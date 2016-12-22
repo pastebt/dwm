@@ -16,7 +16,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from mybs import MyHtmlParser, SelStr
-from comm import DWM, match1, echo, start
+from comm import DWM, match1, echo, debug, start
 
 
 # copy from https://github.com/lvqier/crawlers/tree/master/txsp
@@ -215,6 +215,7 @@ class QQ(DWM):  # v.qq.com
                              postdata=urllib.urlencode(params))
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
+        debug(str(mp.root_node))
         return {
             'filename': mp.select('filename')[0].text,
             'br': float(mp.select('br')[0].text),
@@ -260,8 +261,7 @@ class QQ(DWM):  # v.qq.com
             'fs': int(mp.select('vi>fs')[0].text)
         }
 
-    def query_info(self, url):
-        #url = 'https://v.qq.com/x/cover/ijilh0frmu96sbf/x0017evzp6n.html'
+    def getvinfo(self, url):
         hutf = self.get_hutf(url)
         #echo(hutf)
         ss = SelStr('script[r-notemplate=true]', hutf)
@@ -309,7 +309,12 @@ class QQ(DWM):  # v.qq.com
         #echo(hutf)
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
+        debug(str(mp.root_node))
+        return title, vid, mp
 
+    def query_info(self, url):
+        #url = 'https://v.qq.com/x/cover/ijilh0frmu96sbf/x0017evzp6n.html'
+        title, vid, mp = self.getvinfo(url)
         slid = None
         mfs = 0
         # <fi><sl>0</sl><br>1500</br><id>11401</id><name>shd</name><lmt>0</lmt><sb>1</sb><cname>超清;(720P)</cname><fs>304995197</fs></fi>
@@ -341,7 +346,6 @@ class QQ(DWM):  # v.qq.com
             vt = vi.select('ul>ui>vt')[0].text
             fn = vi.select('fn')[0].text
             fs = int(vi.select('fs')[0].text)
-            echo(str(vi))
             # failed https://v.qq.com/x/cover/i200hs4ip5a6u7a.html
             clfc = vi.select('cl>fc')
             fc = 0
@@ -355,6 +359,7 @@ class QQ(DWM):  # v.qq.com
 
             if fc == 0:
                 vkey = self.getvkey(url, vid, vt, slid, fn)
+                debug(vkey)
                 filename = vkey.get('filename')
                 target_file = os.path.join(target_dir, filename)
                 cdn_url = '%s/%s' % (cdn_host, filename)
@@ -406,6 +411,22 @@ class QQ(DWM):  # v.qq.com
                 urls.append(u)
         return urls
 
+    def test(self):
+        # failed https://v.qq.com/x/cover/i200hs4ip5a6u7a.html
+        #self.extra_headers = {} #{'X-Requested-With': 'ShockwaveFlash/22.0.0.192'}
+        #url = 'http://61.240.149.17/moviets.tc.qq.com/JfQuhSJKy4_aP7dQKBaDSJzGZDuTdsWvS5cjMjKv2XeCQ5z-lJSkv4g3DU9zNb2AS6gtHNXivVJatMmxlcuPg8K9MvLoZFj-cWz0VKF5-xKOhSIgSsu_1ATvWa5OLJLcXeU2g_IT0zylngmP4RUi4Q/w0022948t5m.320111.ts.m3u8?ver=4&sdtfrom=v1000&type=mp4&platform=11&br=45&fmt=sd&sp=0&guid=E62C53DAF58F63C9CF6FB80FD79EC39B'
+        url = 'https://v.qq.com/x/cover/i200hs4ip5a6u7a.html'
+        t, vid, mp = self.getvinfo(url)
+        mi, size = None, 0
+        for fi in mp.select("fl > fi"):
+            if int(fi.select("fs")[0].text) > size:
+                mi = fi
+        echo("cname =", fi.select('cname')[0].text)
+        #hutf = self.get_hutf(url, raw=True)
+        #echo(hutf)
+        sys.exit(1)
+
 
 if __name__ == '__main__':
-    start(QQ)
+    #start(QQ)
+    QQ().test()
