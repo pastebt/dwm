@@ -288,8 +288,8 @@ def get_total_size_st(urllist):
         k, s = get_kind_size(url)
         size += s
         cnt += 1
-        sys.stdout.write(" %d / %d\r" % (cnt, len(urllist)))
-        # echo("%d / %d" % (cnt, len(urllist)))
+        #sys.stdout.write(" %d / %d\r" % (cnt, len(urllist)))
+        debug("%d / %d = %d" % (cnt, len(urllist), s))
     echo("")
     # echo("size =", size)
     return k, size

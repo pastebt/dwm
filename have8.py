@@ -25,7 +25,7 @@ def h8decode(a, b):
 
 
 class HAVE8(DWM):     # http://have8.com/
-    handle_list = ['have8tv\.com/v/drama/\d+/\d+/dailymotion\.html']
+    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/dailymotion\.html']
 
     def get_vid(self, hutf, idx=''):
         m = re.search('adrss\[0\] \= "([^"]+)"', hutf)
@@ -41,6 +41,13 @@ class HAVE8(DWM):     # http://have8.com/
         return None
 
     def query_info(self, url):
+        if '/v/drama/' in url:
+            return self.query_info_drama(url)
+        if '/v/movie/' in url:
+            return self.query_info_movie(url)
+        return None
+
+    def query_info_drama(self, url):
         #url = "http://have8tv.com/v/drama/2/21852/dailymotion.html?0-1-0"
         hutf = self.get_hutf(url)
         up = urlparse(url)
@@ -53,6 +60,19 @@ class HAVE8(DWM):     # http://have8.com/
         echo(vid)
         dm = DM()
         return dm.query_info('http://www.dailymotion.com/embed/video/' + vid)
+
+    def query_info_movie(self, url):
+        #http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
+        hutf = self.get_hutf(url)
+        vids = self.get_vid(hutf, 1).split('+')
+        echo(vids)
+        dm = DM()
+        urls = []
+        for vid in vids:
+            u = 'http://www.dailymotion.com/embed/video/' + vid
+            t, e, us, z = dm.query_info(u)
+            urls += us
+        return t, e, urls, None
 
     def get_playlist(self, url):
         #url = "http://have8tv.com/v/drama/2/21852/dailymotion.html?0-1-0"
@@ -126,6 +146,15 @@ class HAVE8(DWM):     # http://have8.com/
 
         #return self.title, k, [url], tsize
 
+    def test(self):
+        #not support
+        # http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
+        url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
+        hutf = self.get_hutf(url)
+        vids = self.get_vid(hutf)
+        echo(vids)
+
 
 if __name__ == '__main__':
     start(HAVE8)
+    #HAVE8().test()
