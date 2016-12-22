@@ -93,9 +93,8 @@ class HAVE8(DWM):     # http://have8.com/
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf)
         urls = []
-        dm = DM()
         for vid in vids:
-            t, e, us, z = dm.query_info('http://www.dailymotion.com/embed/video/' + vid[1])
+            t, e, us, z = DM().query_info('http://www.dailymotion.com/embed/video/' + vid[1])
             urls.append((t, us[0]))
         return urls
 
