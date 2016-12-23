@@ -376,15 +376,18 @@ def start(kls):
     #               help='url is playlist or not')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
-    p.add_argument('-a', '--align_num', type=int, metavar='#', action='store',
+    p.add_argument('-p', '--playlist_only', action='store_true',
+                   help='try playlist only')
+    p.add_argument('-P', '--not_playlist', action='store_true',
+                   help='not try playlist')
+    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
+                   help='wget skip # urls in list', default=0)
+    p.add_argument('--align_num', type=int, metavar='#', action='store',
                    help='align number', default=0)
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
-                   help='skip # in playlist, -1 skip playlist, 0 playlist only',
-                   default=-1315)
-    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
-                   help='wget skip # urls in list', default=0)
+                   help='skip # in playlist', default=0)
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
@@ -424,10 +427,11 @@ def start(kls):
 
 
 def run(k, args):
-    pl = k.try_playlist(args.playlist_skip == -1315 or \
-                        args.playlist_skip > 0 or \
-                        args.playlist_top > 0,
-                        args.url)
+    #pl = k.try_playlist(args.playlist_skip == -1315 or \
+    #                    args.playlist_skip > 0 or \
+    #                    args.playlist_top > 0,
+    #                    args.url)
+    pl = k.try_playlist(not args.not_playlist, args.url)
     if pl:
         echo(args.url)
         k.is_playlist = True
@@ -452,7 +456,8 @@ def run(k, args):
                 else:
                     break
     #elif pl is not None and args.playlist_skip != -1:
-    elif not pl and args.playlist_skip != 0:
+    #elif not pl and args.playlist_skip != 0:
+    elif not args.playlist_only:
         k.get_one(args.url)
     k.clean_up()
 
