@@ -183,7 +183,7 @@ def to_dict(json_object):
 
 
 class QQ(DWM):  # v.qq.com
-    handle_list = ['.qq.com/']
+    handle_list = ['/v\.qq\.com/x/cover/']
 
     def __init__(self):
         DWM.__init__(self, 'auto')
@@ -462,7 +462,10 @@ class QQ(DWM):  # v.qq.com
         debug('urls =', urls)
         return title, tp, urls, mz
 
+    def test(self):
+        url = 'https://y.qq.com/portal/mv/v/s0017amxyfd.html'   # don't care music
+
 
 if __name__ == '__main__':
-    #start(QQ)
-    QQ().test()
+    start(QQ)
+    #QQ().test()

@@ -14,7 +14,8 @@ SECRETKEY_MINILOADER = '1c15888dc316e05a15fdd0a02ed6584f'
 
 
 class BILIBILI(DWM):
-    handle_list = [".bilibili.com/"]
+    handle_list = ["\.bilibili\.com/video/av\d+/",
+                   "\.bilibili\.com/sp/"]
 
     def query_info(self, url):
         # http://www.bilibili.com/video/av2812495/

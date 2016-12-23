@@ -12,7 +12,7 @@ except ImportError:
     import urllib as parse
 
 from mybs import SelStr
-from comm import DWM, start, echo, match1
+from comm import DWM, start, echo, match1, debug
 
 
 #'http://v.youku.com/v_show/id_XMTU0MzQzNDkzNg==.html?tpa=dW5pb25faWQ9MjAwMDE0XzEwMDAwMV8wMV8wMQ&fromvsogou'
@@ -73,12 +73,10 @@ class YOUKU(DWM):
 
 
     def __init__(self):
-        DWM.__init__(self, "auto")
-        ip = "220.181.111.%d" % random.randint(1, 254)
-        #self.extra_headers = {#'X-Forwarded-For': ip,
-                              #'Client-IP': ip,
+        DWM.__init__(self, proxy="auto")
+        #ip = "220.181.111.%d" % random.randint(1, 254)
+        #self.extra_headers['X-Forwarded-For'] = ip,
         self.extra_headers['Referer'] = 'http://static.youku.com/'
-        self.extra_headers['X-Forwarded-For'] = ip,
         # this is key!
         self.extra_headers['Cookie'] = '__ysuid={}'.format(time.time())
 
@@ -104,12 +102,12 @@ class YOUKU(DWM):
         vid = self.get_vid_from_url(url)
         echo("vid =",vid)
         api_url = 'http://play.youku.com/play/get.json?vid=%s&ct=12' % vid
-        html = self.get_html(api_url)
-        hutf = html.decode('utf8')
+        hutf = self.get_hutf(api_url)
         meta = json.loads(hutf)
         data12 = meta['data']
-
         data = data12
+        debug(data)
+        
         title = data['video']['title']
         sec_ep = data12['security']['encrypt_string']
         sec_ip = data12['security']['ip']
