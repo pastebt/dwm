@@ -407,14 +407,23 @@ class QQ(DWM):  # v.qq.com
     def get_playlist(self, url):
         res = urlparse(url)
         pre = "%s://%s" % (res.scheme, res.netloc)
-        echo("pre =", pre)
+        debug("pre =", pre)
         hutf = self.get_hutf(url)
         urls = []
-        for node in SelStr('a[_stat="videolist:click"]', hutf):
-            if 'title' in node:
-                u = (node['title'], pre + node['href'])
-                echo(*u)
-                urls.append(u)
+        #for node in SelStr('a[_stat="videolist:click"]', hutf):
+        for node in SelStr('div.mod_episode > span.item > '
+                           'a[_stat="videolist:click"][title]', hutf):
+            n = node.text.strip()
+            try:
+                cnt = int(n)
+            except ValueError:
+                continue
+            ii = node.select('i.mark_v > img[alt]')
+            if ii and ii[0]['alt'] == u'预告':
+                continue
+            u = (n + node['title'], pre + node['href'])
+            debug(*u)
+            urls.append(u)
         return urls
 
     def query_info_dlt3(self, url, title, vid, mp):
@@ -426,7 +435,7 @@ class QQ(DWM):  # v.qq.com
             if sz > mz and fi.select('lmt')[0].text == '0':
                 mi = fi
                 mz = sz
-        echo("cname =", mi.select('cname')[0].text)
+        debug("cname =", mi.select('cname')[0].text)
         vlifs = int(mp.select('vl > vi > fs')[0].text)
         fm = mi.select('name')[0].text.strip()
         if vlifs < mz:
@@ -439,18 +448,18 @@ class QQ(DWM):  # v.qq.com
                 break
             #break
         keyid = mp.select('vl > vi > keyid')[0].text.strip()
-        echo(ur)
+        debug("ur =", ur)
         pt = ui.select('hls > pt')[0].text.strip()
         tp = ui.select('hls > ftype')[0].text.strip()
         um = ur + pt + "&type=" + tp + "&fmt=" + fm
-        echo(um)
+        debug("um =", um)
         hutf = self.get_hutf(um, raw=True)
         #echo(hutf)
         urls = []
         for line in hutf.split('\n'):
             if keyid in line:
                 urls.append(ur + line.strip())
-        debug(urls)
+        debug('urls =', urls)
         return title, tp, urls, mz
 
 
