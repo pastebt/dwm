@@ -123,6 +123,7 @@ def usage():
     print '    -d download'
     print '    -i information, no downloading'
     print '    url like http://tv.sohu.com/20121029/n356058486.shtml'
+    # http://m.tv.sohu.com/20110220/n279432193.shtml
     sys.exit(1)
 
 
