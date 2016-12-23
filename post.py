@@ -1,4 +1,4 @@
-#! /usr/bin/pyhton
+#! /usr/bin/python -B
 
 import os
 import re

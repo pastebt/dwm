@@ -14,8 +14,8 @@ class BigDr(DWM):     # http://bigdramas.net/
     handle_list = ['/bigdramas\.net/video/']
 
     def query_info(self, url):
-        url = 'http://bigdramas.net/video/維京傳奇第三季-第5集/'
-        url = 'http://bigdramas.net/video/%E7%B6%AD%E4%BA%AC%E5%82%B3%E5%A5%87%E7%AC%AC%E4%B8%89%E5%AD%A3-%E7%AC%AC5%E9%9B%86/'
+        #url = 'http://bigdramas.net/video/維京傳奇第三季-第5集/'
+        #url = 'http://bigdramas.net/video/%E7%B6%AD%E4%BA%AC%E5%82%B3%E5%A5%87%E7%AC%AC%E4%B8%89%E5%AD%A3-%E7%AC%AC5%E9%9B%86/'
         hutf = self.get_hutf(url)
         title = SelStr('div.video-info > h1', hutf)[0].text
         #echo(title)
