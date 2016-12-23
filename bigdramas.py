@@ -32,6 +32,9 @@ class BigDr(DWM):     # http://bigdramas.net/
         #echo(urls)
         return title, ext, urls, None
 
+    def test(self):
+        url = 'http://bigdramas.net/video/%E6%94%BE%E6%A3%84%E6%88%91%EF%BC%8C%E6%8A%93%E7%B7%8A%E6%88%91-%E7%AC%AC22%E9%9B%86/'
+
 
 if __name__ == '__main__':
     start(BigDr)

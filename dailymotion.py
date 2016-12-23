@@ -8,7 +8,9 @@ from comm import DWM, echo, start
 
 
 class DM(DWM):     # http://www.dailymotion.com/embed/video/
-    handle_list = ['/www.dailymotion.com/embed/video/']
+    handle_list = ['/www.dailymotion.com/embed/video/',
+                   '/www.dailymotion.com/video/'
+                  ]
 
     def query_info(self, url):
         #url = "http://www.dailymotion.com/embed/video/k7alsxAgBgcMGaachYS"
@@ -37,6 +39,8 @@ class DM(DWM):     # http://www.dailymotion.com/embed/video/
         return title, ex, [mu], None
         #sys.exit(1)
 
+    def test(self):
+        url = 'http://www.dailymotion.com/video/k336RLStrzbIGzl96CY'
 
 if __name__ == '__main__':
     start(DM)
