@@ -128,8 +128,8 @@ def mg1(pattern, text):
 #    run(sys.argv[2], sys.argv[1] == '-d')
 
 
-from random import random, randint
 import time
+from random import random, randint
 from comm import DWM, start, debug, echo
 
 
@@ -147,7 +147,11 @@ class SOHU(DWM):     # http://sohu.com/
                              "/vrs_flash.action?vid=%s" % vid)
 
     def real_url(self, host, vid, tvid, new, clipURL, ck):
-        url = 'http://'+host+'/?prot=9&prod=flash&pt=1&file='+clipURL+'&new='+new +'&key='+ ck+'&vid='+str(vid)+'&uid='+str(int(time.time()*1000))+'&t='+str(random())+'&rb=1'
+        url = 'http://' + host + '/?prot=9&prod=flash&pt=1&file='
+        url = url + clipURL + '&new=' + new + '&key='+ ck
+        url = url + '&vid=' + str(vid) + '&uid='
+        url = url + str(int(time.time()*1000)) + '&t='
+        url = url + str(random()) + '&rb=1'
         return json.loads(self.get_hutf(url))['url']
 
     def query_info(self, url):
