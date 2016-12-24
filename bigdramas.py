@@ -44,6 +44,13 @@ class BigDr(DWM):     # http://bigdramas.net/
             echo(dd)
             sys.exit(1)
 
+    def get_playlist(self, url):
+        hutf = self.get_hutf(url)
+        urls = []
+        for a in SelStr('div.tvlists div.items div.item a', hutf):
+            urls.append((a.text, 'http://bigdramas.net' + a['href']))
+        return urls
+
     def test(self):
         # handle by dailymotion
         url = 'http://bigdramas.net/video/%E6%94%BE%E6%A3%84%E6%88%91%EF%BC%8C%E6%8A%93%E7%B7%8A%E6%88%91-%E7%AC%AC22%E9%9B%86/'
