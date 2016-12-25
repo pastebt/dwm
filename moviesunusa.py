@@ -12,7 +12,7 @@ except ImportError:
  
 from openload import OpenLoad
 from mybs import MyHtmlParser, SelStr
-from comm import DWM, match1, echo, start
+from comm import DWM, match1, echo, start, debug
 
 
 class MSU1(DWM):     #http://moviesunusa.net/
@@ -99,20 +99,48 @@ class MSU(DWM):     #http://moviesunusa.net/
         self.extra_headers['User-Agent'] = self.login_agent
         hutf = self.get_hutf(url)
         ifm = match1(hutf, '(\<iframe id="dmPlayer"[^\<\>]+\>\</iframe\>)')
-        #echo(ifm)
-        u = SelStr('iframe', ifm)[0]['src']
-        echo(u)
-        if '/www.dailymotion.com/embed/video/' in u:
-            from dailymotion import DM
-            return DM().query_info(u)
-        else:
-            echo(u)
-            echo('need supporting new source')
-            sys.exit(1)
+        if ifm:
+            u = SelStr('iframe', ifm)[0]['src']
+            debug(u)
+            if '/www.dailymotion.com/embed/video/' in u:
+                from dailymotion import DM
+                return DM().query_info(u)
+            else:
+                echo(u)
+                echo('need supporting new1 source')
+                sys.exit(1)
+        nodes = SelStr('iframe', hutf)
+        if nodes:
+            u = nodes[0]['src']
+            if 'openload.' in u:
+                title = SelStr('meta[name=description]', hutf)[0]['content']
+                debug(title)
+                ol = OpenLoad()
+                ol.title = title
+                return ol.query_info(u)
+            else:
+                echo(u)
+                echo('need supporting new2 source')
+                sys.exit(1)
+        echo('need supporting new3 source')
+        sys.exit(1)
+                
+            
+
+    def get_playlist(self, url):
+        urls = []
+        self.extra_headers['Cookie'] = self.login_cookie
+        self.extra_headers['User-Agent'] = self.login_agent
+        hutf = self.get_hutf(url)
+        for n in SelStr("div.yarpp-related > div > font > ul > li > "
+                        "strong > a[rel=bookmark]", hutf):
+            urls.append((n['title'], n['href']))
+        return [x for x in reversed(urls)]
 
     def test(self):
         cookie = '__cfduid=dc0e31429acf4437138e0f0a21e6f0e861481002357; cf_clearance=e3deea1982cebbde2241fb46294cbdf1db69ab5f-1481002392-31536000; PHPSESSID=123ebb1be84b8fe46b4cd4b8f3d0a247; wordpress_test_cookie=WP+Cookie+check; wordpress_logged_in_a5b64ad7442ae4da2d093cd3469428ca=mo4%7C1482770286%7CgnHDig7f0KiTAyJSS0zXdobrRhs6jB5QJIDmbyrMFoT%7C9ce3dc4a93bf5aa64a64f64b72896fed02919ce5fd2440d0192ba4b346d0e31b; _ga=GA1.2.789626336.1481002395; _gat=1; _gat_clientTracker=1'
-        url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac3%e5%ad%a3-%e7%ac%ac8%e9%9b%86-suits-s3-ep8/'
+        #url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac3%e5%ad%a3-%e7%ac%ac8%e9%9b%86-suits-s3-ep8/'
+        url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac5%e5%ad%a3-%e7%ac%ac11%e9%9b%86-suits-s5-ep11/'
         self.extra_headers['Cookie'] = cookie
         #self.extra_headers['Upgrade-Insecure-Requests'] = 1
         #self.extra_headers['Referer'] = 'http://moviesunusa.net/%E7%84%A1%E8%AD%89%E5%BE%8B%E5%B8%AB-%E7%AC%AC4%E5%AD%A3-suits-season-4/'

@@ -233,7 +233,7 @@ class DWM(object):
         if ispl:
             urls = self.get_playlist(url)
             for t, u in urls:
-                echo(t, u)
+                debug(t, u)
             return urls
         return None
 
@@ -440,7 +440,7 @@ def run(k, args):
     #                    args.url)
     pl = k.try_playlist(not args.not_playlist, args.url)
     if pl:
-        echo(args.url)
+        debug(args.url)
         k.is_playlist = True
         cnt = 0
         for title, url in pl: #k.get_list(args.url):

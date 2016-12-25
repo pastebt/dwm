@@ -189,6 +189,7 @@ class Node(object):
 
     def __iter__(self):
         return self.attrs_dict.iteritems()
+        #return self.attrs_dict.items
 
     def gettext_helper(self):
         return (y for c in self.children for y in c.gettext_helper())
