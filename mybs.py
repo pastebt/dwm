@@ -7,8 +7,10 @@ from itertools import chain
 from gettext import gettext
 try:
     from HTMLParser import HTMLParser
+    py3 = False
 except ImportError:
     from html.parser import HTMLParser
+    py3 = True
 
 from comm import echo
 
@@ -188,8 +190,8 @@ class Node(object):
         return self.select(sel)
 
     def __iter__(self):
-        return self.attrs_dict.iteritems()
-        #return self.attrs_dict.items
+        #return self.attrs_dict.iteritems()
+        return iter(self.attrs_dict.items())
 
     def gettext_helper(self):
         return (y for c in self.children for y in c.gettext_helper())
@@ -392,11 +394,13 @@ if __name__ == '__main__':
         sys.exit(1)
 
     html = open(sys.argv[2]).read() #.decode('utf8', 'ignore')
+    if not py3:
+        html = html.decode('utf8', 'ignore')
     mp = MyHtmlParser(tidy=False)
     mp.feed(html)
     nodes = mp.select(sys.argv[1])
     echo(nodes)
     for n in nodes:
         #echo(n.tag, n.text.strip())
-        echo(str(n))
+        echo(n.__str__())
 
