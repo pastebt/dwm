@@ -3,19 +3,21 @@
 
 import os
 import re
+import sys
 from subprocess import Popen, PIPE
 try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
  
-from mybs import MyHtmlParser
 from openload import OpenLoad
+from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start
 
 
-class MSU(DWM):     #http://moviesunusa.net/
-    handle_list = ['/moviesunusa.net/']
+class MSU1(DWM):     #http://moviesunusa.net/
+    # using captcha, so this is usless, we use login_cookie and login_agent
+    #handle_list = ['/moviesunusa.net/']
     cookie_fn = "msu_cookie.txt"
     login_url = 'http://moviesunusa.net/wp-login.php'
 
@@ -87,6 +89,41 @@ class MSU(DWM):     #http://moviesunusa.net/
                 urls.append((n['title'], n['href']))
         return [x for x in reversed(urls)]
 
+class MSU(DWM):     #http://moviesunusa.net/
+    # using captcha, we use login_cookie and login_agent
+    handle_list = ['/moviesunusa.net/']
+
+    def query_info(self, url):
+        #url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac3%e5%ad%a3-%e7%ac%ac8%e9%9b%86-suits-s3-ep8/'
+        self.extra_headers['Cookie'] = self.login_cookie
+        self.extra_headers['User-Agent'] = self.login_agent
+        hutf = self.get_hutf(url)
+        ifm = match1(hutf, '(\<iframe id="dmPlayer"[^\<\>]+\>\</iframe\>)')
+        #echo(ifm)
+        u = SelStr('iframe', ifm)[0]['src']
+        echo(u)
+        if '/www.dailymotion.com/embed/video/' in u:
+            from dailymotion import DM
+            return DM().query_info(u)
+        else:
+            echo(u)
+            echo('need supporting new source')
+            sys.exit(1)
+
+    def test(self):
+        cookie = '__cfduid=dc0e31429acf4437138e0f0a21e6f0e861481002357; cf_clearance=e3deea1982cebbde2241fb46294cbdf1db69ab5f-1481002392-31536000; PHPSESSID=123ebb1be84b8fe46b4cd4b8f3d0a247; wordpress_test_cookie=WP+Cookie+check; wordpress_logged_in_a5b64ad7442ae4da2d093cd3469428ca=mo4%7C1482770286%7CgnHDig7f0KiTAyJSS0zXdobrRhs6jB5QJIDmbyrMFoT%7C9ce3dc4a93bf5aa64a64f64b72896fed02919ce5fd2440d0192ba4b346d0e31b; _ga=GA1.2.789626336.1481002395; _gat=1; _gat_clientTracker=1'
+        url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac3%e5%ad%a3-%e7%ac%ac8%e9%9b%86-suits-s3-ep8/'
+        self.extra_headers['Cookie'] = cookie
+        #self.extra_headers['Upgrade-Insecure-Requests'] = 1
+        #self.extra_headers['Referer'] = 'http://moviesunusa.net/%E7%84%A1%E8%AD%89%E5%BE%8B%E5%B8%AB-%E7%AC%AC4%E5%AD%A3-suits-season-4/'
+        self.extra_headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
+        hutf = self.get_hutf(url, raw=True)
+        
+        comm.debug(hutf)
+
 
 if __name__ == '__main__':
-    start(MSU)
+    #start(MSU)
+    import comm
+    comm.DEBUG = True
+    MSU().test()

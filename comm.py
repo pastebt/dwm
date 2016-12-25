@@ -44,8 +44,9 @@ except ImportError:
         sys.stdout.write("\n")
 
 
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
-USER_AGENT += 'Gecko/20100101 Firefox/33.0'
+#USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
+#USER_AGENT += 'Gecko/20100101 Firefox/33.0'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
 DEBUG = False
 UTITLE = "UnknownTitle"
 
@@ -394,6 +395,10 @@ def start(kls):
     p.add_argument('-t', '--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
                    default=UTITLE)
+    p.add_argument('--cookie', metavar='COOKIE_STR', action='store',
+                   help='input cookie for login', default='')
+    p.add_argument('--user_agent', metavar='USER_AGENT', action='store',
+                   help='pair with cookie for login', default='')
     p.add_argument('--no_merge', action='store_true',
                    help='skip merge video pieces')
     p.add_argument('--debug', action='store_true',
@@ -416,6 +421,8 @@ def start(kls):
     kls.no_merge = args.no_merge
     kls.info_only = args.info_only
     kls.align_num = args.align_num
+    kls.login_cookie = args.cookie
+    kls.login_agent = args.user_agent
     if args.wget_skip >= 0:
         kls.download_urls = DWM.wget_urls
         kls.dwn_skip = args.wget_skip
