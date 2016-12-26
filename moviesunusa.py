@@ -112,12 +112,17 @@ class MSU(DWM):     #http://moviesunusa.net/
         nodes = SelStr('iframe', hutf)
         if nodes:
             u = nodes[0]['src']
+            title = SelStr('meta[name=description]', hutf)[0]['content']
+            debug(title)
             if 'openload.' in u:
-                title = SelStr('meta[name=description]', hutf)[0]['content']
-                debug(title)
                 ol = OpenLoad()
                 ol.title = title
                 return ol.query_info(u)
+            if 'rapidvideo.com/embed/' in u:
+                from rapidvideo import RapidVideo
+                rv = RapidVideo()
+                rv.title = title
+                return rv.query_info(u)
             else:
                 echo(u)
                 echo('need supporting new2 source')
