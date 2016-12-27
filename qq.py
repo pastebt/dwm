@@ -464,6 +464,7 @@ class QQ(DWM):  # v.qq.com
 
     def test(self):
         url = 'https://y.qq.com/portal/mv/v/s0017amxyfd.html'   # don't care music
+        url = 'https://v.qq.com/x/cover/tu0kfx77pkwk3t6.html?vid=k00205g5xhk' # don't add proxy='auto'
 
 
 if __name__ == '__main__':
