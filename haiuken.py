@@ -41,7 +41,7 @@ class HYG(DWM):     #http://haiuken.com/ 海宇根
         d = {"xEvent": "UIMovieComments.Error",
              "xJson": ips}
         html = self.get_html("http://haiuken.com/ajax/theatre/%s/" % vid,
-                             data=urllib.urlencode(d).encode("utf8"))
+                             postdata=urllib.urlencode(d).encode("utf8"))
         ret = json.loads(html.decode('utf8'))
         url = base64.b64decode(ret['Data']['Error'].encode('utf8'))
         #echo(url)
