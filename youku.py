@@ -83,11 +83,13 @@ class YOUKU(DWM):
     def get_vid_from_url(self, url):
         """Extracts video ID from URL.
         """
+        # http://player.youku.com/embed/XMTY3NzI5NTU3Ng==
         #return match1(url, r'youku\.com/v_show/id_([a-zA-Z0-9=]+)') or \
         #  match1(url, r'player\.youku\.com/player\.php/sid/([a-zA-Z0-9=]+)/v\.swf') or \
         #  match1(url, r'loader\.swf\?VideoIDS=([a-zA-Z0-9=]+)') or \
         #  match1(url, r'player\.youku\.com/embed/([a-zA-Z0-9=]+)')
-        return match1(url, r'youku\.com/v_show/id_([a-zA-Z0-9=]+)')
+        return match1(url, r'youku\.com/v_show/id_([a-zA-Z0-9=]+)',
+                      r'player\.youku\.com/embed/([a-zA-Z0-9=]+)')[0]
 
     def get_stream(self, data):
         for dat in self.stream_types:

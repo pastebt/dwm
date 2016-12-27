@@ -10,8 +10,9 @@ try:
 except ImportError:
     from urllib.parse import unquote, urlparse
  
+from youku import YOUKU
 from dailymotion import DM
-from comm import DWM, match1, echo, start
+from comm import DWM, match1, echo, start, debug
 
 
 #h8decode(data, 'dailymotion')
@@ -25,12 +26,16 @@ def h8decode(a, b):
 
 
 class HAVE8(DWM):     # http://have8.com/
-    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/dailymotion\.html']
+    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/(dailymotion|youku)\.html']
+
+    def get_vsrc(self, hutf):
+        m = re.search('var vsource = "([^"]+)";', hutf)
+        return m.group(1)
 
     def get_vid(self, hutf, idx=''):
         m = re.search('adrss\[0\] \= "([^"]+)"', hutf)
-        data = m.groups()[0]
-        vids = h8decode(data, 'dailymotion')
+        data = m.group(1)
+        vids = h8decode(data, self.get_vsrc(hutf))
         vids = [v.split('++') for v in vids]
         if not idx:
             return vids
@@ -57,15 +62,23 @@ class HAVE8(DWM):     # http://have8.com/
         if len(sels) > 1:
             idx = sels[1]
         vid = self.get_vid(hutf, idx)
-        echo(vid)
-        dm = DM()
-        return dm.query_info('http://www.dailymotion.com/embed/video/' + vid)
+        debug('vid =', vid)
+        source = self.get_vsrc(hutf)
+        debug('source =', source)
+        if source == 'dailymotion':
+            u = 'http://www.dailymotion.com/embed/video/' + vid
+            return DM().query_info(u)
+        elif source == 'youku':
+            u = 'http://player.youku.com/embed/' + vid
+            return YOUKU().query_info(u)
+        echo("Found new source", source)
+        sys.exit(1)
 
     def query_info_movie(self, url):
         #http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf, 1).split('+')
-        echo(vids)
+        debug('vids =', vids)
         urls = []
         for vid in vids:
             u = 'http://www.dailymotion.com/embed/video/' + vid
@@ -144,15 +157,31 @@ class HAVE8(DWM):     # http://have8.com/
 
         #return self.title, k, [url], tsize
 
+    #def get_vid2(self, hutf, name='dailymotion', idx=''):
+    #    m = re.search('adrss\[0\] \= "([^"]+)"', hutf)
+    #    data = m.groups()[0]
+    #    vids = h8decode(data, name)
+    #    vids = [v.split('++') for v in vids]
+    #    if not idx:
+    #        return vids
+    #    for i, v in vids:
+    #        #echo(repr(i), repr(idx))
+    #        if int(i) == int(idx):
+    #            return v
+    #    return None
+
+
     def test(self):
         #not support
         # http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
-        url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
+        url = 'http://have8tv.com/v/drama/2/25076/youku.html?0-3-0'
+        #url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf)
         echo(vids)
+        vid = vids[0]
 
 
 if __name__ == '__main__':
-    start(HAVE8)
-    #HAVE8().test()
+    #start(HAVE8)
+    HAVE8().test()
