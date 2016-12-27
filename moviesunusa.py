@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 import os
@@ -91,10 +90,13 @@ class MSU1(DWM):     #http://moviesunusa.net/
 
 class MSU(DWM):     #http://moviesunusa.net/
     # using captcha, we use login_cookie and login_agent
-    handle_list = ['/moviesunusa.net/']
+    handle_list = ['/moviesunusa\.net/']
 
     def query_info(self, url):
         #url = 'http://moviesunusa.net/%e7%84%a1%e8%ad%89%e5%be%8b%e5%b8%ab-%e8%a8%b4%e8%a8%9f%e9%9b%99%e9%9b%84-%e7%ac%ac3%e5%ad%a3-%e7%ac%ac8%e9%9b%86-suits-s3-ep8/'
+        if not self.login_cookie or not self.login_agent:
+            echo('Pls setup cookie and login_agent')
+            sys.exit(1)
         self.extra_headers['Cookie'] = self.login_cookie
         self.extra_headers['User-Agent'] = self.login_agent
         hutf = self.get_hutf(url)
@@ -129,8 +131,6 @@ class MSU(DWM):     #http://moviesunusa.net/
                 sys.exit(1)
         echo('need supporting new3 source')
         sys.exit(1)
-                
-            
 
     def get_playlist(self, url):
         urls = []
