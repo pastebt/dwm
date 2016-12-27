@@ -69,13 +69,14 @@ class DWM(object):
     is_playlist = False
     handle_list = []
     get_html_url = ''
+    no_proxy = False
 
     def __init__(self, proxy=None):
         global USER_AGENT
         self.redirh = HTTPRedirectHandler()
         self.cookie = HTTPCookieProcessor()
         self.rawopen = build_opener(self.redirh, self.cookie)
-        if proxy is None:
+        if proxy is None or self.no_proxy:
             self.opener = self.rawopen
         elif proxy == 'auto':
             # proxy.uku.im:8888
@@ -214,6 +215,8 @@ class DWM(object):
             return
         if not title:
             title = t
+        nt = norm_title(title)
+        echo('nt =', nt)
         if self.info_only:
             if ext is None or size is None:
                 e, s = self.get_total_size(urls)
@@ -367,6 +370,49 @@ def match1(text, *patterns):
         return ret
 
 
+numap = {u'一':1, u'二':2, u'三':3, u'四':4, u'五':5,
+         u'六':6, u'七':7, u'八':8, u'九':9, u'十':10}
+
+
+def c2n(cs):
+    n = 0
+    for c in cs:
+        i = numap[c]
+        if i < 10:
+            n = n + i
+        elif n:
+            n = n * 10
+        else:
+            n = 10
+    return n
+
+
+def norm_title(title):
+    global numap
+    #dd = re.split("(s\d{1,2}e\d{1,2})", title, flags=re.I)
+    #echo(dd)
+    echo(title)
+    m = re.search("(s\d{1,2}e\d{1,2})", title, flags=re.I)
+    if m:
+        #echo(m.group(1), m.pos, m.endpos)
+        g = m.groups()
+        #echo(g)
+        return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
+    se = ""
+    ns = ''.join(numap.keys())
+    m = re.search("([" + ns + u"]+)季", title)
+    if m:
+        echo(m.group(1))
+        se = "S%02d" % c2n(m.group(1))
+    m = re.search("([" + ns + u"]+)集", title)
+    if m:
+        echo(m.group(1))
+        se = se + "E%02d" % c2n(m.group(1))
+    if se:
+        se = se + "_"
+    return se + title
+
+
 def start(kls):
     global DEBUG
     p = argparse.ArgumentParser(description='Download Web Movie')
@@ -377,30 +423,32 @@ def start(kls):
     #               help='url is playlist or not')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
+    p.add_argument('-o', '--output', metavar='dir|url', action='store',
+                   help='where download file go, dir or url to post',
+                   default='.')
     p.add_argument('-p', '--playlist_only', action='store_true',
                    help='try playlist only')
     p.add_argument('-P', '--not_playlist', action='store_true',
                    help='not try playlist')
-    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
-                   help='wget skip # urls in list', default=0)
-    p.add_argument('--align_num', type=int, metavar='#', action='store',
-                   help='align number', default=0)
     p.add_argument('--playlist_top', type=int, metavar='#', action='store',
                    help='only get top # of playlist', default=0)
     p.add_argument('--playlist_skip', type=int, metavar='#', action='store',
                    help='skip # in playlist', default=0)
-    p.add_argument('-o', '--output', metavar='dir|url', action='store',
-                   help='where download file go, dir or url to post',
-                   default='.')
-    p.add_argument('-t', '--title', metavar='TITLE', action='store',
+    p.add_argument('--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
                    default=UTITLE)
+    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
+                   help='wget skip # urls in list', default=0)
+    p.add_argument('--align_num', type=int, metavar='#', action='store',
+                   help='align number', default=0)
     p.add_argument('--cookie', metavar='COOKIE_STR', action='store',
                    help='input cookie for login', default='')
     p.add_argument('--user_agent', metavar='USER_AGENT', action='store',
                    help='pair with cookie for login', default='')
     p.add_argument('--no_merge', action='store_true',
                    help='skip merge video pieces')
+    p.add_argument('--no_proxy', action='store_true',
+                   help='disable auto proxy')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
@@ -419,6 +467,7 @@ def start(kls):
     kls.title = args.title
     kls.out_dir = args.output
     kls.no_merge = args.no_merge
+    kls.no_proxy = args.no_proxy
     kls.info_only = args.info_only
     kls.align_num = args.align_num
     kls.login_cookie = args.cookie
@@ -434,10 +483,6 @@ def start(kls):
 
 
 def run(k, args):
-    #pl = k.try_playlist(args.playlist_skip == -1315 or \
-    #                    args.playlist_skip > 0 or \
-    #                    args.playlist_top > 0,
-    #                    args.url)
     pl = k.try_playlist(not args.not_playlist, args.url)
     if pl:
         debug(args.url)
@@ -447,7 +492,7 @@ def run(k, args):
             cnt = cnt + 1
             if cnt > args.playlist_top > 0:
                 break
-            if cnt < args.playlist_skip:
+            if cnt <= args.playlist_skip:
                 continue
             echo(title, url)
             for i in range(2):
@@ -473,4 +518,10 @@ if __name__ == '__main__':
     #d = DWM()
     #html = d.get_html("http://www.bilibili.com/video/av2060396/")
     #print(html)
-    start(DWM)
+    #start(DWM)
+    echo(norm_title("abc S01e02qwe"))
+    echo(norm_title(u"测试 第一季 第五集"))
+    echo(norm_title(u"测试 第一季 第十集"))
+    echo(norm_title(u"测试 第一季 第十五集"))
+    echo(norm_title(u"测试 第一季 第一十五集"))
+    echo(norm_title(u"测试 第一季 第二十五集"))
