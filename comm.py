@@ -392,12 +392,12 @@ def norm_title(title):
     #dd = re.split("(s\d{1,2}e\d{1,2})", title, flags=re.I)
     #echo(dd)
     echo(title)
-    m = re.search("(s\d{1,2}e\d{1,2})", title, flags=re.I)
+    m = re.search("(s\d{1,2}e\d{1,2}\.*)", title, flags=re.I)
     if m:
         #echo(m.group(1), m.pos, m.endpos)
         g = m.groups()
         #echo(g)
-        return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
+        return g[0].upper().strip('.') + '_' + title[:m.start()] +  title[m.end():]
     se = ""
     ns = ''.join(numap.keys())
     m = re.search("([" + ns + u"]+)季", title)

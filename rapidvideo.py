@@ -25,7 +25,10 @@ class RapidVideo(DWM):     # http://rapidvideo.com/
         data = match1(data, '"sources":\s*(\[[^\[\]]+\])')
         ml, u = 0, ''
         for src in json.loads(data):
-            i = self.labels.index(src['label'])
+            l = src['label']
+            if l not in self.labels:
+                echo("new label", l)
+            i = self.labels.index(l)
             if i > ml:
                 ml, u = i, src['file']
         debug(title, u)
