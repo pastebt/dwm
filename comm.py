@@ -395,12 +395,12 @@ def norm_title(title):
     #dd = re.split("(s\d{1,2}e\d{1,2})", title, flags=re.I)
     #echo(dd)
     echo(title)
-    m = re.search("(s\d{1,2}e\d{1,2}\.*)", title, flags=re.I)
+    m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
     if m:
         #echo(m.group(1), m.pos, m.endpos)
         g = m.groups()
         #echo(g)
-        return g[0].upper().strip('.') + '_' + title[:m.start()] +  title[m.end():]
+        return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
     se = ""
     ns = ''.join(numap.keys())
     m = re.search("([" + ns + u"]+)季", title)
@@ -534,7 +534,8 @@ if __name__ == '__main__':
     #html = d.get_html("http://www.bilibili.com/video/av2060396/")
     #print(html)
     #start(DWM)
-    echo(norm_title("abc S01e02qwe"))
+    echo(norm_title("abc S01e02.qwe"))
+    echo(norm_title("abcS01e02.  qwe"))
     echo(norm_title(u"测试 第一季 第五集"))
     echo(norm_title(u"测试 第一季 第十集"))
     echo(norm_title(u"测试 第一季 第十五集"))
