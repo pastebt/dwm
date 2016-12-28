@@ -204,7 +204,7 @@ class DWM(object):
             if p.returncode == 0:
                 os.rename(dwnfn, outfn)
 
-    def get_one(self, url, t="UnknownTitle"):
+    def get_one(self, url, t="UnknownTitle", n=False):
         try:
             title, ext, urls, size = self.query_info(url)
         except self.ExistsError as e:
@@ -216,7 +216,10 @@ class DWM(object):
         if not title:
             title = t
         nt = norm_title(title)
-        echo('nt =', nt)
+        if n:
+            title = nt
+        else:
+            echo('nt =', nt)
         if self.info_only:
             if ext is None or size is None:
                 e, s = self.get_total_size(urls)
@@ -426,6 +429,8 @@ def start(kls):
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
                    help='where download file go, dir or url to post',
                    default='.')
+    p.add_argument('-n', '--norm_title', action='store_true',
+                   help='normalize title')
     p.add_argument('-p', '--playlist_only', action='store_true',
                    help='try playlist only')
     p.add_argument('-P', '--not_playlist', action='store_true',
@@ -449,6 +454,8 @@ def start(kls):
                    help='skip merge video pieces')
     p.add_argument('--no_proxy', action='store_true',
                    help='disable auto proxy')
+    #p.add_argument('--continue_next', action='store_true',
+    #               help='continue when error in playlist')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
@@ -495,18 +502,26 @@ def run(k, args):
             if cnt <= args.playlist_skip:
                 continue
             echo(title, url)
-            for i in range(2):
-                try:
-                    k.get_one(url, title)
-                except subprocess.CalledProcessError as e:
-                    echo(e)
-                    return
-                #except Exception as e:
-                #    echo(type(e), e, "will try again ...")
-                #    sleep(5)
-                #    continue
+            try:
+                k.get_one(url, title, args.norm_title)
+            except Exception as e:
+                #if args.continue_next:
+                if args.debug:
+                    echo("Error:", e)
                 else:
-                    break
+                    raise
+            #for i in range(2):
+            #    try:
+            #        k.get_one(url, title)
+            #    except subprocess.CalledProcessError as e:
+            #        echo(e)
+            #        return
+            #    #except Exception as e:
+            #    #    echo(type(e), e, "will try again ...")
+            #    #    sleep(5)
+            #    #    continue
+            #    else:
+            #        break
     #elif pl is not None and args.playlist_skip != -1:
     #elif not pl and args.playlist_skip != 0:
     elif not args.playlist_only:

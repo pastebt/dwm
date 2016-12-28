@@ -28,9 +28,9 @@ class DRAMA8(DWM):
         m = re.search("""\<source src="(http\://8drama\."""
                       """(net/ipobar_|com/ggpic)"""
                       """\.php[^<> ]+)" type""", hutf)
-        if not m:
-            echo(html)
-            return None
+        #if not m:
+        #    echo(html)
+        #    return None
         url = m.group(1)
         url = HTMLParser().unescape(url)
         debug("query_info, url = " + url)

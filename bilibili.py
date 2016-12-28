@@ -14,6 +14,7 @@ SECRETKEY_MINILOADER = '1c15888dc316e05a15fdd0a02ed6584f'
 
 
 class BILIBILI(DWM):
+    sp = False
     handle_list = ["\.bilibili\.com/video/av\d+/",
                    "\.bilibili\.com/sp/"]
 
@@ -32,7 +33,7 @@ class BILIBILI(DWM):
         title = self.align_title_num(title)
         #echo(title.encode('utf8'))
         echo(title)
-        #return
+        vtitle = SelStr('div.v-title > h1', hutf)[0].text
         m = re.search('''cid=(\d+)&''', hutf)
         cid = m.group(1)
         echo("cid =", cid)
@@ -66,12 +67,16 @@ class BILIBILI(DWM):
         #echo("m title =[%s]" % title)
         m = re.search(u"(\d+)、.+", title)
         #if m and m.group(1) == m.group(2):
-        if m and BILIBILI.sp:
+        #if m and BILIBILI.sp:
+        if m:
             n = int(m.group(1)) - 1
-            if self.title == UTITLE:
-                title = "%s[%02d]" % (cid, n)
+            if BILIBILI.sp:
+                if self.title == UTITLE:
+                    title = "%s[%02d]" % (cid, n)
+                else:
+                    title = "%s[%02d]" % (self.title, n)
             else:
-                title = "%s[%02d]" % (self.title, n)
+                title = ("E%02d_" %  (n + 1)) + vtitle
         #else:
         #    echo("m =", m)
         return title, ext, urls, totalsize

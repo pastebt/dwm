@@ -109,8 +109,8 @@ class MSU(DWM):     #http://moviesunusa.net/
                 return DM().query_info(u)
             else:
                 echo(u)
-                echo('need supporting new1 source')
-                sys.exit(1)
+                raise Exception('need supporting new1 source')
+                #sys.exit(1)
         nodes = SelStr('iframe', hutf)
         if nodes:
             u = nodes[0]['src']
@@ -127,10 +127,10 @@ class MSU(DWM):     #http://moviesunusa.net/
                 return rv.query_info(u)
             else:
                 echo(u)
-                echo('need supporting new2 source')
-                sys.exit(1)
-        echo('need supporting new3 source')
-        sys.exit(1)
+                raise Exception('need supporting new2 source')
+                #sys.exit(1)
+        raise Exception('need supporting new3 source')
+        #sys.exit(1)
 
     def get_playlist(self, url):
         urls = []

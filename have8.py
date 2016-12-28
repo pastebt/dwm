@@ -9,9 +9,11 @@ try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import unquote, urlparse
- 
+
+from mybs import SelStr 
 from youku import YOUKU
 from dailymotion import DM
+from openload import OpenLoad
 from comm import DWM, match1, echo, start, debug
 
 
@@ -26,7 +28,7 @@ def h8decode(a, b):
 
 
 class HAVE8(DWM):     # http://have8.com/
-    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/(dailymotion|youku)\.html']
+    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/(dailymotion|youku|openload)\.html']
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -71,6 +73,13 @@ class HAVE8(DWM):     # http://have8.com/
         elif source == 'youku':
             u = 'http://player.youku.com/embed/' + vid
             return YOUKU().query_info(u)
+        elif source == 'openload':
+            ol = OpenLoad()
+            ol.title = SelStr('meta[name=description]', hutf)[0]['content']
+            ol.title = ol.title + "E%02d" % int(idx)
+            echo("have8 title", ol.title)
+            u = 'https://openload.co/embed/' + vid
+            return ol.query_info(u)
         echo("Found new source", source)
         sys.exit(1)
 
@@ -174,8 +183,9 @@ class HAVE8(DWM):     # http://have8.com/
     def test(self):
         #not support
         # http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
-        url = 'http://have8tv.com/v/drama/2/25076/youku.html?0-3-0'
+        #url = 'http://have8tv.com/v/drama/2/25076/youku.html?0-3-0'
         #url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
+        url = 'http://have8tv.com/v/drama/2/25583/openload.html?0-1-0'
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf)
         echo(vids)
