@@ -411,6 +411,10 @@ def norm_title(title):
     if m:
         echo(m.group(1))
         se = se + "E%02d" % c2n(m.group(1))
+    elif se:    # already has S0X
+        m = re.search(u"(\d+)集", title, re.U)
+        if m:
+            se = se + "E%02d" % int(m.group(1))
     if se:
         se = se + "_"
     return se + title
@@ -525,7 +529,7 @@ def run(k, args):
     #elif pl is not None and args.playlist_skip != -1:
     #elif not pl and args.playlist_skip != 0:
     elif not args.playlist_only:
-        k.get_one(args.url)
+        k.get_one(args.url, n=args.norm_title)
     k.clean_up()
 
 
@@ -541,3 +545,4 @@ if __name__ == '__main__':
     echo(norm_title(u"测试 第一季 第十五集"))
     echo(norm_title(u"测试 第一季 第一十五集"))
     echo(norm_title(u"测试 第一季 第二十五集"))
+    echo(norm_title(u"测试 第一季 第12集"))
