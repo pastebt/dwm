@@ -35,6 +35,7 @@ class SOHU(DWM):     # http://sohu.com/
 
     def query_info(self, url):
         url = 'http://tv.sohu.com/20110220/n279432193.shtml'
+        url = 'http://tv.sohu.com/20150705/n416207533.shtml'
         html = self.get_html(url)
         vid = mg1(r'\Wvid\s*[\:=]\s*[\'"]?(\d+)[\'"]?', html)
         echo('vid =', vid)
