@@ -29,7 +29,13 @@ class BigDr(DWM):     # http://bigdramas.net/
         dd = json.loads(dd)
         if dd['source'] == "Bigdramas":
             self.extra_headers['Referer'] = url
-            hutf = self.get_hutf('http://bigdramas.net/view/?ref=' + dd['ids'][0])
+            ref = 'http://bigdramas.net/view/?ref=' + dd['ids'][0]
+            debug("ref =", ref)
+            hutf = self.get_hutf(ref)
+            #p = Popen(["./phantomjs", "dwm.js", "300", ref, url], stdout=PIPE)
+            #html = p.stdout.read()
+            #hutf = html.decode('utf8')
+            #p.wait()
             ss = SelStr('div.video-wrapper > video > source', hutf)[0]
             urls = [ss['src']]
             ext = ss['type'][-3:]

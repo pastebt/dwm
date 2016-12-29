@@ -111,11 +111,19 @@ class MSU(DWM):     #http://moviesunusa.net/
                 echo(u)
                 raise Exception('need supporting new1 source')
                 #sys.exit(1)
-        nodes = SelStr('iframe', hutf)
-        if nodes:
-            u = nodes[0]['src']
-            title = SelStr('meta[name=description]', hutf)[0]['content']
-            debug(title)
+        title = SelStr('meta[name=description]', hutf)[0]['content']
+        debug(title)
+        #debug(hutf)
+        srcs = [node['src'] for node in SelStr('iframe', hutf)]
+        if not srcs:
+            s = match1(hutf, '\<iframe [^\<\>]+ src\="(\S+)" .*\>')
+            if s:
+                srcs.append(s)
+        for u in srcs:
+            debug(u)
+            if '/videomega.tv/' in u:
+                echo("dead", u)
+                continue
             if 'openload.' in u:
                 ol = OpenLoad()
                 ol.title = title
