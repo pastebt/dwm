@@ -36,7 +36,19 @@ class BigDr(DWM):     # http://bigdramas.net/
             #html = p.stdout.read()
             #hutf = html.decode('utf8')
             #p.wait()
-            ss = SelStr('div.video-wrapper > video > source', hutf)[0]
+            sss = SelStr('div.video-wrapper > video > source', hutf)
+            if not sss:
+                echo("phantomjs wait 5 ...")
+                p = Popen(["./phantomjs", "dwm.js", "-5", ref, url], stdout=PIPE)
+                html = p.stdout.read()
+                hutf = html.decode('utf8')
+                p.wait()
+                sss = SelStr('div.video-wrapper > video > source', hutf)
+                if not sss:
+                    debug('hutf size = ', len(hutf))
+                    debug(hutf)
+                    #sys.exit(1)
+            ss = sss[0]
             urls = [ss['src']]
             ext = ss['type'][-3:]
             debug(urls)
