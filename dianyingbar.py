@@ -75,9 +75,5 @@ class DYB(DWM):     #dianyingbar
         return pl
 
 
-# failed
-# http://www.dianyingbar.com/11151.html
-
-
 if __name__ == '__main__':
     start(DYB)
