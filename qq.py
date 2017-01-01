@@ -11,7 +11,7 @@ import random
 import struct
 
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse, parse_qs
 except ImportError:
     from urllib.parse import urlparse
 
@@ -276,7 +276,18 @@ class QQ(DWM):  # v.qq.com
         title = video_info['title']
         vid = video_info['vid']
         echo('title =', title, 'vid =', vid)
+        mp = self.get_vinfo_do(url, vid, fmt)
+        return title, vid, mp
 
+    def getvinfo_iframe_player(self, url, fmt='shd'):
+        # 'http://v.qq.com/iframe/player.html?vid=i00167ai266&tiny=0&auto=0'
+        res = urlparse(url)
+        qs = parse_qs(res.query)
+        vid = qs['vid'][0]
+        mp = self.get_vinfo_do(url, vid, fmt)
+        return self.title, vid, mp
+
+    def get_vinfo_do(self, url, vid, fmt):
         #getvinfo(target_dir, page_url, video_info['vid'])
         rand = random.random()
         ckey = echo_ckeyv3(vid, PLAYER_GUID, rand,
@@ -313,11 +324,14 @@ class QQ(DWM):  # v.qq.com
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
         debug(str(mp.root_node))
-        return title, vid, mp
+        return mp
 
     def query_info(self, url):
         #url = 'https://v.qq.com/x/cover/ijilh0frmu96sbf/x0017evzp6n.html'
-        title, vid, mp = self.getvinfo(url)
+        if 'iframe/player' in url:
+            title, vid, mp = self.getvinfo_iframe_player(url)
+        else:
+            title, vid, mp = self.getvinfo(url)
         dlt = mp.select('dltype')[0].text.strip()
         if dlt == '3':
             return self.query_info_dlt3(url, title, vid, mp)
@@ -465,6 +479,10 @@ class QQ(DWM):  # v.qq.com
     def test(self):
         url = 'https://y.qq.com/portal/mv/v/s0017amxyfd.html'   # don't care music
         url = 'https://v.qq.com/x/cover/tu0kfx77pkwk3t6.html?vid=k00205g5xhk' # don't add proxy='auto'
+        url = 'http://v.qq.com/iframe/player.html?vid=i00167ai266&tiny=0&auto=0'
+        hutf = self.get_hutf(url)
+        #title, vid, mp = self.getvinfo(url)
+        echo(hutf)
 
 
 if __name__ == '__main__':

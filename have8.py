@@ -10,6 +10,7 @@ try:
 except ImportError:
     from urllib.parse import unquote, urlparse
 
+from qq import QQ
 from mybs import SelStr 
 from youku import YOUKU
 from dailymotion import DM
@@ -28,7 +29,8 @@ def h8decode(a, b):
 
 
 class HAVE8(DWM):     # http://have8.com/
-    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/(dailymotion|youku|openload)\.html']
+    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/'
+                   '(dailymotion|youku|openload|qq)\.html']
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -63,6 +65,8 @@ class HAVE8(DWM):     # http://have8.com/
         idx = 1
         if len(sels) > 1:
             idx = sels[1]
+        title = SelStr('meta[name=description]', hutf)[0]['content']
+        title = title + "E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
         debug('vid =', vid)
         source = self.get_vsrc(hutf)
@@ -75,11 +79,18 @@ class HAVE8(DWM):     # http://have8.com/
             return YOUKU().query_info(u)
         elif source == 'openload':
             ol = OpenLoad()
-            ol.title = SelStr('meta[name=description]', hutf)[0]['content']
-            ol.title = ol.title + "E%02d" % int(idx)
-            echo("have8 title", ol.title)
+            ol.title = title
+            echo("using have8 title", title)
             u = 'https://openload.co/embed/' + vid
             return ol.query_info(u)
+        elif source == 'qq':
+            q = QQ()
+            q.title = title
+            echo("using have8 title", title)
+            u = 'http://v.qq.com/iframe/player.html?vid=%s&tiny=0&auto=0' % vid
+            #u = 'http://v.qq.com/iframe/player.html?vid=' + vid
+            return q.query_info(u)
+            
         echo("Found new source", source)
         sys.exit(1)
 
@@ -185,7 +196,8 @@ class HAVE8(DWM):     # http://have8.com/
         # http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
         #url = 'http://have8tv.com/v/drama/2/25076/youku.html?0-3-0'
         #url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
-        url = 'http://have8tv.com/v/drama/2/25583/openload.html?0-1-0'
+        #url = 'http://have8tv.com/v/drama/2/25583/openload.html?0-1-0'
+        url = 'http://have8tv.com/v/drama/1/19161/qq.html?0-1-0'
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf)
         echo(vids)
