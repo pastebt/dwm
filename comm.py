@@ -275,7 +275,6 @@ def get_kind_size(u):
         conn.request("HEAD", q) #, "", h)
         #conn.request("GET", q) #, "", h)
         resp = conn.getresponse()
-        #echo("data1 =", resp.read())
         conn.close()
         #echo(resp.getheaders())
         #echo(resp.status, resp.reason)
@@ -295,10 +294,8 @@ def get_total_size_st(urllist):
         k, s = get_kind_size(url)
         size += s
         cnt += 1
-        #sys.stdout.write(" %d / %d\r" % (cnt, len(urllist)))
         debug("%d / %d = %d" % (cnt, len(urllist), s))
     echo("")
-    # echo("size =", size)
     return k, size
 
 
@@ -392,14 +389,11 @@ def c2n(cs):
 
 def norm_title(title):
     global numap
-    #dd = re.split("(s\d{1,2}e\d{1,2})", title, flags=re.I)
-    #echo(dd)
+
     echo(title)
     m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
     if m:
-        #echo(m.group(1), m.pos, m.endpos)
         g = m.groups()
-        #echo(g)
         return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
     se = ""
     ns = ''.join(numap.keys())
@@ -426,8 +420,6 @@ def start(kls):
     #, add_help=False)
     p.add_argument('url', metavar='URL', type=str, action='store',
                    help='url of movie')
-    #p.add_argument('-p', '--playlist', action='store_true',
-    #               help='url is playlist or not')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
@@ -458,19 +450,13 @@ def start(kls):
                    help='skip merge video pieces')
     p.add_argument('--no_proxy', action='store_true',
                    help='disable auto proxy')
-    #p.add_argument('--continue_next', action='store_true',
-    #               help='continue when error in playlist')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     args = p.parse_args()
     DEBUG = args.debug
     debug(args)
 
-    #echo(dir(kls))
-    #if getattr(kls, 'func_name', None): # if kls is a func
-    #if getattr(kls, '__call__', None): # if kls is a func
     if not getattr(kls, 'query_info', None):
-        #echo(kls)
         kls = kls(args.url)
         if kls is None:
             echo("Not support ", args.url)
@@ -514,20 +500,6 @@ def run(k, args):
                     echo("Error:", e)
                 else:
                     raise
-            #for i in range(2):
-            #    try:
-            #        k.get_one(url, title)
-            #    except subprocess.CalledProcessError as e:
-            #        echo(e)
-            #        return
-            #    #except Exception as e:
-            #    #    echo(type(e), e, "will try again ...")
-            #    #    sleep(5)
-            #    #    continue
-            #    else:
-            #        break
-    #elif pl is not None and args.playlist_skip != -1:
-    #elif not pl and args.playlist_skip != 0:
     elif not args.playlist_only:
         k.get_one(args.url, n=args.norm_title)
     k.clean_up()
