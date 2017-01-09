@@ -9,7 +9,7 @@ from comm import DWM, match1, echo, start, get_kind_size, UTITLE
 
 
 class OpenLoad(DWM):     # http://openload.co/
-    handle_list = ['openload', 'oload\.tv/embed/']
+    handle_list = ['openload', 'oload\.tv/']
 
     def __init__(self):
         DWM.__init__(self)
