@@ -4,7 +4,8 @@ import os
 import re
 from subprocess import Popen, PIPE
 
-from comm import DWM, match1, echo, start, get_kind_size
+from mybs import SelStr
+from comm import DWM, match1, echo, start, get_kind_size, UTITLE
 
 
 class OpenLoad(DWM):     # http://openload.co/
@@ -27,10 +28,17 @@ class OpenLoad(DWM):     # http://openload.co/
         echo(vid)
         url = "https://openload.co/stream/%s?mime=true" % vid
 
+        # "https://openload.co/embed/kUEfGclsU9o/"
+        n = SelStr("meta[name=og:title]", hutf)
+        if n and self.title == UTITLE:
+            self.title = n[0]['content']   #="skyrim_no-audio_1080.mp4">"
+
         # https://openload.co/stream/isCWWnlsZLE~1481139117~208.91.0.0~mcLfSy5C?mime=true
         # video/mp4 584989307
         k, tsize = get_kind_size(url)
         k = k.split('/')[-1]
+        if self.title.endswith('.' + k):
+            self.title = self.title[:-4]
         return self.title, k, [url], tsize
 
 
