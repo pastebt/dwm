@@ -25,8 +25,9 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         t = match1(title, r)
         if t:
             title = t
-        #echo(title)
-        src = 'http://www.ttwanda.com' + SelStr('iframe.player', hutf)[0]['src']
+        src = SelStr('iframe.player', hutf)[0]['src']
+        if not 'ttwanda.com' in src:
+            src = 'http://www.ttwanda.com' + src
         echo(src)
         self.extra_headers['Referer'] = url     # this is important
         hutf = self.get_hutf(src)
