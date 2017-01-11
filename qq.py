@@ -16,7 +16,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from mybs import MyHtmlParser, SelStr
-from comm import DWM, match1, echo, debug, start
+from comm import DWM, match1, echo, debug, start, U
 
 
 # copy from https://github.com/lvqier/crawlers/tree/master/txsp
@@ -433,7 +433,7 @@ class QQ(DWM):  # v.qq.com
             except ValueError:
                 continue
             ii = node.select('i.mark_v > img[alt]')
-            if ii and ii[0]['alt'] == u'预告':
+            if ii and ii[0]['alt'] == U('预告'):
                 continue
             u = (n + node['title'], pre + node['href'])
             debug(*u)
