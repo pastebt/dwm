@@ -37,10 +37,14 @@ def merge1(name, ext, cnt):
     p.wait()
 
 
-def merge(name, ext, cnt, clean=False):
+def merge(name, ext, cnt, clean=False, ists=False):
+    # ext = 'x-mpeg-ts'
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
-    outfn = "%s.%s" % (name, ext)
-    mrgfn = "%s.mrg.%s" % (name, ext)
+    oex = ext
+    if ext == 'x-mpeg-ts':
+        oex = "mp4"
+    outfn = "%s.%s" % (name, oex)
+    mrgfn = "%s.mrg.%s" % (name, oex)
     if os.path.exists(outfn):
         echo(outfn, "exists")
         return
@@ -60,7 +64,10 @@ def merge(name, ext, cnt, clean=False):
         echo("merge", f, "/", cnt)
         try:
             s = None
-            fobj = open(f + ".ts", "r+b")
+            if ext == 'x-mpeg-ts' or ists:
+                fobj = open(f, "r+b")
+            else:
+                fobj = open(f + ".ts", "r+b")
         except IOError:
             smd = ["avconv", 
                    #'-loglevel', #'quiet', "error",
@@ -92,19 +99,23 @@ def merge(name, ext, cnt, clean=False):
 
 
 def usage():
-    echo('Usage:', sys.argv[0], "name ext url_num")
+    echo('Usage:', sys.argv[0], "name ext url_num [ists]")
     sys.exit(1)
 
 
 def main():
-    if len(sys.argv) != 4:
+    if len(sys.argv) not in (4, 5):
         usage()
     try:
         i = int(sys.argv[3])
     except:
         usage()
-    #merge(sys.argv[1], "mp4", i)
-    merge(sys.argv[1], sys.argv[2], i)
+    if len(sys.argv) == 4:
+        merge(sys.argv[1], sys.argv[2], i)
+    elif len(sys.argv) == 5 and sys.argv[4] == 'ists':
+        merge(sys.argv[1], sys.argv[2], i, False, True)
+    else:
+        usag()
 
 
 if __name__ == '__main__':

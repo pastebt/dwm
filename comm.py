@@ -277,6 +277,7 @@ class DWM(object):
 
 
 def get_kind_size(u, cookie={}):
+    kinds = {'mp2t': 'mp4'}
     url = u
     while url:
         debug('get_kind_size, url =', url)
@@ -294,13 +295,15 @@ def get_kind_size(u, cookie={}):
         #conn.request("GET", q) #, "", h)
         resp = conn.getresponse()
         conn.close()
-        #echo(resp.getheaders())
-        #echo(resp.status, resp.reason)
-        #if resp.status == 302:
+        debug(resp.status, resp.reason)
+        debug(resp.getheaders())
         url = resp.getheader('Location', '')
     size = int(resp.getheader('Content-Length', '0'))
-    kind = resp.getheader('Content-Type', '') #.split("-")[1]
-    return kind, size
+    kind = resp.getheader('Content-Type', '')
+    debug('Content-Type:', kind)
+    if '/' in kind:
+        kind = kind.split('/')[-1]
+    return kinds.get(kind, kind), size
 
 
 def get_total_size_st(urllist):

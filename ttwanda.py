@@ -14,6 +14,10 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
     def query_info(self, url):
         #url = 'http://www.ttwanda.com/films/us/1693.html?xf'
         hutf = self.get_hutf(url)
+        if not '?' in url:
+            a = SelStr('section.p5 div a', hutf)[0]['href']
+            url = url + a
+            hutf = self.get_hutf(url)
         title = SelStr("div.video-content article p strong", hutf)[0].text
         r = "《(.+)》"
         if not py3:
@@ -29,8 +33,11 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         #echo(hutf)
         dst = match1(hutf, 'var play_url \= "([^"]+)"')
         echo(dst)
-        if 'youku.com/partner/m3u8' in dst:
-            return title, 'flv', self.try_m3u8(dst), None
+        if not dst:
+            echo("Can not find var play_url")
+            sys.exit(1)
+        if 'youku.com/partner/m3u8' in dst or 'lecloud.com/' in dst:
+            return title, None, self.try_m3u8(dst), None
         if 'ttwanda.com/ftn_handler/' in dst:
             cs = {}
             for c in self.cookie.cookiejar:
@@ -40,7 +47,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             echo(cs)
             self.wget_cookie = cs
             k, s = get_kind_size(dst, cs)
-            return title, k[-3:], [dst], s
+            return title, k, [dst], s
         echo('TTWanda has new source')
         echo(dst)
         sys.exit(1)
