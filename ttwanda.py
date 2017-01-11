@@ -46,5 +46,5 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
 
 
 if __name__ == '__main__':
-    start(TTWdanDa)
+    start(TTWanDa)
     #TTWanDa().query_info(1)
