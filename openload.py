@@ -4,7 +4,7 @@ import os
 import re
 from subprocess import Popen, PIPE
 
-from comm import DWM, match1, echo, start, get_kind_size
+from comm import DWM, match1, echo, start, get_kind_size, debug
 
 
 class OpenLoad(DWM):     # http://openload.co/
@@ -16,11 +16,13 @@ class OpenLoad(DWM):     # http://openload.co/
 
     def query_info(self, url):
         # https://openload.co/embed/isCWWnlsZLE/
+        # https://openload.io/embed/biw7ytfelzU/
         # <span id="streamurl">isCWWnlsZLE~1481138074~208.91.0.0~g617lYdo</span>
         p = Popen(["./phantomjs", "dwm.js", "300", url], stdout=PIPE)
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
+        debug(hutf)
         #vid = match1(url, r'haiuken.com/theatre/([^/]+)/')
         m = re.search('''<span id="streamurl">([^<>]+)</span>''', hutf)
         vid = m.groups()[0]
