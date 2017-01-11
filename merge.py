@@ -53,6 +53,7 @@ def merge(name, ext, cnt, clean=False):
            "-i", "-",
            "-y",
            "-c", "copy",
+           #"-bsf", "h264_mp4toannexb",
            mrgfn]
     p = Popen(cmd, stdin=PIPE)
     for f in fs:
