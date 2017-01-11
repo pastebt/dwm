@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 
 from mybs import SelStr
 from comm import DWM, match1, echo, start, debug, py3, get_kind_size
@@ -30,23 +31,23 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         echo(dst)
         if 'youku.com/partner/m3u8' in dst:
             return title, 'flv', self.try_m3u8(dst), None
-        cs = {}
-        for c in self.cookie.cookiejar:
-            if c.name == 'PHPSESSID':
-                continue
-            cs[c.name] = c.value
-        echo(cs)
-        self.wget_cookie = cs
-        k, s = get_kind_size(dst, cs)
-        return title, k[-3:], [dst], s
-
+        if 'ttwanda.com/ftn_handler/' in dst:
+            cs = {}
+            for c in self.cookie.cookiejar:
+                if c.name == 'PHPSESSID':
+                    continue
+                cs[c.name] = c.value
+            echo(cs)
+            self.wget_cookie = cs
+            k, s = get_kind_size(dst, cs)
+            return title, k[-3:], [dst], s
+        echo('TTWanda has new source')
+        echo(dst)
+        sys.exit(1)
 
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
         urls = []
-        #src = SelStr('body > div#a1 > video', hutf)
-        #if src: # m3u8
-        #src = src[0]['src']
         for line in self.get_html(src).split('\n'):
             line = line.strip()
             if not line or line.startswith("#"):
