@@ -288,9 +288,10 @@ def get_kind_size(u, cookie={}):
             conn = httplib.HTTPConnection(url_parts[1])
         # print url_parts
         q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-        hd = {}
+        hd = {'User-Agent': USER_AGENT}
         for k, v in cookie.items():
             hd['Cookie'] = "%s=%s" % (k, v)
+        debug(hd)
         conn.request("HEAD", q, "", hd)
         #conn.request("GET", q) #, "", h)
         resp = conn.getresponse()

@@ -48,6 +48,8 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             self.wget_cookie = cs
             k, s = get_kind_size(dst, cs)
             return title, k, [dst], s
+        if 'mgtv.com/' in dst:
+            return title, None, [dst], None
         echo('TTWanda has new source')
         echo(dst)
         sys.exit(1)
