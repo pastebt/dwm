@@ -370,8 +370,18 @@ def match1(text, *patterns):
         return ret
 
 
-numap = {u'一':1, u'二':2, u'三':3, u'四':4, u'五':5,
-         u'六':6, u'七':7, u'八':8, u'九':9, u'十':10}
+#numap = {u'一':1, u'二':2, u'三':3, u'四':4, u'五':5,
+#         u'六':6, u'七':7, u'八':8, u'九':9, u'十':10}
+numap = {}
+cnum = "一二三四五六七八九十"
+sere = "([" + cnum + "]+)季"
+epre = "([" + cnum + "]+)集"
+npre = "(\d+)集"
+if not py3:
+    cnum = cnum.decode('utf8')
+    sere = sere.decode('utf8')
+    epre = epre.decode('utf8')
+    npre = npre.decode('utf8')
 
 
 def c2n(cs):
@@ -389,24 +399,27 @@ def c2n(cs):
 
 def norm_title(title):
     global numap
-
+    for i, c in enumerate(cnum, 1):
+        numap[c] = i
+    if not py3 and not isinstance(title, unicode):
+        title = title.decode('utf8')
     echo(title)
     m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
     if m:
         g = m.groups()
         return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
     se = ""
-    ns = ''.join(numap.keys())
-    m = re.search("([" + ns + u"]+)季", title)
+    #ns = ''.join(numap.keys())
+    m = re.search(sere, title)
     if m:
         echo(m.group(1))
         se = "S%02d" % c2n(m.group(1))
-    m = re.search("([" + ns + u"]+)集", title)
+    m = re.search(epre, title)
     if m:
         echo(m.group(1))
         se = se + "E%02d" % c2n(m.group(1))
     elif se:    # already has S0X
-        m = re.search(u"(\d+)集", title, re.U)
+        m = re.search(npre, title, re.U)
         if m:
             se = se + "E%02d" % int(m.group(1))
     if se:
@@ -512,9 +525,9 @@ if __name__ == '__main__':
     #start(DWM)
     echo(norm_title("abc S01e02.qwe"))
     echo(norm_title("abcS01e02.  qwe"))
-    echo(norm_title(u"测试 第一季 第五集"))
-    echo(norm_title(u"测试 第一季 第十集"))
-    echo(norm_title(u"测试 第一季 第十五集"))
-    echo(norm_title(u"测试 第一季 第一十五集"))
-    echo(norm_title(u"测试 第一季 第二十五集"))
-    echo(norm_title(u"测试 第一季 第12集"))
+    echo(norm_title("测试 第一季 第五集"))
+    echo(norm_title("测试 第一季 第十集"))
+    echo(norm_title("测试 第一季 第十五集"))
+    echo(norm_title("测试 第一季 第一十五集"))
+    echo(norm_title("测试 第一季 第二十五集"))
+    echo(norm_title("测试 第一季 第12集"))
