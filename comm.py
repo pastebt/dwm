@@ -70,6 +70,7 @@ class DWM(object):
     handle_list = []
     get_html_url = ''
     no_proxy = False
+    wget_cookie = {}
 
     def __init__(self, proxy=None):
         global USER_AGENT
@@ -189,16 +190,23 @@ class DWM(object):
         else:
             echo("download", outfn, "/", unum)
             dwnfn = outfn + ".dwm"
-            p = subprocess.Popen(["wget", 
-                                  "-U", USER_AGENT,
-                                  #"--wait", "30",
-                                  #"--tries=50",
-                                  "--read-timeout=30",
-                                  "-c",
-                                  "--no-use-server-timestamps",
-                                  #"-S", 
-                                  "-O", dwnfn,
-                                  url])
+            cmds = ["wget", 
+                    "-U", USER_AGENT,
+                    #"--wait", "30",
+                    #"--tries=50",
+                    "--read-timeout=30",
+                    "-c",
+                    "--no-use-server-timestamps",
+                    #"-S",
+                    ]
+
+            # --header='Cookie: FTN5K=af45f935;'
+            for k, v in self.wget_cookie.items():
+                cmds.append("--header=Cookie: %s=%s" % (k, v))
+
+            cmds += ["-O", dwnfn, url]
+            echo(cmds)
+            p = subprocess.Popen(cmds)
             p.wait()
             #if os.stat(dwnfn).st_size == totalsize:
             if p.returncode == 0:
@@ -260,7 +268,7 @@ class DWM(object):
         return False
 
 
-def get_kind_size(u):
+def get_kind_size(u, cookie={}):
     url = u
     while url:
         debug('get_kind_size, url =', url)
@@ -271,8 +279,10 @@ def get_kind_size(u):
             conn = httplib.HTTPConnection(url_parts[1])
         # print url_parts
         q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
-        #print h
-        conn.request("HEAD", q) #, "", h)
+        hd = {}
+        for k, v in cookie.items():
+            hd['Cookie'] = "%s=%s" % (k, v)
+        conn.request("HEAD", q, "", hd)
         #conn.request("GET", q) #, "", h)
         resp = conn.getresponse()
         conn.close()
