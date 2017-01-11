@@ -18,6 +18,7 @@ class OpenLoad(DWM):     # http://openload.co/
     def query_info(self, url):
         # https://openload.co/embed/isCWWnlsZLE/
         # <span id="streamurl">isCWWnlsZLE~1481138074~208.91.0.0~g617lYdo</span>
+        echo("phantomjs wait 300 ...")
         p = Popen(["./phantomjs", "dwm.js", "300", url], stdout=PIPE)
         html = p.stdout.read()
         hutf = html.decode('utf8')
