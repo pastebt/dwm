@@ -40,14 +40,10 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         if 'youku.com/partner/m3u8' in dst or 'lecloud.com/' in dst:
             return title, None, self.try_m3u8(dst), None
         if 'ttwanda.com/ftn_handler/' in dst:
-            cs = {}
-            for c in self.cookie.cookiejar:
-                if c.name == 'PHPSESSID':
-                    continue
-                cs[c.name] = c.value
+            cs = ["%s=%s" % (c.name, c.value) for c in self.cookie.cookiejar if c.name != 'PHPSESSID']
             echo(cs)
-            self.wget_cookie = cs
-            k, s = get_kind_size(dst, cs)
+            self.wget_cookie = "; ".join(cs)
+            k, s = get_kind_size(dst, self.wget_cookie)
             return title, k, [dst], s
         if 'mgtv.com/' in dst or '189.cn/v5/downloadFile' in dst:
             # http://www.ttwanda.com/films/us/907.html?style=cq

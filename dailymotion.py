@@ -1,7 +1,6 @@
 # -*- coding: utf8 -*-
 
 import re
-import sys
 import json
  
 from comm import DWM, echo, start
@@ -37,10 +36,10 @@ class DM(DWM):     # http://www.dailymotion.com/embed/video/
         echo("ext=%s, mq=%s, url=%s" % (ex, mq, mu))
         title = j['metadata']['title'].strip('.')
         return title, ex, [mu], None
-        #sys.exit(1)
 
     def test(self):
         url = 'http://www.dailymotion.com/video/k336RLStrzbIGzl96CY'
+
 
 if __name__ == '__main__':
     start(DM)

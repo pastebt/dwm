@@ -7,10 +7,8 @@ from subprocess import Popen, PIPE
 
 try:
     from HTMLParser import HTMLParser
-    p3 = False
 except ImportError:
     from html.parser import HTMLParser
-    p3 = True
 
 from comm import DWM, echo, start, debug
 
@@ -28,9 +26,6 @@ class DRAMA8(DWM):
         m = re.search("""\<source src="(http\://8drama\."""
                       """(net/ipobar_|com/ggpic)"""
                       """\.php[^<> ]+)" type""", hutf)
-        #if not m:
-        #    echo(html)
-        #    return None
         url = m.group(1)
         url = HTMLParser().unescape(url)
         debug("query_info, url = " + url)
@@ -43,18 +38,8 @@ class DRAMA8(DWM):
         self.check_exists(title, t)
         return title, t, [url], size
 
-    #def download_urls(self, title, ext, urls, totalsize):
-    #    outfn = os.path.join(self.out_dir, title + "." + ext)
-    #    echo("download", outfn)
-    #    dwnfn = outfn + ".dwm"
-    #    p = Popen(["wget", "-c", "-O", dwnfn, urls[0]])
-    #    p.wait()
-    #    if os.stat(dwnfn).st_size == totalsize:
-    #        os.rename(dwnfn, outfn)
-
     def get_playlist(self, page_url):
-        html = self.get_html(page_url)
-        hutf = html.decode('utf8')
+        hutf = self.get_hutf(page_url)
         m = re.findall('<td width="20%"><a href="(http://8drama.com/\d+/)">([^<>]+)<',
                       hutf)
         if self.align_num == 0:

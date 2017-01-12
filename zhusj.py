@@ -1,17 +1,12 @@
-#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import re
-import sys
-import json
-import base64
 try:
-    import urllib.parse as urllib
+    from urllib.parse import urlparse, parse_qs 
 except ImportError:
     from urlparse import parse_qs, urlparse
 
 from mybs import MyHtmlParser, select
-from comm import DWM, match1, echo, start, get_kind_size
+from comm import DWM, match1, echo, start
 
 
 class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
@@ -33,7 +28,6 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
                 break
         tn = m.select('div.crumbs span')[0]
         title = tn.text
-        echo(title)
 
         self.get_html(url)
         echo(self.get_html_url)
@@ -50,12 +44,9 @@ class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
             url = q['url'][0]
             if 'youku' in url:
                 from youku import YOUKU
-                y = YOUKU()
-                return y.query_info(url)
+                return YOUKU().query_info(url)
 
-        k, total_size = get_kind_size(url)
-        k = k.split('/')[-1]
-        return title, k, [url], total_size
+        return title, None, [url], None
 
 
 if __name__ == '__main__':

@@ -21,9 +21,7 @@ class HYG(DWM):     #http://haiuken.com/ 海宇根
         # http://haiuken.com/theatre/2muu/
         vid = match1(url, r'haiuken.com/theatre/([^/]+)/')
         echo("vid=", vid)
-        html = self.get_html(url)
-        #echo(html)
-        hutf = html.decode('utf8', 'ignore')
+        hutf = self.get_hutf(url)
         m = MyHtmlParser(tidy=False)
         m.feed(hutf)
         if self.title == UTITLE:
@@ -32,27 +30,17 @@ class HYG(DWM):     #http://haiuken.com/ 海宇根
                 title = title[10:]
         else:
             title = self.title
-        echo(title)
 
         ret = m.select(".bg2 .tmpl img")
         ips = json.dumps([r['src'].split("://")[1].split('/')[0] for r in ret])
-        #echo(ips)
 
         d = {"xEvent": "UIMovieComments.Error",
              "xJson": ips}
-        html = self.get_html("http://haiuken.com/ajax/theatre/%s/" % vid,
+        hutf = self.get_html("http://haiuken.com/ajax/theatre/%s/" % vid,
                              postdata=urllib.urlencode(d).encode("utf8"))
-        ret = json.loads(html.decode('utf8'))
-        url = base64.b64decode(ret['Data']['Error'].encode('utf8'))
-        #echo(url)
-
-        urls = [url.decode('utf8')]
-        #echo(urls)
-        k, total_size = get_kind_size(urls[0])
-        k = k.split('/')[-1]
-        #echo(k)
-        echo(total_size)
-        return title, k, urls, total_size
+        ret = json.loads(hutf)
+        url = base64.b64decode(ret['Data']['Error'].encode('utf8')).decode('utf8')
+        return title, None, [url], None
 
 
 if __name__ == '__main__':

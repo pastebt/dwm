@@ -1,10 +1,9 @@
 # -*- coding: utf8 -*-
 
 import re
-import sys
 
 from mybs import SelStr
-from comm import DWM, match1, echo, start, get_kind_size
+from comm import DWM, match1, echo, start
 
 
 class DYB(DWM):     #dianyingbar
@@ -20,12 +19,10 @@ class DYB(DWM):     #dianyingbar
         # get flv part list
         html = self.get_html(url)
         hutf = html.decode('utf8', 'ignore')
-        #echo(hutf)
         ret = re.findall("<video><file><\!\[CDATA\[([^<>]+)\]\]></file>"
                          "<size>(\d+)</size>"
                          "<seconds>\d+</seconds></video>",
                          hutf)
-        #print(ret)
         if not ret:
             return self.qi2(hutf)
         urls = []
@@ -33,13 +30,7 @@ class DYB(DWM):     #dianyingbar
         for u, s in ret:
             urls.append(u)
             total_size += int(s)
-        if urls:
-            k, s = get_kind_size(urls[0])
-            k = k.split('/')[-1]
-        else:
-            k = ''
-        #echo(k)
-        return None, k, urls, total_size
+        return None, None, urls, total_size
 
     def qi2(self, hutf):
         # http://www.dianyingbar.com/11184.html
@@ -54,7 +45,7 @@ class DYB(DWM):     #dianyingbar
             #self.extra_headers['Referer'] = 'https://vipwobuka.dianyingbar.com:998/ckplayer/YKYun.php?id=' + vid
             urls.append(url)
             break
-        echo("title=", title, 'mp4')
+        #echo("title=", title, 'mp4')
         return title, 'mp4', urls, None
 
     def get_playlist(self, url):
@@ -64,14 +55,12 @@ class DYB(DWM):     #dianyingbar
         html = self.get_html(url)
         hutf = html.decode('utf8', 'ignore')
         ret = re.findall("videoarr.push\('YKYun\.php\?id\=([^\(\)]+)'\)", hutf)
-        #print(ret[0])
         t = self.title
         #pl = ["http://bodekuai.duapp.com/api/yUrl.php?id=" + r for r in ret]
         pl = []
         for i, r in enumerate(ret, start=1):
             pl.append(("%s_%02d" % (t, i),
                        "http://bodekuai.duapp.com/api/yUrl.php?id=" + r))
-        echo(pl)
         return pl
 
 

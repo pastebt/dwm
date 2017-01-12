@@ -1,10 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import os
-import re
 import random
-from subprocess import Popen, PIPE
 try:
     import urllib.parse as urllib
 except ImportError:
@@ -28,15 +24,8 @@ class VMUS(DWM):     #http://vmus.co/
         post_data = "log=%s&pwd=%s&wp-submit=" % (up, up)
         post_data = post_data + "%E5%85%8D%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5%28%E6%96%B9%E6%B3%95%E8%AB%8B%E8%A6%8B%E4%B8%8A%E6%96%B9%E8%AA%AA%E6%98%8E%29+%C2%BB&redirect_to="
         post_data = post_data + urllib.quote(url)
-        #p = Popen(["./phantomjs", "dwm.js", "60", self.login_url, url, post_data],
-        #          stdout=PIPE)
-        #echo("Wait query_info phantomjs 60 sec ...")
-        #html = p.stdout.read()
-        #p.wait()
         html = self.get_html(self.login_url, postdata=post_data)
         hutf = html.decode('utf8')
-        #echo(hutf)
-        #
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
         urls = match1(hutf, '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
@@ -46,23 +35,15 @@ class VMUS(DWM):     #http://vmus.co/
         title = match1(hutf, '<meta property="og:title" content="([^<>]+)"')
         echo("vmus query_info title=", title)
 
-        #return title, k, urls, total_size
         ol = OpenLoad()
         ol.title = title
         return ol.query_info(urls[0])
 
     def get_playlist(self, url):
         # http://vmus.co/category/%E9%80%A3%E8%BC%89%E4%B8%AD/%E7%AC%AC%E4%B8%80%E5%AD%A3/%E6%AF%92%E6%A2%9Fnarcos/
-        #p = Popen(["./phantomjs", "dwm.js", "60", url], stdout=PIPE)
-        #echo("Wait try_playlist phantomjs 60 sec ...")
-        #html = p.stdout.read()
-        #p.wait()
-        html = self.get_html(url)
-        hutf = html.decode('utf8', 'ignore')
-        #echo(hutf)
+        hutf = self.get_hutf(url)
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
-        # #post-24821 > h2 > a #content
         nodes = mp.select("#content > article > h2 > a")
         urls = []
         for n in nodes:
@@ -71,11 +52,6 @@ class VMUS(DWM):     #http://vmus.co/
         urls = [x for x in reversed(urls)]
         if not urls:
             # http://vmus.co/%E7%BE%85%E9%A6%AC%E7%9A%84%E6%A6%AE%E8%80%80-rome/
-            # #post-2644 > div.entry.clearfix > p:nth-child(11) > a:nth-child(1)
-            #nodes = mp.select("#content article div.entry p a")
-            #for n in nodes:
-            #    urls.append((n.text, n['href']))
-
             # http://vmus.co/11-22-63/  has extra entry need filter out
             phrs = mp.select("#content article div.entry hr,p")
             h = False

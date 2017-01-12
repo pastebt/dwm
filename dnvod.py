@@ -15,7 +15,6 @@ class DNVOD(DWM):     # http://dnvod.eu/
     def query_info(self, url):
         #url = 'https://www.dnvod.eu/Movie/Readyplay.aspx?id=deYM01Pf0bo%3d'
         hutf = self.get_hutf(url)
-        #echo(hutf)
         title = SelStr('span#bfy_title >', hutf)[0].data.strip()
         debug('title =', title)
         for script in SelStr('script', hutf):
@@ -25,16 +24,12 @@ class DNVOD(DWM):     # http://dnvod.eu/
             vid = match1(txt, "id: '([^']+)',")
             key = match1(txt, "key: '([^']+)',")
             break
-        debug('vid =', vid)
-        debug('key =', key)
+        debug('vid =', vid, ', key =', key)
         u = "https://www.dnvod.eu/Movie/GetResource.ashx?id=%s&type=htm" % vid
         self.extra_headers['Referer'] = url
         durl = self.get_html(u, postdata="key=" + key)
         debug(durl)
-
-        k, tsize = get_kind_size(durl)
-        k = k.split('/')[-1]
-        return title, k, [durl], tsize
+        return title, None, [durl], None
 
     def get_playlist(self, url):
         #url = 'https://www.dnvod.eu/Movie/detail.aspx?id=NU%2bOQHwQObI%3d'

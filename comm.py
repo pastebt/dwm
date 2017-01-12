@@ -212,8 +212,8 @@ class DWM(object):
                     ]
 
             # --header='Cookie: FTN5K=af45f935;'
-            for k, v in self.wget_cookie.items():
-                cmds.append("--header=Cookie: %s=%s" % (k, v))
+            if self.wget_cookie:
+                cmds.append("--header=Cookie: " + self.wget_cookie)
 
             cmds += ["-O", dwnfn, url]
             echo(cmds)
@@ -279,7 +279,7 @@ class DWM(object):
         return False
 
 
-def get_kind_size(u, cookie={}):
+def get_kind_size(u, cookie=""):
     kinds = {}
     url = u
     act = 'HEAD'
@@ -293,11 +293,10 @@ def get_kind_size(u, cookie={}):
         # print url_parts
         q = urlparse.urlunsplit(("", "", url_parts[2], url_parts[3], ""))
         hd = {'User-Agent': USER_AGENT}
-        for k, v in cookie.items():
-            hd['Cookie'] = "%s=%s" % (k, v)
+        if cookie:
+            hd['Cookie'] = cookie
         debug(hd)
         conn.request(act, q, "", hd)
-        #conn.request("HEAD", q, "", hd)
         try:
             resp = conn.getresponse()
         except httplib.BadStatusLine:   # some not know HEAD
@@ -430,15 +429,12 @@ def norm_title(title):
     global numap
     for i, c in enumerate(cnum, 1):
         numap[c] = i
-    #if not py3 and not isinstance(title, unicode):
-    #    title = title.decode('utf8')
     echo(title)
     m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
     if m:
         g = m.groups()
         return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
     se = ""
-    #ns = ''.join(numap.keys())
     m = re.search(sere, title)
     if m:
         echo(m.group(1))
