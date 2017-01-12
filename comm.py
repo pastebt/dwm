@@ -280,9 +280,9 @@ class DWM(object):
 
 
 def get_kind_size(u, cookie={}):
-    #kinds = {'mp2t': 'mp4'}
     kinds = {}
     url = u
+    act = 'HEAD'
     while url:
         debug('get_kind_size, url =', url)
         url_parts = urlparse.urlsplit(url)
@@ -296,8 +296,8 @@ def get_kind_size(u, cookie={}):
         for k, v in cookie.items():
             hd['Cookie'] = "%s=%s" % (k, v)
         debug(hd)
-        conn.request("HEAD", q, "", hd)
-        #conn.request("GET", q) #, "", h)
+        conn.request(act, q, "", hd)
+        #conn.request("HEAD", q, "", hd)
         try:
             resp = conn.getresponse()
         except httplib.BadStatusLine:   # some not know HEAD
@@ -308,11 +308,16 @@ def get_kind_size(u, cookie={}):
         debug(resp.status, resp.reason)
         debug(resp.getheaders())
         url = resp.getheader('Location', '')
-    size = int(resp.getheader('Content-Length', '0'))
+        if not url:
+            size = int(resp.getheader('Content-Length', '0'))
+            if not size:
+                url = u
+                act = 'GET'
     kind = resp.getheader('Content-Type', '')
     debug('Content-Type:', kind)
-    if '/' in kind:
-        kind = kind.split('/')[-1]
+    for k in kind.split(';'):
+        if 'video' in k:
+            kind = k.split('/')[-1]
     return kinds.get(kind, kind), size
 
 
