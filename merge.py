@@ -38,10 +38,12 @@ def merge1(name, ext, cnt):
 
 
 def merge(name, ext, cnt, clean=False, ists=False):
+    tss = ('x-mpeg-ts', 'mp2t')
     # ext = 'x-mpeg-ts'
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
     oex = ext
-    if ext == 'x-mpeg-ts':
+    if ext in tss:
+        ists = True
         oex = "mp4"
     outfn = "%s.%s" % (name, oex)
     mrgfn = "%s.mrg.%s" % (name, oex)
@@ -64,7 +66,7 @@ def merge(name, ext, cnt, clean=False, ists=False):
         echo("merge", f, "/", cnt)
         try:
             s = None
-            if ext == 'x-mpeg-ts' or ists:
+            if ists:
                 fobj = open(f, "r+b")
             else:
                 fobj = open(f + ".ts", "r+b")
