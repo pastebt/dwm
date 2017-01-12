@@ -26,7 +26,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         if t:
             title = t
         src = SelStr('iframe.player', hutf)[0]['src']
-        if not 'ttwanda.com' in src:
+        if not src.startswith("http://") and not src.startswith("https://"):
             src = 'http://www.ttwanda.com' + src
         echo(src)
         self.extra_headers['Referer'] = url     # this is important
