@@ -178,6 +178,9 @@ class DWM(object):
             self.use_dwm_merge(urls, title, ext)
 
     def wget_urls(self, title, ext, urls, tsize):
+        if ext is None:
+            k, s = get_kind_size(urls[0])
+            ext = k
         title = "_".join(title.split('/'))
         if len(urls) == 1:
             self.wget_one_url(title, ext, urls[0], 1)
