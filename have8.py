@@ -1,9 +1,7 @@
 # -*- coding: utf8 -*-
 
-import os
 import re
 import sys
-from subprocess import Popen, PIPE
 try: 
     from urllib import unquote
     from urlparse import urlparse
@@ -18,7 +16,6 @@ from openload import OpenLoad
 from comm import DWM, match1, echo, start, debug
 
 
-#h8decode(data, 'dailymotion')
 def h8decode(a, b):
     ss = ""
     l = len(b) + 1
@@ -174,22 +171,6 @@ class HAVE8(DWM):     # http://have8.com/
                 mr, mu = r, lines[1].strip()
         echo('mr =', mr, ', mu =', mu)
         sys.exit(1)
-
-        #return self.title, k, [url], tsize
-
-    #def get_vid2(self, hutf, name='dailymotion', idx=''):
-    #    m = re.search('adrss\[0\] \= "([^"]+)"', hutf)
-    #    data = m.groups()[0]
-    #    vids = h8decode(data, name)
-    #    vids = [v.split('++') for v in vids]
-    #    if not idx:
-    #        return vids
-    #    for i, v in vids:
-    #        #echo(repr(i), repr(idx))
-    #        if int(i) == int(idx):
-    #            return v
-    #    return None
-
 
     def test(self):
         #not support
