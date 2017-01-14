@@ -9,7 +9,7 @@ from comm import DWM, match1, echo, start, debug, py3, get_kind_size
 
 
 class TTWanDa(DWM):     # http://www.ttwanda.com/
-    handle_list = ['ttwanda\.com/films/']
+    handle_list = ['\.ttwanda\.com/films/', '\.ttwanda\.com/tv/']
 
     def query_info(self, url):
         #url = 'http://www.ttwanda.com/films/us/1693.html?xf'
@@ -23,7 +23,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         if not py3:
             r = r.decode('utf8')
         t = match1(title, r)
-        if t:
+        if t and '/films/' in url:
             title = t
         src = SelStr('iframe.player', hutf)[0]['src']
         if not src.startswith("http://") and not src.startswith("https://"):
@@ -45,12 +45,13 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             self.wget_cookie = "; ".join(cs)
             k, s = get_kind_size(dst, self.wget_cookie)
             return title, k, [dst], s
-        if 'mgtv.com/' in dst or '189.cn/v5/downloadFile' in dst:
-            # http://www.ttwanda.com/films/us/907.html?style=cq
-            return title, None, [dst], None
-        echo('TTWanda has new source')
-        echo(dst)
-        sys.exit(1)
+        #if 'mgtv.com/' in dst or '189.cn/v5/downloadFile' in dst:
+        #    # http://www.ttwanda.com/films/us/907.html?style=cq
+        #    return title, None, [dst], None
+        #echo('TTWanda has new source')
+        #echo(dst)
+        #sys.exit(1)
+        return title, None, [dst], None
 
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
@@ -63,7 +64,19 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             urls.append(line)
         return urls
 
+    def get_playlist(self, url):
+        if not '/tv/' in url:
+            return []
+        url = url.split('?')[0]
+        hutf = self.get_hutf(url)
+        ns = SelStr('div.article-paging a', hutf)
+        return [(a.text, url + a['href']) for a in ns]
+
+    def test(self):
+        # /tv/ustv/945.html?vid=20723618&title=第01集%20新局长崛起
+        # http://www.ttwanda.com/tv/ustv/945.html
+
 
 if __name__ == '__main__':
-    #start(TTWanDa)
-    TTWanDa().query_info(1)
+    start(TTWanDa)
+    #TTWanDa().query_info(1)
