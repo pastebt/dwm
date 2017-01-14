@@ -271,6 +271,9 @@ class DWM(object):
     def clean_up(self):
         pass
 
+    def test(self, args):
+        echo("test Not Implement")
+
     @classmethod
     def can_handle_it(cls, url):
         for h in cls.handle_list:
@@ -428,7 +431,7 @@ def norm_title(title):
     global numap
     for i, c in enumerate(cnum, 1):
         numap[c] = i
-    echo(title)
+    debug(title)
     m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
     if m:
         g = m.groups()
@@ -436,11 +439,11 @@ def norm_title(title):
     se = ""
     m = re.search(sere, title)
     if m:
-        echo(m.group(1))
+        debug(m.group(1))
         se = "S%02d" % c2n(m.group(1))
     m = re.search(epre, title)
     if m:
-        echo(m.group(1))
+        debug(m.group(1))
         se = se + "E%02d" % c2n(m.group(1))
     elif se:    # already has S0X
         m = re.search(npre, title, re.U)
@@ -489,6 +492,8 @@ def start(kls):
                    help='disable auto proxy')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
+    p.add_argument('--testing', action='store_true',
+                   help='do testing')
     args = p.parse_args()
     DEBUG = args.debug
     debug(args)
@@ -513,7 +518,11 @@ def start(kls):
         raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
     k = kls()
     k.parsed_args = args
-    run(k, args)
+    if args.testing:
+        DEBUG = True
+        k.test(args)
+    else:
+        run(k, args)
 
 
 def run(k, args):

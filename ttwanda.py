@@ -26,12 +26,19 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         if t and '/films/' in url:
             title = t
         src = SelStr('iframe.player', hutf)[0]['src']
+
+        if '/player/v.php?url=' in src:
+            # http://www.ttwanda.com/tv/ustv/945.html
+            # ../../player/v.php?url=www.le.com/ptv/vplay/20723618.html
+            src = 'http://' + src.split('?url=', 1)[1]
+            from letv import LETV
+            return LETV().query_info(src)
+        
         if not src.startswith("http://") and not src.startswith("https://"):
-            src = 'http://www.ttwanda.com' + src
+            src = 'http://www.ttwanda.com/' + src
         echo(src)
         self.extra_headers['Referer'] = url     # this is important
         hutf = self.get_hutf(src)
-        #echo(hutf)
         dst = match1(hutf, 'var play_url \= "([^"]+)"')
         echo(dst)
         if not dst:
@@ -70,14 +77,20 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         url = url.split('?')[0]
         hutf = self.get_hutf(url)
         ns = SelStr('div.article-paging a', hutf)
-        return [(a.text, url + a['href']) for a in ns]
+        # href="?vid=20723618&amp;title=第01集 新局长崛起"
+        urls = []
+        for a in ns:
+            vid = match1(a['href'], 'vid=(\d+)')
+            urls.append((a.text, url + '?vid=' + vid))
+        return urls
 
-    def test(self):
+    def test(self, args):
         # /tv/ustv/945.html?vid=20723618&title=第01集%20新局长崛起
         url = 'http://www.ttwanda.com/tv/ustv/945.html'
+        url = 'http://www.ttwanda.com/tv/ustv/945.html?vid=20723618&title=%E7%AC%AC01%E9%9B%86%20%E6%96%B0%E5%B1%80%E9%95%BF%E5%B4%9B%E8%B5%B7'
+        html = self.get_hutf(url)
         
 
 
 if __name__ == '__main__':
     start(TTWanDa)
-    #TTWanDa().query_info(1)

@@ -103,7 +103,8 @@ class LETV(DWM):
         m3u8 = self.get_html(info2["location"])
         m3u8_list = decode_m3u8(bytearray(m3u8))
         us = re.findall(r'^[^#][^\r]*', m3u8_list, re.MULTILINE)
-        return title, ext, us, None
+        #return title, ext, us, None
+        return title, None, us, None
 
     def get_playlist(self, page_url):
         # http://www.letv.com/tv/10003313.html
