@@ -7,7 +7,7 @@ except ImportError:
     import urllib
  
 from openload import OpenLoad
-from mybs import MyHtmlParser
+from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start
 
 
@@ -34,6 +34,9 @@ class VMUS(DWM):     #http://vmus.co/
 
         title = match1(hutf, '<meta property="og:title" content="([^<>]+)"')
         echo("vmus query_info title=", title)
+        if not urls:
+            echo(SelStr("div.clearfix > p > strong", hutf)[0].text)
+            return None, None, urls, None
 
         ol = OpenLoad()
         ol.title = title

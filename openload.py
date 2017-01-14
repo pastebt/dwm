@@ -16,6 +16,7 @@ class OpenLoad(DWM):     # http://openload.co/
         self.extra_headers['Referer'] = 'https://vjs.zencdn.net/swf/5.1.0/video-js.swf'
 
     def query_info(self, url):
+        # https://openload.io/embed/igdtpdeGltM/
         # https://openload.co/embed/isCWWnlsZLE/
         # https://openload.io/embed/biw7ytfelzU/
         # <span id="streamurl">isCWWnlsZLE~1481138074~208.91.0.0~g617lYdo</span>
@@ -25,6 +26,10 @@ class OpenLoad(DWM):     # http://openload.co/
         hutf = html.decode('utf8')
         p.wait()
         debug(hutf)
+        n = SelStr('h6', hutf)
+        if n:
+            echo(n[0].text)
+            return self.title, None, [], None
         #vid = match1(url, r'haiuken.com/theatre/([^/]+)/')
         m = re.search('''<span id="streamurl">([^<>]+)</span>''', hutf)
         vid = m.groups()[0]
