@@ -24,8 +24,6 @@ class DRAMA8(DWM):
     def get_playlist(self, url):
         ns = SelStr('div.entry-content.rich-content tr td a',
                     self.get_hutf(url))
-        if self.align_num == 0:
-            self.align_num = len(str(len(ns)))
         return [(a.text, a['href']) for a in ns]
 
 
