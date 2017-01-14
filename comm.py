@@ -145,11 +145,11 @@ class DWM(object):
         return ("%%s%%0%dd%%s" % self.align_num) % (ns[0], int(ns[1]), ns[2])
 
     def get_total_size(self, urllist):
+        echo("total %d" % len(urllist))
         if len(urllist) > 9:
             k, s = get_total_size_mt(urllist)
         else:
             k, s = get_total_size_st(urllist)
-        #echo("Size:\t%.2f MiB (%d Bytes)" % (round(s / 1048576.0, 2), s))
         return k, s
 
     def use_dwm_merge(self, urls, title, ext, clean=True):
@@ -239,6 +239,7 @@ class DWM(object):
             title = nt
         else:
             echo('nt =', nt)
+        title = self.align_title_num(title)
         if self.info_only:
             if ext is None or size is None:
                 e, s = self.get_total_size(urls)
@@ -324,7 +325,6 @@ def get_total_size_st(urllist):
     size = 0
     cnt = 0
     k = "ext"
-    echo("total %d" % len(urllist))
     for url in urllist:
         k, s = get_kind_size(url)
         size += s
@@ -339,7 +339,6 @@ def get_total_size_mt(urllist, tn=10):
     qsrc, qdst = Queue(), Queue()
     size = 0
     cnt = 0
-    echo("total %d" % len(urllist))
 
     def worker():
         while True:

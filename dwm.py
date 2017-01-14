@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python -B
 
 import os
 import re
@@ -23,17 +23,13 @@ def find_kls(url):
         if not ret:
             continue
         name = fn[:-3]
-        #echo(ret)
         try:
             m = imp.load_source(name, fn)
-        #except ImportError as i:
-        #    print(name, i)
         except Exception as e:
             echo(name, e)
         else:
             for n in ret:
                 kls = getattr(m, n)
-                #echo(kls)
                 if kls.can_handle_it(url):
                     return kls
     return None
