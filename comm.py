@@ -216,7 +216,7 @@ class DWM(object):
                 cmds.append("--header=Cookie: " + self.wget_cookie)
 
             cmds += ["-O", dwnfn, url]
-            echo(cmds)
+            debug(cmds)
             p = subprocess.Popen(cmds)
             p.wait()
             #if os.stat(dwnfn).st_size == totalsize:
