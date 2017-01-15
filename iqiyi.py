@@ -28,7 +28,6 @@ class IQIYI(DWM):
         ext = i.streams[stream_id]['container']
         total_size = i.streams[stream_id]['size']
         title = self.align_title_num(i.title)
-        self.check_exists(title, ext)
         return title, ext, urls, total_size
 
     def get_playlist(self, page_url):

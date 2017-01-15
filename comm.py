@@ -51,6 +51,7 @@ except ImportError:
             return dat.decode('utf8')
         return dat
 
+from merge import merge, tss
 
 #USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
 #USER_AGENT += 'Gecko/20100101 Firefox/33.0'
@@ -67,9 +68,6 @@ def debug(*args):
 
 
 class DWM(object):
-    class ExistsError(Exception):
-        pass
-
     out_dir = './'
     dwn_skip = None
     info_only = False
@@ -130,12 +128,14 @@ class DWM(object):
     def get_hutf(self, *param, **dd):
         return self.get_html(*param, **dd).decode('utf8', 'ignore')
 
-    def check_exists(self, title, ext):
-        if self.info_only:
-            return
-        outfn = os.path.join(self.out_dir, title + "." + ext)
-        if os.path.exists(outfn):
-            raise self.ExistsError(outfn + " exists")
+    def get_outfn(self, title, ext, unum=0):
+        outfn = of = os.path.join(self.out_dir, title + "." + ext)
+        if unum > 1 and ext in tss:
+            of = os.path.join(self.out_dir, title + ".mp4")
+        if os.path.exists(of):
+            echo(of + " exists")
+            return None
+        return outfn
 
     def align_title_num(self, t):
         t2 = '-'.join(t.split('/'))
@@ -156,7 +156,6 @@ class DWM(object):
         if self.no_merge:
             echo("skip merge")
             return
-        from merge import merge
         merge(os.path.join(self.out_dir, title), ext, len(urls), clean)
 
     def download_urls(self, title, ext, urls, totalsize):
@@ -182,53 +181,44 @@ class DWM(object):
             k, s = get_kind_size(urls[0])
             ext = k
         title = "_".join(title.split('/'))
-        if len(urls) == 1:
-            self.wget_one_url(title, ext, urls[0], 1)
-            return
-        cnt = 0
-        for url in urls:
-            if cnt >= self.dwn_skip:
-                self.wget_one_url("%s[%02d]" % (title, cnt),
-                                  ext, url, len(urls))
-            cnt = cnt + 1
+        unum = len(urls)
+        if not self.get_outfn(title, ext, unum):
+            return      # file exists
+        if unum == 1:
+            return self.wget_one_url(outfn, urls[0], 1)
+        for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
+            outfn = self.get_outfn("%s[%02d]" % (title, cnt), ext)
+            if outfn:
+                self.wget_one_url(outfn, url, unum)
         self.use_dwm_merge(urls, title, ext, False)
 
-    def wget_one_url(self, title, ext, url, unum):
-        outfn = os.path.join(self.out_dir, title + "." + ext)
-        if os.path.exists(outfn):
-            echo("skip", outfn)
-            return
-        else:
-            echo("download", outfn, "/", unum)
-            dwnfn = outfn + ".dwm"
-            cmds = ["wget", 
-                    "-U", USER_AGENT,
-                    #"--wait", "30",
-                    #"--tries=50",
-                    "--read-timeout=30",
-                    "-c",
-                    "--no-use-server-timestamps",
-                    #"-S",
-                    ]
+    def wget_one_url(self, outfn, url, unum):
+        echo("download", outfn, "/", unum)
+        dwnfn = outfn + ".dwm"
+        cmds = ["wget", 
+                "-U", USER_AGENT,
+                #"--wait", "30",
+                #"--tries=50",
+                "--read-timeout=30",
+                "-c",
+                "--no-use-server-timestamps",
+                #"-S",
+                ]
 
-            # --header='Cookie: FTN5K=af45f935;'
-            if self.wget_cookie:
-                cmds.append("--header=Cookie: " + self.wget_cookie)
+        # --header='Cookie: FTN5K=af45f935;'
+        if self.wget_cookie:
+            cmds.append("--header=Cookie: " + self.wget_cookie)
 
-            cmds += ["-O", dwnfn, url]
-            debug(cmds)
-            p = subprocess.Popen(cmds)
-            p.wait()
-            #if os.stat(dwnfn).st_size == totalsize:
-            if p.returncode == 0:
-                os.rename(dwnfn, outfn)
+        cmds += ["-O", dwnfn, url]
+        debug(cmds)
+        p = subprocess.Popen(cmds)
+        p.wait()
+        #if os.stat(dwnfn).st_size == totalsize:
+        if p.returncode == 0:
+            os.rename(dwnfn, outfn)
 
     def get_one(self, url, t="UnknownTitle", n=False):
-        try:
-            title, ext, urls, size = self.query_info(url)
-        except self.ExistsError as e:
-            echo(e)
-            return
+        title, ext, urls, size = self.query_info(url)
         if not urls:
             echo("Empty urls")
             return

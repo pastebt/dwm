@@ -37,8 +37,10 @@ def merge1(name, ext, cnt):
     p.wait()
 
 
+tss = ('x-mpeg-ts', 'mp2t')
+
+
 def merge(name, ext, cnt, clean=False, ists=False):
-    tss = ('x-mpeg-ts', 'mp2t')
     # ext = 'x-mpeg-ts'
     # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
     oex = ext
