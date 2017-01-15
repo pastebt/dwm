@@ -182,8 +182,8 @@ class DWM(object):
             ext = k
         title = "_".join(title.split('/'))
         unum = len(urls)
-        if not self.get_outfn(title, ext, unum):
-            return      # file exists
+        outfn = self.get_outfn(title, ext, unum)
+        if not outfn: return    # file exists
         if unum == 1:
             return self.wget_one_url(outfn, urls[0], 1)
         for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
