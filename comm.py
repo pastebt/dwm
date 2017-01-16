@@ -91,6 +91,9 @@ class DWM(object):
             #self.proxyh = ProxyHandler({'http': "proxy.uku.im:8888"})
             self.proxyh = ProxyHandler({'http': "https://secure.uku.im:8443"})
             self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
+        else:
+            self.proxyh = ProxyHandler(proxy)
+            self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         self.extra_headers = {"User-Agent": USER_AGENT}
 
     def get_html(self, url, raw=False, postdata=None):
