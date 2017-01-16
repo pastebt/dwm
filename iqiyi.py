@@ -2,6 +2,7 @@
 
 import sys
 import time
+import json
 import random
 import hashlib
 from subprocess import Popen, PIPE
@@ -51,8 +52,8 @@ class IQIYI(DWM):
         url = 'http://www.iqiyi.com/v_19rrkxmiss.html'
         class I2(DWM):
             def __init__(self):
-                #DWM.__init__(self, proxy={'http': 'http://186.95.216.253:8080'})
-                DWM.__init__(self, proxy='auto')
+                DWM.__init__(self, proxy={'http': 'https://secure.uku.im:993'})
+                #DWM.__init__(self, proxy='auto')
                 ip = "220.181.111.%d" % random.randint(1, 254)
                 self.extra_headers['X-Forwarded-For'] = ip
                 self.extra_headers['Client-IP'] = ip
@@ -62,8 +63,8 @@ class IQIYI(DWM):
                 src = '76f90cbd92f94a2e925d83e8ccd22cb7'
                 key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
                 sc = hashlib.new('md5', bytes(str(t) + key  + vid, 'utf-8')).hexdigest()
-                return 'http://cache.m.iqiyi.com/jp/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
-                #return 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
+                #return 'http://cache.m.iqiyi.com/jp/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
+                return 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
                         tvid, vid, t, sc, src)
                 #data = self.get_hutf(vmsreq)
                 #return json.loads(data)
