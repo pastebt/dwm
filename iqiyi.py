@@ -1,6 +1,9 @@
 # -*- coding: utf8 -*-
 
 import sys
+import time
+import random
+import hashlib
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
@@ -43,6 +46,34 @@ class IQIYI(DWM):
         self.align_num = len(str(len(urls)))
         return urls
 
+    def getVMS(self, tvid, vid):
+        t = int(time.time() * 1000)
+        src = '76f90cbd92f94a2e925d83e8ccd22cb7'
+        key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
+        sc = hashlib.new('md5', bytes(str(t) + key  + vid, 'utf-8')).hexdigest()
+        return 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
+                tvid, vid, t, sc, src)
+        #data = self.get_hutf(vmsreq)
+        #return json.loads(data)
+
+    def test(self, args):
+        url = 'http://www.iqiyi.com/v_19rrkxmiss.html'
+        class I2(IQIYI):
+            def __init__(self):
+                DWM.__init__(self) #, proxy="auto")
+                ip = "220.181.111.%d" % random.randint(1, 254)
+                self.extra_headers['X-Forwarded-For'] = ip
+                self.extra_headers['Client-IP'] = ip
+
+        i2 = I2()
+        i2.get_hutf(url)
+        tvid = "453406400"
+        videoid = "778e9e5286f2ca6a94d8b5da0062f978"
+        du = self.getVMS(tvid, videoid)
+        echo(du)
+        hutf = i2.get_hutf(du)
+        echo(hutf)
+        
 
 if __name__ == '__main__':
     start(IQIYI)
