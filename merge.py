@@ -13,7 +13,7 @@ def run1(name, cnt):
     cmd = ["avconv"]
     for i in range(1, cnt + 1):
         cmd.append("-i")
-        cmd.append("%s[%02d].mp4"% (name, i))
+        cmd.append("%s[%02d].mp4" % (name, i))
     cmd.append("-y")
     cmd.append("-c")
     cmd.append("copy")
@@ -26,7 +26,7 @@ def merge1(name, ext, cnt):
     cmd = ['cat']
     for i in range(cnt):
         #cmd.append("tmp/欢乐颂42[%02d].mp4.ts"% i)
-        cmd.append("%s[%02d].%s.ts"% (name, i, ext))
+        cmd.append("%s[%02d].%s.ts" % (name, i, ext))
     cmd.append(">")
     tmpfn = "%s.%s.ts" % (name, ext)
     cmd.append(tmpfn)
@@ -54,7 +54,7 @@ def merge(name, ext, cnt, clean=False, ists=False):
         return
     fs = []
     for i in range(cnt):
-        fs.append("%s[%02d].%s"% (name, i, ext))
+        fs.append("%s[%02d].%s" % (name, i, ext))
 
     cmd = ["avconv",
            "-v", "error",
@@ -73,7 +73,7 @@ def merge(name, ext, cnt, clean=False, ists=False):
             else:
                 fobj = open(f + ".ts", "r+b")
         except IOError:
-            smd = ["avconv", 
+            smd = ["avconv",
                    #'-loglevel', #'quiet', "error",
                    "-v", "error",
                    "-i", f,

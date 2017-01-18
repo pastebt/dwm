@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 try:
-    from urllib.parse import urlparse, parse_qs 
+    from urllib.parse import urlparse, parse_qs
 except ImportError:
     from urlparse import parse_qs, urlparse
 
@@ -9,7 +9,7 @@ from mybs import MyHtmlParser, select
 from comm import DWM, match1, echo, start
 
 
-class ZSJ(DWM):     #http://www.zhusj.com/ 主视角
+class ZSJ(DWM):     # http://www.zhusj.com/ 主视角
     handle_list = ['.zhusj.com/']
 
     def query_info(self, url):
