@@ -81,7 +81,10 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         urls = []
         for a in ns:
             vid = match1(a['href'], 'vid=(\d+)')
-            urls.append((a.text, url + '?vid=' + vid))
+            if vid:
+                urls.append((a.text, url + '?vid=' + vid))
+            else:
+                urls.append((a.text, url + a['href']))
         return urls
 
     def test(self, args):
