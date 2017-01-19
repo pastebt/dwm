@@ -6,7 +6,7 @@ from mybs import SelStr
 from comm import DWM, match1, echo, start
 
 
-class DYB(DWM):     #dianyingbar
+class DYB(DWM):     # dianyingbar
     handle_list = ['.dianyingbar.com/']
 
     def __init__(self):

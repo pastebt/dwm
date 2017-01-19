@@ -79,7 +79,8 @@ def select_one(act, sel, elms):
 
     if act == '':
         #return (e for e in elms if e.tag == sel)
-        return (e for e in elms if e.tag in sel.split(',')) # this will keep order
+        # this will keep order
+        return (e for e in elms if e.tag in sel.split(','))
     if act == '.':
         #return (e for e in elms if e.get('class') == sel)
         return (e for e in elms if sel in e.get('class', '').split())
@@ -246,7 +247,7 @@ class TagNode(Node):
 
     def show(self, textonly=False):
         if not textonly:
-            if self.raw_text and (not self.children 
+            if self.raw_text and (not self.children
                                   or self.raw_text[-2] != '/'):
                 yield self.raw_text
                 if self.raw_text[-2] == '/':
@@ -374,26 +375,12 @@ def SelStr(sel, data):
     return mp.select(sel)
 
 
-#mp = MyHtmlParser()
-#mp.feed("""<html><head></head><body>
-#           <a a='1'  b='2'>12&gt;</ a></body></html>""")
-#
-#print str(mp.root_node)
-##print "".join(mp.root_node.show())
-##print [x for x in mp.root_node.children()]
-##print "".join(mp.root_node.first_child.show())
-#
-##print str(next(select("a", mp.root_node.descendants())))
-#ns = select("a", mp.root_node.descendants())
-#print map(str, ns)
-
-
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         echo('Usage: ', sys.argv[0], 'selector html_file')
         sys.exit(1)
 
-    html = open(sys.argv[2]).read() #.decode('utf8', 'ignore')
+    html = open(sys.argv[2]).read()  # .decode('utf8', 'ignore')
     if not py3:
         html = html.decode('utf8', 'ignore')
     mp = MyHtmlParser(tidy=False)
@@ -401,6 +388,4 @@ if __name__ == '__main__':
     nodes = mp.select(sys.argv[1])
     echo(nodes)
     for n in nodes:
-        #echo(n.tag, n.text.strip())
         echo(n.__str__())
-

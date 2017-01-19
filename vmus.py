@@ -5,7 +5,7 @@ try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
- 
+
 from openload import OpenLoad
 from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start
@@ -27,7 +27,7 @@ class VMUS(DWM):     #http://vmus.co/
         html = self.get_html(self.login_url, postdata=post_data)
         hutf = html.decode('utf8')
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
-        #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
+        #<iframe src="https://openload.co/embed/isCWWnlsZLE/"
         urls = match1(hutf, '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
           '\<meta name="og:url" content="(https://openload.(c|i)o/embed/\S+)"\>')
         echo(urls)

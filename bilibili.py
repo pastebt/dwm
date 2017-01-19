@@ -76,7 +76,7 @@ class BILIBILI(DWM):
                 else:
                     title = "%s[%02d]" % (self.title, n)
             else:
-                title = ("E%02d_" %  (n + 1)) + vtitle
+                title = ("E%02d_" % (n + 1)) + vtitle
         #else:
         #    echo("m =", m)
         return title, ext, urls, totalsize

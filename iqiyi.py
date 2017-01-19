@@ -8,7 +8,7 @@ import hashlib
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from comm import DWM, match1, echo, start
+from comm import DWM, match1, echo, start, debug
 
 
 class IQIYI(DWM):
@@ -47,9 +47,10 @@ class IQIYI(DWM):
         self.align_num = len(str(len(urls)))
         return urls
 
-    def test(self, args):
-        # https://www.find-ip.net/proxy-checker 
+    def test1(self, args):
+        # https://www.find-ip.net/proxy-checker
         url = 'http://www.iqiyi.com/v_19rrkxmiss.html'
+
         class I2(DWM):
             def __init__(self):
                 DWM.__init__(self, proxy={'http': 'https://secure.uku.im:993'})
@@ -62,7 +63,7 @@ class IQIYI(DWM):
                 t = int(time.time() * 1000)
                 src = '76f90cbd92f94a2e925d83e8ccd22cb7'
                 key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
-                sc = hashlib.new('md5', bytes(str(t) + key  + vid, 'utf-8')).hexdigest()
+                sc = hashlib.new('md5', bytes(str(t) + key + vid, 'utf-8')).hexdigest()
                 #return 'http://cache.m.iqiyi.com/jp/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
                 return 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
                         tvid, vid, t, sc, src)
@@ -78,7 +79,18 @@ class IQIYI(DWM):
         hutf = i2.get_hutf(du)
         echo(hutf)
         echo(json.loads(hutf))
-        
+
+    def test(self, args):
+        # 'http://cache.video.qiyi.com/vms?key=fvip&src=1702633101b340d8917a69cf8a4b8c7c&tvId=499243300&vid=6ec75484a71ccca68486ee920a1c773b&vinfo=1&tm=492&qyid=64244abf73c06236a718587ee55ddb39&puid=&authKey=d4e33437de36048589d6a49e46f8ae9f&um=0&pf=b6c13e26323c537d&thdk=&thdt=&rs=1&k_tag=1&qdx=n&qdv=2&vf=c5a6346d206f397775f9fd35fc844736'
+        # 'http://cache.video.qiyi.com/vms?key=fvip&tvId=499243300&vid=6ec75484a71ccca68486ee920a1c773b&tm=492&qyid=64244abf73c06236a718587ee55ddb39'
+        # 'http://cache.m.iqiyi.com/dc/dt/a721127bx2f0584c5x777a6171/20161125/1c/86/d1b62f6e4a1186a01ec77f84aeaba6c0.m3u8?np_tag=nginx_part_tag&qd_sc=023d7e9717afb3431fa1eef3394e1ee5&t_sign=-0-76f90cbd92f94a2e925d83e8ccd22cb7-499243300_04022000001000000000_17'
+        url = 'http://www.iqiyi.com/v_19rrljurm0.html#vfrm=19-9-0-1'
+        p = Popen(["./phantomjs", "dwm.js", "200", url], stdout=PIPE)
+        html = p.stdout.read()
+        p.wait()
+        hutf = html.decode("utf8")
+        debug(hutf)
+
 
 if __name__ == '__main__':
     start(IQIYI)

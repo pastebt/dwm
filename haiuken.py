@@ -14,7 +14,7 @@ from mybs import MyHtmlParser
 from comm import DWM, match1, echo, start, get_kind_size, UTITLE
 
 
-class HYG(DWM):     #http://haiuken.com/ 海宇根
+class HYG(DWM):     # http://haiuken.com/ 海宇根
     handle_list = ['/haiuken.com/']
 
     def query_info(self, url):

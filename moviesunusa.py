@@ -8,13 +8,13 @@ try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
- 
+
 from openload import OpenLoad
 from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start, debug
 
 
-class MSU1(DWM):     #http://moviesunusa.net/
+class MSU1(DWM):     # http://moviesunusa.net/
     # using captcha, so this is usless, we use login_cookie and login_agent
     #handle_list = ['/moviesunusa.net/']
     cookie_fn = "msu_cookie.txt"
@@ -57,8 +57,9 @@ class MSU1(DWM):     #http://moviesunusa.net/
         #echo(hutf)
         #
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
-        #<iframe src="https://openload.co/embed/isCWWnlsZLE/" 
-        urls = match1(hutf, '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
+        #<iframe src="https://openload.co/embed/isCWWnlsZLE/"
+        urls = match1(hutf,
+          '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
           '\<meta name="og:url" content="(https://openload.(c|i)o/embed/\S+)"\>')
         echo(urls)
 
@@ -88,7 +89,8 @@ class MSU1(DWM):     #http://moviesunusa.net/
                 urls.append((n['title'], n['href']))
         return [x for x in reversed(urls)]
 
-class MSU(DWM):     #http://moviesunusa.net/
+
+class MSU(DWM):     # http://moviesunusa.net/
     # using captcha, we use login_cookie and login_agent
     handle_list = ['/moviesunusa\.net/']
 
@@ -159,7 +161,7 @@ class MSU(DWM):     #http://moviesunusa.net/
         #self.extra_headers['Referer'] = 'http://moviesunusa.net/%E7%84%A1%E8%AD%89%E5%BE%8B%E5%B8%AB-%E7%AC%AC4%E5%AD%A3-suits-season-4/'
         self.extra_headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
         hutf = self.get_hutf(url, raw=True)
-        
+
         comm.debug(hutf)
 
 

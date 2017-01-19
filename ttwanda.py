@@ -33,7 +33,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             src = 'http://' + src.split('?url=', 1)[1]
             from letv import LETV
             return LETV().query_info(src)
-        
+
         if not src.startswith("http://") and not src.startswith("https://"):
             src = 'http://www.ttwanda.com/' + src
         echo(src)
@@ -92,7 +92,6 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         url = 'http://www.ttwanda.com/tv/ustv/945.html'
         url = 'http://www.ttwanda.com/tv/ustv/945.html?vid=20723618&title=%E7%AC%AC01%E9%9B%86%20%E6%96%B0%E5%B1%80%E9%95%BF%E5%B4%9B%E8%B5%B7'
         html = self.get_hutf(url)
-        
 
 
 if __name__ == '__main__':

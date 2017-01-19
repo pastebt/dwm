@@ -2,7 +2,7 @@
 
 import re
 import json
- 
+
 from comm import DWM, echo, start
 
 
