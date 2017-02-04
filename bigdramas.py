@@ -57,6 +57,10 @@ class BigDr(DWM):     # http://bigdramas.net/
             eurl = "http://www.dailymotion.com/embed/video/" + dd['ids'][0]
             from dailymotion import DM
             return DM().query_info(eurl)
+        elif dd['source'] == "Youtube":
+            echo("dd =", dd)
+            echo("url: https://youtu.be/" + dd["ids"][0])
+            sys.exit(1)
         else:
             echo("found new source")
             echo(dd)
