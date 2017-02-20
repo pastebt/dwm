@@ -19,10 +19,12 @@ class DNVOD(DWM):     # http://dnvod.eu/
         debug('title =', title)
         for script in SelStr('script', hutf):
             txt = script.text
+            debug('txt =', txt)
             if 'PlayerConfig' not in txt:
                 continue
-            vid = match1(txt, "id: '([^']+)',")
-            key = match1(txt, "key: '([^']+)',")
+            debug('got PlayerConfig')
+            vid = match1(txt, "id:\s*'([^']+)',")
+            key = match1(txt, "key:\s*'([^']+)',")
             break
         debug('vid =', vid, ', key =', key)
         u = "https://www.dnvod.eu/Movie/GetResource.ashx?id=%s&type=htm" % vid

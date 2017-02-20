@@ -8,3 +8,5 @@ python3 letv.py --playlist_skip 11 --playlist_top 23 'http://www.le.com/tv/10021
 avconv -i gf1.avi -acodec mp3 -vcodec copy out.mp4
 
 for I in 10 11 12 13 14 15 16 17 18 19; do ./dwm.py -P -o tmp http://www.ttwanda.com/tv/cntv/1622.html?yk-$I; done
+
+ ./dwm.py -p -o tmp --playlist_top 2 http://www.ttwanda.com/tv/cntv/2176.html?le-10
