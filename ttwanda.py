@@ -44,7 +44,9 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         if not dst:
             echo("Can not find var play_url")
             sys.exit(1)
-        if ('youku.com/' in dst and '/m3u8' in dst) or 'lecloud.com/' in dst:
+        if ('youku.com/' in dst and '/m3u8' in dst) \
+            or 'lecloud.com/' in dst 
+            or '/letv-uts/' in dst:
             return title, None, self.try_m3u8(dst), None
         if 'ttwanda.com/ftn_handler/' in dst:
             cs = ["%s=%s" % (c.name, c.value) for c in self.cookie.cookiejar if c.name != 'PHPSESSID']
