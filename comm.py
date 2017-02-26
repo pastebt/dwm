@@ -161,7 +161,7 @@ class DWM(object):
             return
         merge(os.path.join(self.out_dir, title), ext, len(urls), clean)
 
-    def download_urls(self, title, ext, urls, totalsize):
+    def download_urls_you_get(self, title, ext, urls, totalsize):
         sys.path.insert(1, '../you-get/src')
         from you_get.common import download_urls
         try:
@@ -471,8 +471,8 @@ def start(kls):
     p.add_argument('--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
                    default=UTITLE)
-    p.add_argument('--wget_skip', type=int, metavar='#', action='store',
-                   help='wget skip # urls in list', default=0)
+    #p.add_argument('--wget_skip', type=int, metavar='#', action='store',
+    #               help='wget skip # urls in list', default=0)
     p.add_argument('--align_num', type=int, metavar='#', action='store',
                    help='align number', default=0)
     p.add_argument('--cookie', metavar='COOKIE_STR', action='store',
@@ -504,11 +504,12 @@ def start(kls):
     kls.align_num = args.align_num
     kls.login_cookie = args.cookie
     kls.login_agent = args.user_agent
-    if args.wget_skip >= 0:
-        kls.download_urls = DWM.wget_urls
-        kls.dwn_skip = args.wget_skip
-    elif not py3 and not kls.info_only:
-        raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
+    #if args.wget_skip >= 0:
+    #    kls.download_urls = DWM.wget_urls
+    #    kls.dwn_skip = args.wget_skip
+    #elif not py3 and not kls.info_only:
+    #    raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
+    kls.download_urls = DWM.wget_urls
     k = kls()
     k.parsed_args = args
     if args.testing:
