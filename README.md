@@ -1,5 +1,5 @@
 # dwm
-Download Web Movies, init code from you-get, downlaod by wget, some using phantomjs, http://phantomjs.org/download.html
+Download Web Movies, init code from you-get https://github.com/soimort/you-get, downlaod by wget, some using phantomjs to fetch information, http://phantomjs.org/download.html
 
 # Support:
 
