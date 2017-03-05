@@ -131,6 +131,19 @@ class DWM(object):
     def get_hutf(self, *param, **dd):
         return self.get_html(*param, **dd).decode('utf8', 'ignore')
 
+    def phantom_hutf(self, url, timeout=300, refer=None, postdata=None):
+        echo('phantomjs wait', timeout, '...')
+        cmd = ["./phantomjs", "dwm.js", str(timeout), url]
+        if refer:
+            cmd.append(refer)
+        if postdata:
+            cmd.append(postdata)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        html = p.stdout.read()
+        hutf = html.decode('utf8')
+        p.wait()
+        return hutf
+
     def get_outfn(self, title, ext, unum=0):
         outfn = of = os.path.join(self.out_dir, title + "." + ext)
         if unum > 1 and ext in tss:
