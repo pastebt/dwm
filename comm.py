@@ -69,7 +69,7 @@ def debug(*args):
 
 class DWM(object):
     out_dir = './'
-    dwn_skip = None
+    #dwn_skip = 0
     info_only = False
     align_num = 0
     is_playlist = False
@@ -189,7 +189,8 @@ class DWM(object):
         if not outfn: return    # file exists
         if unum == 1:
             return self.wget_one_url(outfn, urls[0], 1)
-        for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
+        #for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
+        for cnt, url in enumerate(urls):
             outfn = self.get_outfn("%s[%02d]" % (title, cnt), ext)
             if outfn:
                 self.wget_one_url(outfn, url, unum)
@@ -510,6 +511,7 @@ def start(kls):
     #elif not py3 and not kls.info_only:
     #    raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
     kls.download_urls = DWM.wget_urls
+    #kls.dwn_skip = args.wget_skip
     k = kls()
     k.parsed_args = args
     if args.testing:

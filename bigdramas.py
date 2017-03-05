@@ -38,8 +38,8 @@ class BigDr(DWM):     # http://bigdramas.net/
             #p.wait()
             sss = SelStr('div.video-wrapper > video > source', hutf)
             if not sss:
-                echo("phantomjs wait 5 ...")
-                p = Popen(["./phantomjs", "dwm.js", "-5", ref, url], stdout=PIPE)
+                echo("phantomjs wait 20 ...")
+                p = Popen(["./phantomjs", "dwm.js", "-20", ref, url], stdout=PIPE)
                 html = p.stdout.read()
                 hutf = html.decode('utf8')
                 p.wait()
