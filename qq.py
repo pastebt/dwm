@@ -168,10 +168,12 @@ def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334', platform=1090
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:41.0) Gecko/20100101 Firefox/41.0'
 SWF_REFERER = 'http://imgcache.qq.com/tencentvideo_v1/player/TencentPlayer.swf?max_age=86400&v=20151010'
-PLATFORM = 10902
+#PLATFORM = 10902
+PLATFORM = 11
 PLAYER_GUID = uuid.uuid4().hex
 PLAYER_PID = uuid.uuid4().hex
-PLAYER_VERSION = '3.2.19.356'
+#PLAYER_VERSION = '3.2.19.356'
+PLAYER_VERSION = '3.2.38.401'
 KLIB_VERSION = '2.0'
 
 
