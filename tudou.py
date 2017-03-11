@@ -24,16 +24,12 @@ class TUDOU(DWM):
 
     def test(self, args):
         url = "http://www.tudou.com/albumplay/zgdaPAjRz1s/8cUPFUj8sl4.html"
-        # vcode = XNzYxNzM0MDk
         #youku = "http://youku.com/v_show/id_XNzYxNzM0MDk2"
-        #hutf = self.phantom_hutf(url)
-        #echo(hutf)
         #,vcode: 'XNzYxNzM0MDk2'
         hutf = self.get_hutf(url)
         #vcode = match1(hutf, "vcode:\s*'([^']+)'")
         vcode = match1(hutf, U("vcode:\s*'([^']+)',\s*lan\:\s*'粤语'"))
         #vcode = match1(hutf, "id:\s*3\s*,\s*vcode:\s*'([^']+)',\s*lan:")
-        #vcode = match1(hutf, " 3, vcode: '([^']+)'")
         echo("vcode", vcode)
         yu = "http://youku.com/v_show/id_" + vcode
         echo(YOUKU().query_info(yu))
