@@ -144,6 +144,17 @@ class DWM(object):
         p.wait()
         return hutf
 
+    def try_m3u8(self, src):
+        #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
+        # http://www.ttwanda.com/films/us/1881.html?le  mp2t
+        urls = []
+        for line in self.get_html(src).split('\n'):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            urls.append(line)
+        return urls
+
     def get_outfn(self, title, ext, unum=0):
         outfn = of = os.path.join(self.out_dir, title + "." + ext)
         if unum > 1 and ext in tss:

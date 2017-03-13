@@ -27,7 +27,7 @@ def h8decode(a, b):
 
 class HAVE8(DWM):     # http://have8.com/
     handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/'
-                   '(dailymotion|youku|openload|qq)\.html']
+                   '(dailymotion|youku|openload|qq|14tv)\.html']
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -87,9 +87,18 @@ class HAVE8(DWM):     # http://have8.com/
             u = 'http://v.qq.com/iframe/player.html?vid=%s&tiny=0&auto=0' % vid
             #u = 'http://v.qq.com/iframe/player.html?vid=' + vid
             return q.query_info(u)
+        elif source == '14tv':
+            urls = self.query_14tv(vid)
+            return title, None, urls, None
 
         echo("Found new source", source)
         sys.exit(1)
+
+    def query_14tv(self, vid):
+        bu = "http://v-redirect.14player.com/14tv/mp4:%s.mp4/" % vid
+        us = self.try_m3u8(bu + "chunklist.m3u8")
+        return [bu + u for u in us]
+
 
     def query_info_movie(self, url):
         #http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
@@ -124,11 +133,23 @@ class HAVE8(DWM):     # http://have8.com/
         #url = 'http://have8tv.com/v/drama/2/25076/youku.html?0-3-0'
         #url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
         #url = 'http://have8tv.com/v/drama/2/25583/openload.html?0-1-0'
-        url = 'http://have8tv.com/v/drama/1/19161/qq.html?0-1-0'
+        #url = 'http://have8tv.com/v/drama/1/19161/qq.html?0-1-0'
+        url = 'http://have8tv.com/v/drama/2/20636/14tv.html?0-1-0'
+        #http://v-redirect.14player.com/14tv/mp4:lxj-agxqd6j-01.mp4/chunklist.m3u8
         hutf = self.get_hutf(url)
         vids = self.get_vid(hutf)
         echo(vids)
         vid = vids[0]
+        #vid = self.get_vid(hutf, idx)
+        #debug('vid =', vid)
+        source = self.get_vsrc(hutf)
+        echo("source", source)
+        #url = "http://v-redirect.14player.com/14tv/mp4:%s.mp4/chunklist.m3u8" % vid[1]
+        #echo(url)
+        #hutf = self.get_hutf(url)
+        #print hutf
+        #us = self.try_m3u8(url)
+        #echo(us)
 
 
 if __name__ == '__main__':
