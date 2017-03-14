@@ -99,7 +99,6 @@ class HAVE8(DWM):     # http://have8.com/
         us = self.try_m3u8(bu + "chunklist.m3u8")
         return [bu + u for u in us]
 
-
     def query_info_movie(self, url):
         #http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0
         hutf = self.get_hutf(url)

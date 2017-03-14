@@ -61,17 +61,6 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         #echo(dst)
         #sys.exit(1)
         return title, None, [dst], None
-    
-    #def try_m3u8(self, src):
-    #    #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
-    #    # http://www.ttwanda.com/films/us/1881.html?le  mp2t
-    #    urls = []
-    #    for line in self.get_html(src).split('\n'):
-    #        line = line.strip()
-    #        if not line or line.startswith("#"):
-    #            continue
-    #        urls.append(line)
-    #    return urls
 
     def get_playlist(self, url):
         if not '/tv/' in url:
