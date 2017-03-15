@@ -43,6 +43,9 @@ class ACFUN(DWM):
         {"encode":"1_1489346126_cd3a0e8575edd448bbd6e497a65908bc","sourceId":"58be74680cf2a0edfd235a75","contentId":3526338,"allowDanmaku":0,"title":"时空线索","userId":10171686,"danmakuId":4938063,"sourceType":"zhuzhan","createTime":"2017-03-07 17:40:59.0","videoList":[{"bitRate":99,"playUrl":"58be74680cf2a0edfd235a75"}],"success":true,"startTime":0,"id":4938063,"time":7565,"config":0,"player":"youku","status":2}
         '''
         echo(hutf)
+        """
+curl 'http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=58be74680cf2a0edfd235a75&ct=85&ev=2&sign=1_1489616951_c07d20643dad14757cfa9aa122a6b33d&time=1489616965963' -H 'Pragma: no-cache' -H 'Accept-Encoding: gzip, deflate, sdch' -H 'Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36' -H 'Accept: */*' -H 'Referer: http://www.acfun.cn/v/ac3526338' -H 'X-Requested-With: ShockwaveFlash/22.0.0.192' -H 'Connection: keep-alive' -H 'Cache-Control: no-cache' --compressed
+        """
         #vcode = match1(hutf, "vcode:\s*'([^']+)'")
         #echo("vcode", vcode)
         #yu = "http://youku.com/v_show/id_" + vcode
