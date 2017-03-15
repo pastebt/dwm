@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 
+import json
+
 from mybs import SelStr
 from comm import DWM, echo, start, match1, U
 
@@ -25,8 +27,18 @@ class ACFUN(DWM):
     def test(self, args):
         url = 'http://www.acfun.cn/v/ac3526338'
         hutf = self.get_hutf(url)
-        #hutf = self.phantom_hutf(url)
-        info = 'http://www.acfun.cn/video/getVideo.aspx?id=4938063'
+        for s in SelStr("script", hutf):
+            t = s.text.strip()
+            if not t.startswith("var pageInfo = "):
+                continue
+            j = json.loads(t[15:])
+            vid = j['videoId']
+            title = j['title']
+            break
+        echo("vid=", vid, "title=", title)
+        #info = 'http://www.acfun.cn/video/getVideo.aspx?id=4938063'
+        info = 'http://www.acfun.cn/video/getVideo.aspx?id=%s' % vid
+        hutf = self.get_hutf(info)
         '''
         {"encode":"1_1489346126_cd3a0e8575edd448bbd6e497a65908bc","sourceId":"58be74680cf2a0edfd235a75","contentId":3526338,"allowDanmaku":0,"title":"时空线索","userId":10171686,"danmakuId":4938063,"sourceType":"zhuzhan","createTime":"2017-03-07 17:40:59.0","videoList":[{"bitRate":99,"playUrl":"58be74680cf2a0edfd235a75"}],"success":true,"startTime":0,"id":4938063,"time":7565,"config":0,"player":"youku","status":2}
         '''
