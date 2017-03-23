@@ -4,7 +4,7 @@ import json
 import base64
 
 from mybs import SelStr
-from comm import DWM, echo, start, match1, U
+from comm import DWM, echo, start, match1, U, debug
 
 from youku import YOUKU
 
@@ -41,13 +41,52 @@ class ACFUN(DWM):
     handle_list = ['\.acfun\.cn/v/']
 
     def query_info(self, url):
-        # http://www.tudou.com/albumplay/zgdaPAjRz1s/8cUPFUj8sl4.html
+        # url = 'http://www.acfun.cn/v/ac3526338'
         hutf = self.get_hutf(url)
-        vcode = match1(hutf, U("vcode:\s*'([^']+)',\s*lan\:\s*'粤语'"))
-        echo("vcode", vcode)
-        yu = "http://youku.com/v_show/id_" + vcode
-        #return title, None, [url], None
-        return YOUKU().query_info(yu)
+        for s in SelStr("script", hutf):
+            t = s.text.strip()
+            if not t.startswith("var pageInfo = "):
+                continue
+            j = json.loads(t[15:])
+            vid = j['videoId']
+            title = j['title']
+            break
+        echo("vid=", vid, "title=", title)
+
+        info_url = 'http://www.acfun.cn/video/getVideo.aspx?id=%s' % vid
+        info = json.loads(self.get_hutf(info_url))
+        web = "http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=%s&ct=85&ev=2&sign=%s&time=1489616965963" % (
+               info['sourceId'], info['encode'])
+        d = json.loads(self.get_hutf(web))
+        #key = "328f45d8"
+        key = "2da3ca9e"
+        ext = "mp4"
+        data = json.loads(rc4(key, base64.b64decode(d['data'])))
+        stream = self.sel_stream(data, 'mp4hd3')
+        segs = stream.get('segs', [])
+        m3u8 = stream.get('m3u8', '')
+        styp = stream["stream_type"]
+        if segs:
+            urls = [s['url'] for s in segs]
+        elif m3u8:
+            debug(m3u8)
+            urls = self.try_m3u8(m3u8)
+            ext="ts"
+        # title, ext, urls, size
+        return title, ext, urls, stream['total_size']
+
+    def sel_stream(self, data, stype="Auto"):
+        s = None
+        m = 1
+        for d in data['stream']:
+            if d['stream_type'] == stype:
+                s = d
+                break
+            if d['total_size'] > m:
+                m = d['total_size']
+                s = d
+        debug("stream_type =", s['stream_type'], ", total_size =", s['total_size'])
+        return s
 
     def get_playlist(self, url):
         ns = SelStr('a.item.item_positive', self.phantom_hutf(url))
@@ -86,13 +125,10 @@ curl 'http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=58be74680cf2a0edfd2
         #key = "328f45d8"
         key = "2da3ca9e"
         data = json.loads(rc4(key, base64.b64decode(d['data'])))
-        import pprint
-        pprint.PrettyPrinter(indent=4).pprint(data)
-
-        #vcode = match1(hutf, "vcode:\s*'([^']+)'")
-        #echo("vcode", vcode)
-        #yu = "http://youku.com/v_show/id_" + vcode
-        #echo(YOUKU().query_info(yu))
+        #import pprint
+        #pprint.PrettyPrinter(indent=4).pprint(data)
+        for s in data['stream']:
+            echo(s['stream_type'], s['total_size'], s['resolution'], len(s.get('segs', ['No Segs'])))
 
 
 if __name__ == '__main__':
