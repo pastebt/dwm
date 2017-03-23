@@ -8,6 +8,34 @@ from comm import DWM, echo, start, match1, U
 from youku import YOUKU
 
 
+#https://github.com/zhangn1985/ykdl/blob/master/ykdl/extractors/acorig.py
+
+def rc4(b, d):
+    c = list(range(256))
+    g = 0
+    f = ''
+    j = 0
+    while j < 256:
+        g = (g + c[j] + ord(b[j % len(b)])) % 256
+        i = c[j]
+        c[j] = c[g]
+        c[g] = i
+        j += 1
+    m = g = j = 0
+    while m < len(d):
+        j = (j + 1) % 256
+        g = (g + c[j]) % 256
+        i = c[j]
+        c[j] = c[g]
+        c[g] = i
+        if isinstance(d[m], int):
+            f += chr(d[m] ^ c[(c[j] + c[g]) % 256])
+        else:
+            f += chr(ord(d[m]) ^ c[(c[j] + c[g]) % 256])
+        m += 1
+    return f
+
+
 class ACFUN(DWM):
     handle_list = ['\.acfun\.cn/v/']
 
@@ -50,6 +78,11 @@ curl 'http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=58be74680cf2a0edfd2
         url = "https://api.youku.com/players/custom.json?client_id=908a519d032263f8&video_id=58be74680cf2a0edfd235a75&embsig=1_1489346126_cd3a0e8575edd448bbd6e497a65908bc&player_id=ytec"
         hutf = self.get_hutf(url)
         echo(hutf)
+        #d = json.load(open("a.json"))
+        #s = d['data']
+        ##key = "328f45d8"
+        #print repr(rc4("2da3ca9e", base64.b64decode(s)))
+
         #vcode = match1(hutf, "vcode:\s*'([^']+)'")
         #echo("vcode", vcode)
         #yu = "http://youku.com/v_show/id_" + vcode
