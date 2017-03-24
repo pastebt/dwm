@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 import json
+import time
 import base64
 
 from mybs import SelStr
@@ -55,8 +56,10 @@ class ACFUN(DWM):
 
         info_url = 'http://www.acfun.cn/video/getVideo.aspx?id=%s' % vid
         info = json.loads(self.get_hutf(info_url))
-        web = "http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=%s&ct=85&ev=2&sign=%s&time=1489616965963" % (
-               info['sourceId'], info['encode'])
+        web = "http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=%s&ct=85&ev=2&sign=%s&time=%d" % (
+               info['sourceId'], info['encode'], time.time()*1000)
+        #1489616965963
+        #1490378161
         d = json.loads(self.get_hutf(web))
         #key = "328f45d8"
         key = "2da3ca9e"
