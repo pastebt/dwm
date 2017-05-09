@@ -9,6 +9,7 @@ class RBC(DWM):
     def query_info(self, url):
         # try get cookie
         #self.get_hutf("http://sitereview.bluecoat.com/sitereview.jsp")
+        # http://csi.websense.com/
         hutf = self.get_hutf(
                 'http://sitereview.bluecoat.com/rest/categorization',
                 postdata='url='+url)
