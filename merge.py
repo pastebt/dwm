@@ -37,7 +37,7 @@ def merge1(name, ext, cnt):
     p.wait()
 
 
-tss = ('x-mpeg-ts', 'mp2t', 'MP2T')
+tss = ('ts', 'x-mpeg-ts', 'mp2t', 'MP2T')
 
 
 def merge(name, ext, cnt, clean=False, ists=False):
