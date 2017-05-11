@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 
+import re
 import json
 
 from mybs import SelStr
@@ -24,7 +25,21 @@ class RWS(DWM):
         # try get cookie
         self.phantom_hutf("http://csi.websense.com/")
         
-    
+
+class RTM(DWM):
+    # https://global.sitesafety.trendmicro.com/result.php
+    def query_info(self, url):
+        self.get_hutf("https://global.sitesafety.trendmicro.com/")
+        hutf = self.get_html(
+                    "https://global.sitesafety.trendmicro.com/result.php",
+                    postdata='urlname=%s&getinfo=Check+Now' % url)
+        #echo(hutf)
+        #<div class="labeltitlesmallresult">Entertainment</div>
+        rets = re.findall('<div class="labeltitlesmallresult">(.+)</div>',
+                          hutf)
+        echo(rets)
+
 
 if __name__ == '__main__':
-    RWS().query_info("abc.com")
+    RTM().query_info("abc.com")
+    #RTM().query_info("xxx.com")
