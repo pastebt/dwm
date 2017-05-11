@@ -2,6 +2,7 @@
 
 import json
 
+from mybs import SelStr
 from comm import DWM, echo
 
 
@@ -18,5 +19,12 @@ class RBC(DWM):
         echo(data["categorization"])
 
 
+class RWS(DWM):
+    def query_info(self, url):
+        # try get cookie
+        self.phantom_hutf("http://csi.websense.com/")
+        
+    
+
 if __name__ == '__main__':
-    RBC().query_info("abc.com")
+    RWS().query_info("abc.com")
