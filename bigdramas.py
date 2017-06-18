@@ -64,6 +64,17 @@ class BigDr(DWM):     # http://bigdramas.net/
             echo("url: https://youtu.be/" + dd["ids"][0])
             #sys.exit(1)
             return None
+        elif dd['source'] == "Video66":
+            echo(dd)
+            from video66 import VIDEO66
+            v66 = VIDEO66()
+            urls = []
+            for uid in dd['ids']:
+                u = "http://video66.org/embed.php?w=798&h=449&vid=" + uid
+                echo(u)
+                t, e, us, s = v66.query_info(u)
+                urls.append(us[0])
+            return title, e, urls, None
         else:
             echo("found new source")
             echo(dd)
