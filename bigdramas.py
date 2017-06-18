@@ -56,15 +56,19 @@ class BigDr(DWM):     # http://bigdramas.net/
         elif dd['source'] == "Dailymotion":
             eurl = "http://www.dailymotion.com/embed/video/" + dd['ids'][0]
             from dailymotion import DM
-            return DM().query_info(eurl)
+            #return DM().query_info(eurl)
+            ret = DM().query_info(eurl)
+            return title, ret[1], ret[2], ret[3]
         elif dd['source'] == "Youtube":
             echo("dd =", dd)
             echo("url: https://youtu.be/" + dd["ids"][0])
-            sys.exit(1)
+            #sys.exit(1)
+            return None
         else:
             echo("found new source")
             echo(dd)
-            sys.exit(1)
+            return None
+            #sys.exit(1)
 
     def get_playlist(self, url):
         hutf = self.get_hutf(url)

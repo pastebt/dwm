@@ -67,6 +67,12 @@ def debug(*args):
     echo(*args)    
 
 
+class UO(object):
+    def __init__(self, url, referer):
+        self.url = url
+        self.referer = referer
+
+
 class DWM(object):
     out_dir = './'
     #dwn_skip = 0
@@ -237,7 +243,10 @@ class DWM(object):
         if self.wget_cookie:
             cmds.append("--header=Cookie: " + self.wget_cookie)
 
-        cmds += ["-O", dwnfn, url]
+        if isinstance(url, UO):
+            cmds += ["-O", dwnfn, "--header=Referer: " + url.referer, url.url]
+        else:
+            cmds += ["-O", dwnfn, url]
         debug(cmds)
         p = subprocess.Popen(cmds)
         p.wait()
@@ -303,7 +312,12 @@ class DWM(object):
 
 def get_kind_size(u, cookie=""):
     kinds = {}
-    url = u
+    if isinstance(u, UO):
+        url = u.url
+        ref = u.referer
+    else:
+        url = u
+        ref = ""
     act = 'HEAD'
     while url:
         debug('get_kind_size, url =', url)
@@ -317,6 +331,8 @@ def get_kind_size(u, cookie=""):
         hd = {'User-Agent': USER_AGENT}
         if cookie:
             hd['Cookie'] = cookie
+        if ref:
+            hd['Referer'] = ref
         debug(hd)
         conn.request(act, q, "", hd)
         try:
