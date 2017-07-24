@@ -64,6 +64,10 @@ class SOHU(DWM):     # http://sohu.com/
         debug("title=%s, size=%d" % (title,size))
         debug(urls)
 
+
+    def test(self):
+        url = 'http://tv.sohu.com/s2014/hjhealer/'
+
  
 if __name__ == '__main__':
     import comm

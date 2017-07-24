@@ -254,12 +254,13 @@ class DWM(object):
         if p.returncode == 0:
             os.rename(dwnfn, outfn)
 
-    def get_one(self, url, t="UnknownTitle", n=False):
+    #def get_one(self, url, t="UnknownTitle", n=False):
+    def get_one(self, url, t=UTITLE, n=False):
         title, ext, urls, size = self.query_info(url)
         if not urls:
             echo("Empty urls")
             return
-        if not title:
+        if not title or t != UTITLE:
             title = t
         nt = norm_title(title)
         if n:
@@ -537,7 +538,10 @@ def start(kls):
         if kls is None:
             echo("Not support ", args.url)
             sys.exit(1)
-    kls.title = args.title
+    if py3:
+        kls.title = args.title
+    else:
+        kls.title = args.title.decode('utf8')
     kls.out_dir = args.output
     kls.no_merge = args.no_merge
     kls.no_proxy = args.no_proxy
@@ -583,7 +587,7 @@ def run(k, args):
                 else:
                     raise
     elif not args.playlist_only:
-        k.get_one(args.url, n=args.norm_title)
+        k.get_one(args.url, k.title, args.norm_title)
     k.clean_up()
 
 
