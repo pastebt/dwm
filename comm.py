@@ -261,7 +261,10 @@ class DWM(object):
             echo("Empty urls")
             return
         if not title or t != UTITLE:
-            title = t
+            if ext and title.endswith("." + ext):
+                title = t[:-len("." + ext)]
+            else:
+                title = t
         nt = norm_title(title)
         if n:
             title = nt
