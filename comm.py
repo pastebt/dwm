@@ -168,6 +168,8 @@ class DWM(object):
         if os.path.exists(of):
             echo(of + " exists")
             return None
+        if not os.path.exists(self.out_dir):
+            os.makedirs(self.out_dir)
         return outfn
 
     def align_title_num(self, t):
