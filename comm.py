@@ -13,7 +13,8 @@ try:
     import http.client as httplib
     import urllib.parse as urlparse
     from urllib.request import HTTPCookieProcessor, ProxyHandler
-    from urllib.request import HTTPRedirectHandler, Request
+    from urllib.request import HTTPRedirectHandler, HTTPSHandler
+    from urllib.request import Request
     from urllib.request import build_opener
     py3 = True
 
@@ -27,7 +28,8 @@ except ImportError:
     import urlparse
     from Queue import Queue
     from urllib2 import HTTPCookieProcessor, ProxyHandler
-    from urllib2 import HTTPRedirectHandler, Request
+    from urllib2 import HTTPRedirectHandler, HTTPSHandler
+    from urllib2 import Request
     from urllib2 import build_opener
     py3 = False
 
@@ -50,6 +52,9 @@ except ImportError:
         if not isinstance(dat, unicode):
             return dat.decode('utf8')
         return dat
+
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 from merge import merge, tss
 
@@ -153,12 +158,19 @@ class DWM(object):
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
         # http://www.ttwanda.com/films/us/1881.html?le  mp2t
+        return self._get_m3u8_urls(self.get_html(src))
+
+    def _get_m3u8_urls(self, src, data):
+        bu = os.path.dirname(src) + "/"
         urls = []
-        for line in self.get_html(src).split('\n'):
+        for line in data.split('\n'):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            urls.append(line)
+            if "://" in line:
+                urls.append(line)
+            else:
+                urls.append(bu + line)
         return urls
 
     def get_outfn(self, title, ext, unum=0):
@@ -238,6 +250,7 @@ class DWM(object):
                 "--read-timeout=30",
                 "-c",
                 "--no-use-server-timestamps",
+                "--no-check-certificate",
                 #"-S",
                 ]
 
