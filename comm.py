@@ -54,7 +54,6 @@ except ImportError:
         return dat
 
 import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
 
 from merge import merge, tss
 
@@ -250,9 +249,11 @@ class DWM(object):
                 "--read-timeout=30",
                 "-c",
                 "--no-use-server-timestamps",
-                "--no-check-certificate",
+                #"--no-check-certificate",
                 #"-S",
                 ]
+        if self.no_check_certificate:
+            cmds.append("--no-check-certificate")
 
         # --header='Cookie: FTN5K=af45f935;'
         if self.wget_cookie:
@@ -541,6 +542,8 @@ def start(kls):
                    help='pair with cookie for login', default='')
     p.add_argument('--no_merge', action='store_true',
                    help='skip merge video pieces')
+    p.add_argument('--no_check_certificate', action='store_true',
+                   help='not check https certificate')
     p.add_argument('--no_proxy', action='store_true',
                    help='disable auto proxy')
     p.add_argument('--debug', action='store_true',
@@ -572,6 +575,9 @@ def start(kls):
     #    kls.dwn_skip = args.wget_skip
     #elif not py3 and not kls.info_only:
     #    raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
+    kls.no_check_certificate = args.no_check_certificate
+    if args.no_check_certificate:
+        ssl._create_default_https_context = ssl._create_unverified_context
     kls.download_urls = DWM.wget_urls
     #kls.dwn_skip = args.wget_skip
     k = kls()
