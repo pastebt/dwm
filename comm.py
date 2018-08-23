@@ -157,10 +157,11 @@ class DWM(object):
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
         # http://www.ttwanda.com/films/us/1881.html?le  mp2t
-        return self._get_m3u8_urls(self.get_html(src))
+        return self._get_m3u8_urls(src, self.get_html(src))
 
     def _get_m3u8_urls(self, src, data):
         bu = os.path.dirname(src) + "/"
+        rt = "/".join(src.split('/')[:3])
         urls = []
         for line in data.split('\n'):
             line = line.strip()
@@ -168,6 +169,8 @@ class DWM(object):
                 continue
             if "://" in line:
                 urls.append(line)
+            elif line[0] == '/':
+                urls.append(rt + line)
             else:
                 urls.append(bu + line)
         return urls
@@ -367,6 +370,10 @@ def get_kind_size(u, cookie=""):
         url = resp.getheader('Location', '')
         if not url:
             size = int(resp.getheader('Content-Length', '0'))
+            kind = resp.getheader('Content-Type', '')
+            # application/vnd.apple.mpegURL
+            if kind.endswith(".mpegURL"):
+                return "m3u8", size
             if not size:
                 url = u
                 act = 'GET'
