@@ -8,10 +8,21 @@ from mybs import SelStr
 from comm import DWM, echo, start, get_kind_size
 
 
-class M3U8(DWM):
+class Y3600(DWM):
     handle_list = ['www.y3600.com/']
 
     def query_info(self, m3u8url):
+        hutf = self.get_hutf(m3u8url)
+        #echo(hutf)
+        #url = "https://www.y3600.com/hanju/2017/1017.html"
+        m = re.findall('''var redirecturl = "(.+)";''', hutf)
+        if m:
+            echo(m)
+            b = m[0]
+            m = re.findall('''var main = "(.+index.m3u8.+)";''', hutf)
+            echo(m)
+            m3u8url = b + m[0]
+ 
         us = self.try_m3u8(m3u8url)
         echo(us)
         if len(us) == 1:
@@ -47,6 +58,7 @@ class M3U8(DWM):
         m = re.findall('''<a onclick="ck_m3u8\('([^<>]+)',this.+title="([^<>]+)">''', hutf)
         if len(m) > 0:
             return [(x[1], x[0]) for x in m]
+        return
         us = self._doif(hutf)
         return us
 
@@ -54,6 +66,8 @@ class M3U8(DWM):
         #url = "https://www.y3600.com/hanju/2017/1017.html"
         m = re.findall('''<a onclick="doif\('([^<>]+)'.+title="([^"]+)".*>''', hutf)
         echo(m)
+        return [(x[1], x[0]) for x in m]
+
         us = []
         for u, t in m:
             echo(u)
@@ -91,7 +105,7 @@ class M3U8(DWM):
         #echo(us)
         #us = self._get_m3u8_urls(us, self.
 
-    def test(self, args):
+    def test2(self, args):
         url = "https://www.y3600.com/hanju/2017/1017.html"
         hutf = self.get_hutf(url)
         #m = re.findall('''<a onclick="doif\('([^<>]+)',this.+title="([^<>]+)" ing.+>''', hutf)
@@ -114,8 +128,13 @@ class M3U8(DWM):
         echo(us)
         us = self.try_m3u8(us[0])
         echo(us)
-        
+
+    def test(self, args):
+        url = "https://www.y3600.com/hanju/2014/334.html"
+        url = "https://www.y3600.com/hanju/2014/367.html"
+        hutf = self.get_hutf(url)
+        echo(hutf)
 
 
 if __name__ == '__main__':
-    start(M3U8)
+    start(Y3600)
