@@ -58,7 +58,7 @@ class Y3600(DWM):
         m = re.findall('''<a onclick="ck_m3u8\('([^<>]+)',this.+title="([^<>]+)">''', hutf)
         if len(m) > 0:
             return [(x[1], x[0]) for x in m]
-        return
+        #return
         us = self._doif(hutf)
         return us
 
