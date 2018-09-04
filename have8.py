@@ -60,11 +60,11 @@ class HAVE8(DWM):     # http://have8.com/
         # http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0
         # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
         hutf = self.get_hutf(url)
-        m = re.search('var title = "([^"]+)";', hutf)
-        debug("m =", m.group(1))
-        title = m.group(1)
         idx = self.get_idx(url)
         debug("idx=", idx)
+        m = re.search('var title = "([^"]+)";', hutf)
+        debug("m =", m.group(1))
+        title = m.group(1) + "_E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
         debug("vid =", vid)
         urls = self.try_m3u8(unquote(vid))
@@ -91,7 +91,7 @@ class HAVE8(DWM):     # http://have8.com/
         #    idx = sels[1]
         idx = self.get_idx(url)
         title = SelStr('meta[name=description]', hutf)[0]['content']
-        title = title + "E%02d" % int(idx)
+        title = title + "_E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
         debug('vid =', vid)
         source = self.get_vsrc(hutf)
