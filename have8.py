@@ -27,7 +27,8 @@ def h8decode(a, b):
 
 class HAVE8(DWM):     # http://have8.com/
     handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/'
-                   '(dailymotion|youku|openload|qq|14tv)\.html']
+                   '(dailymotion|youku|openload|qq|14tv)\.html',
+                   'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -51,17 +52,44 @@ class HAVE8(DWM):     # http://have8.com/
             return self.query_info_drama(url)
         if '/v/movie/' in url:
             return self.query_info_movie(url)
+        if '.tv/drama/' in url:
+            return self.query_info_tv(url)
         return None
+
+    def query_info_tv(self, url):
+        # http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0
+        # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
+        hutf = self.get_hutf(url)
+        m = re.search('var title = "([^"]+)";', hutf)
+        debug("m =", m.group(1))
+        title = m.group(1)
+        idx = self.get_idx(url)
+        debug("idx=", idx)
+        vid = self.get_vid(hutf, idx)
+        debug("vid =", vid)
+        urls = self.try_m3u8(unquote(vid))
+        debug("urls =", len(urls), urls[0])
+        return title, None, urls, None
+
+    def get_idx(self, url):
+        up = urlparse(url)
+        sels = up.query.split('-')
+        debug("sels =", sels)
+        idx = 1
+        if len(sels) > 1:
+            idx = sels[1]
+        return idx
 
     def query_info_drama(self, url):
         #url = "http://have8tv.com/v/drama/2/21852/dailymotion.html?0-1-0"
         hutf = self.get_hutf(url)
-        up = urlparse(url)
-        sels = up.query.split('-')
-        #echo(sels)
-        idx = 1
-        if len(sels) > 1:
-            idx = sels[1]
+        #up = urlparse(url)
+        #sels = up.query.split('-')
+        #debug("sels =", sels)
+        #idx = 1
+        #if len(sels) > 1:
+        #    idx = sels[1]
+        idx = self.get_idx(url)
         title = SelStr('meta[name=description]', hutf)[0]['content']
         title = title + "E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
@@ -90,7 +118,6 @@ class HAVE8(DWM):     # http://have8.com/
         elif source == '14tv':
             urls = self.query_14tv(vid)
             return title, None, urls, None
-
         echo("Found new source", source)
         sys.exit(1)
 
@@ -133,9 +160,12 @@ class HAVE8(DWM):     # http://have8.com/
         #url = 'http://have8tv.com/v/movie/4/43601/dailymotion.html?0-1-0'
         #url = 'http://have8tv.com/v/drama/2/25583/openload.html?0-1-0'
         #url = 'http://have8tv.com/v/drama/1/19161/qq.html?0-1-0'
-        url = 'http://have8tv.com/v/drama/2/20636/14tv.html?0-1-0'
+        #url = 'http://have8tv.com/v/drama/2/20636/14tv.html?0-1-0'
         #http://v-redirect.14player.com/14tv/mp4:lxj-agxqd6j-01.mp4/chunklist.m3u8
+        url = "http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0"
+            # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
         hutf = self.get_hutf(url)
+        echo(hutf)
         vids = self.get_vid(hutf)
         echo(vids)
         vid = vids[0]
