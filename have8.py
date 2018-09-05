@@ -26,9 +26,11 @@ def h8decode(a, b):
 
 
 class HAVE8(DWM):     # http://have8.com/
-    handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/'
-                   '(dailymotion|youku|openload|qq|14tv)\.html',
-                   'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
+    #handle_list = ['have8tv\.com/v/(drama|movie)/\d+/\d+/'
+    #               '(dailymotion|youku|openload|qq|14tv)\.html',
+    #               'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
+    handle_list = ['have8\.tv/(drama|movie)/\d+/\d+/'
+                   '(dailymotion|youku|openload|qq|14tv|m3u8)\.html']
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -48,15 +50,17 @@ class HAVE8(DWM):     # http://have8.com/
         return None
 
     def query_info(self, url):
-        if '/v/drama/' in url:
-            return self.query_info_drama(url)
-        if '/v/movie/' in url:
-            return self.query_info_movie(url)
+        #if '/v/drama/' in url:
+        #    return self.query_info_drama(url)
+        #if '/v/movie/' in url:
+        #    return self.query_info_movie(url)
         if '.tv/drama/' in url:
-            return self.query_info_tv(url)
+            return self.query_info_drama(url)
+        if '.tv/movie/' in url:
+            return self.query_info_movie(url)
         return None
 
-    def query_info_tv(self, url):
+    def query_info_drama_m3u8(self, url):
         # http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0
         # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
         hutf = self.get_hutf(url)
@@ -90,12 +94,14 @@ class HAVE8(DWM):     # http://have8.com/
         #idx = 1
         #if len(sels) > 1:
         #    idx = sels[1]
+        source = self.get_vsrc(hutf)
+        if source == 'm3u8':
+            return self.query_info_drama_m3u8(url)
         idx = self.get_idx(url)
         title = SelStr('meta[name=description]', hutf)[0]['content']
         title = title + "_E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
         debug('vid =', vid)
-        source = self.get_vsrc(hutf)
         debug('source =', source)
         if source == 'dailymotion':
             u = 'http://www.dailymotion.com/embed/video/' + vid
@@ -119,6 +125,7 @@ class HAVE8(DWM):     # http://have8.com/
         elif source == '14tv':
             urls = self.query_14tv(vid)
             return title, None, urls, None
+
         echo("Found new source", source)
         sys.exit(1)
 
