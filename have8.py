@@ -66,8 +66,9 @@ class HAVE8(DWM):     # http://have8.com/
         debug("m =", m.group(1))
         title = m.group(1) + "_E%02d" % int(idx)
         vid = self.get_vid(hutf, idx)
+        vid = unquote(vid)
         debug("vid =", vid)
-        urls = self.try_m3u8(unquote(vid))
+        urls = self.try_m3u8(vid)
         debug("urls =", len(urls), urls[0])
         return title, None, urls, None
 

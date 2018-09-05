@@ -24,11 +24,13 @@ class Y3600(DWM):
             m3u8url = b + m[0]
  
         us = self.try_m3u8(m3u8url)
-        echo(us)
-        if len(us) == 1:
-            t, s = get_kind_size(us[0])
-            if t == 'm3u8':
-                us = self.try_m3u8(us[0])
+
+        #echo(us)
+        #if len(us) == 1:
+        #    t, s = get_kind_size(us[0])
+        #    if t == 'm3u8':
+        #        us = self.try_m3u8(us[0])
+
         #us = self._read_m3u8(m3u8url)
         #print(us)
         #us = self._read_m3u8(us[0])

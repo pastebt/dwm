@@ -157,7 +157,12 @@ class DWM(object):
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
         # http://www.ttwanda.com/films/us/1881.html?le  mp2t
-        return self._get_m3u8_urls(src, self.get_html(src))
+        us = self._get_m3u8_urls(src, self.get_html(src))
+        if len(us) == 1:
+            t, s = get_kind_size(us[0])
+            if t == 'm3u8':
+                us = self.try_m3u8(us[0])
+        return us
 
     def _get_m3u8_urls(self, src, data):
         bu = os.path.dirname(src) + "/"
