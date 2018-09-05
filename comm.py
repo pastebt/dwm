@@ -238,6 +238,7 @@ class DWM(object):
         unum = len(urls)
         outfn = self.get_outfn(title, ext, unum)
         if not outfn: return    # file exists
+        echo("download", outfn)
         if unum == 1:
             return self.wget_one_url(outfn, urls[0], 1)
         #for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
@@ -248,7 +249,7 @@ class DWM(object):
         self.use_dwm_merge(urls, title, ext, False)
 
     def wget_one_url(self, outfn, url, unum):
-        echo("download", outfn, "/", unum)
+        echo("wget", outfn, "/", unum)
         dwnfn = outfn + ".dwm"
         cmds = ["wget", 
                 "-U", USER_AGENT,
