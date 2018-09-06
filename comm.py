@@ -243,9 +243,11 @@ class DWM(object):
             return self.wget_one_url(outfn, urls[0], 1)
         #for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
         for cnt, url in enumerate(urls):
+            echo("progress = %.1f%%" % (100.0 * cnt / len(urls)))
             outfn = self.get_outfn("%s[%02d]" % (title, cnt), ext)
             if outfn:
                 self.wget_one_url(outfn, url, unum)
+        echo("progress = 100%")
         self.use_dwm_merge(urls, title, ext, False)
 
     def wget_one_url(self, outfn, url, unum):
@@ -273,7 +275,7 @@ class DWM(object):
         else:
             cmds += ["-O", dwnfn, url]
         debug(cmds)
-        p = subprocess.Popen(cmds)
+        p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
         p.wait()
         #if os.stat(dwnfn).st_size == totalsize:
         if p.returncode == 0:
