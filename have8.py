@@ -30,7 +30,9 @@ class HAVE8(DWM):     # http://have8.com/
     #               '(dailymotion|youku|openload|qq|14tv)\.html',
     #               'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
     handle_list = ['have8\.tv/(drama|movie)/\d+/\d+/'
-                   '(dailymotion|youku|openload|qq|14tv|m3u8)\.html']
+                   '(dailymotion|youku|openload|qq|14tv|m3u8)\.html',
+                   'autocarinsider\.com/(d)/\d+/\d+/(m3u8)\.html',
+                   ]
 
     def get_vsrc(self, hutf):
         m = re.search('var vsource = "([^"]+)";', hutf)
@@ -54,7 +56,7 @@ class HAVE8(DWM):     # http://have8.com/
         #    return self.query_info_drama(url)
         #if '/v/movie/' in url:
         #    return self.query_info_movie(url)
-        if '.tv/drama/' in url:
+        if '.tv/drama/' in url or '.com/d/' in url:
             return self.query_info_drama(url)
         if '.tv/movie/' in url:
             return self.query_info_movie(url)
@@ -170,8 +172,9 @@ class HAVE8(DWM):     # http://have8.com/
         #url = 'http://have8tv.com/v/drama/1/19161/qq.html?0-1-0'
         #url = 'http://have8tv.com/v/drama/2/20636/14tv.html?0-1-0'
         #http://v-redirect.14player.com/14tv/mp4:lxj-agxqd6j-01.mp4/chunklist.m3u8
-        url = "http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0"
+        #url = "http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0"
             # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
+        url = "http://autocarinsider.com/d/2/28239/m3u8.html?0-10-0"
         hutf = self.get_hutf(url)
         echo(hutf)
         vids = self.get_vid(hutf)
