@@ -13,7 +13,7 @@ from mybs import SelStr
 from youku import YOUKU
 from dailymotion import DM
 from openload import OpenLoad
-from comm import DWM, match1, echo, start, debug
+from comm import DWM, match1, echo, start, debug, UTITLE
 
 
 def h8decode(a, b):
@@ -160,7 +160,10 @@ class HAVE8(DWM):     # http://have8.com/
         base = up.scheme + '://' + up.netloc + up.path
         for vid in vids:
             sels[1] = vid[0]
-            urls.append((None, base + "?" + '-'.join(sels)))
+            t = None
+            if self.title != UTITLE:
+                t = "%02d%s" % (int(sels[1]), self.title)
+            urls.append((t, base + "?" + '-'.join(sels)))
         return urls
 
     def test(self):
