@@ -13,6 +13,7 @@ from mybs import SelStr
 from youku import YOUKU
 from dailymotion import DM
 from openload import OpenLoad
+from rapidvideo import RapidVideo
 from comm import DWM, match1, echo, start, debug, UTITLE
 
 
@@ -31,7 +32,7 @@ class HAVE8(DWM):     # http://have8.com/
     #               'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
     handle_list = ['have8\.tv/(drama|movie)/\d+/\d+/'
                    '(dailymotion|youku|openload|qq|14tv|m3u8)\.html',
-                   'autocarinsider\.com/(d)/\d+/\d+/(m3u8)\.html',
+                   'autocarinsider\.com/(d)/\d+/\d+/(rapidvideo|m3u8)\.html',
                    ]
 
     def get_vsrc(self, hutf):
@@ -127,6 +128,13 @@ class HAVE8(DWM):     # http://have8.com/
         elif source == '14tv':
             urls = self.query_14tv(vid)
             return title, None, urls, None
+        elif source == 'rapidvideo':
+            # https://www.rapidvideo.com/embed/FUZ35WDLM7
+            rv = RapidVideo()
+            rv.title = self.title
+            #echo("using have8 title", title)
+            u = 'https://www.rapidvideo.com/embed/' + vid
+            return rv.query_info(u)
 
         echo("Found new source", source)
         sys.exit(1)
@@ -162,7 +170,10 @@ class HAVE8(DWM):     # http://have8.com/
             sels[1] = vid[0]
             t = None
             if self.title != UTITLE:
-                t = "%02d%s" % (int(sels[1]), self.title)
+                if '%' in self.title:
+                    t = self.title % int(sels[1])
+                else:
+                    t = "%02d%s" % (int(sels[1]), self.title)
             urls.append((t, base + "?" + '-'.join(sels)))
         return urls
 
@@ -177,7 +188,8 @@ class HAVE8(DWM):     # http://have8.com/
         #http://v-redirect.14player.com/14tv/mp4:lxj-agxqd6j-01.mp4/chunklist.m3u8
         #url = "http://v.have8.tv/drama/2/25832/m3u8.html?0-29-0"
             # https://52dy.hanju2017.com/20180904/BN0R4K7Y/index.m3u8
-        url = "http://autocarinsider.com/d/2/28239/m3u8.html?0-10-0"
+        #url = "http://autocarinsider.com/d/2/28239/m3u8.html?0-10-0"
+        url = "http://autocarinsider.com/d/2/28239/rapidvideo.html?0-42-0"
         hutf = self.get_hutf(url)
         echo(hutf)
         vids = self.get_vid(hutf)
