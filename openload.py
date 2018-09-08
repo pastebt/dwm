@@ -61,12 +61,13 @@ class OpenLoad(DWM):     # http://openload.co/
         #https://1fiag6g.oloadcdn.net/dl/l/zxbDTu3BltrypxdY/GN4oyoh2bQY/PoliceUnit38_06.mp4?mime=true
 
         # https://openload.co/embed/qCpGFs8AOa4/
-        url = 'https://openload.co/embed/9zS9QNUWxZ8/'
+        #url = 'https://openload.co/embed/9zS9QNUWxZ8/'
         #'https://openload.co/stream/9zS9QNUWxZ8~1497803146~64.180.0.0~eBodZDZa?mime=true'
         #'https://oqt1pl.oloadcdn.net/dl/l/vfG56RBHDh7gErUv/9zS9QNUWxZ8/PoliceUnit38_05.mp4?mime=true'
         #pass
+        url = 'https://openload.co/embed/QM5ommgqrG8'
         hutf = self.phantom_hutf(url)
-        print hutf.encode('utf8')
+        echo(hutf)
 
 
 if __name__ == '__main__':
