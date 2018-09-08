@@ -163,18 +163,21 @@ class HAVE8(DWM):     # http://have8.com/
         if len(sels) < 2:
             sels = ['0', '', '0']
         hutf = self.get_hutf(url)
+        #vsrc = self.get_vsrc(hutf)
         vids = self.get_vid(hutf)
+        #echo(vids)
         urls = []
         base = up.scheme + '://' + up.netloc + up.path
         for vid in vids:
             sels[1] = vid[0]
-            t = None
+            t = ""
             if self.title != UTITLE:
                 if '%' in self.title:
                     t = self.title % int(sels[1])
                 else:
                     t = "%02d%s" % (int(sels[1]), self.title)
             urls.append((t, base + "?" + '-'.join(sels)))
+        #echo(urls)
         return urls
 
     def test(self):
