@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
@@ -66,9 +67,20 @@ class OpenLoad(DWM):     # http://openload.co/
         #'https://oqt1pl.oloadcdn.net/dl/l/vfG56RBHDh7gErUv/9zS9QNUWxZ8/PoliceUnit38_05.mp4?mime=true'
         #pass
         url = 'https://openload.co/embed/QM5ommgqrG8'
-        hutf = self.phantom_hutf(url)
-        echo(hutf)
+        url = 'https://openload.co/embed/Wx_SaRAFgO4/'
+        #hutf = self.phantom_hutf(url)
+        #echo(hutf)
+        hutf = open("/tmp/tmpC6Kwkk").read()
+        ret = match1(hutf, 
+                r'>\s*([\w-]+~\d{10,}~\d+\.\d+\.0\.0~[\w-]+)\s*<',
+                           r'>\s*([\w~-]+~\d+\.\d+\.\d+\.\d+~[\w~-]+)',
+                           r'>\s*([\w-]+~\d{10,}~(?:[a-f\d]+:){2}:~[\w-]+)\s*<',
+                           r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)\s*<',
+                           r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)',
+                )
+        echo(ret)
 
 
 if __name__ == '__main__':
-    start(OpenLoad)
+    #start(OpenLoad)
+    OpenLoad().test(sys.argv[1:])

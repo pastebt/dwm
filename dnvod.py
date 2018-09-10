@@ -25,8 +25,8 @@ class DNVOD(DWM):     # http://dnvod.eu/
             debug('got PlayerConfig')
             vid = match1(txt, "id:\s*'([^']+)',")
             key = match1(txt, "key:\s*'([^']+)',")
+            debug('vid =', vid, ', key =', key)
             break
-        debug('vid =', vid, ', key =', key)
         u = "https://www.dnvod.eu/Movie/GetResource.ashx?id=%s&type=htm" % vid
         self.extra_headers['Referer'] = url
         durl = self.get_html(u, postdata="key=" + key)
@@ -43,6 +43,11 @@ class DNVOD(DWM):     # http://dnvod.eu/
             urls.append((a.text, 'https://www.dnvod.eu' + a['href']))
         return urls
 
+    def test(self, argv):
+        url = 'https://www.dnvod.tv/Movie/detail.aspx?id=TEee8%2fITNg4%3d'
+        url = 'https://www.dnvod.tv/Movie/Readyplay.aspx?id=OIfaQTVHEiA%3d'
+        # http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4?sourceIp=154.20.114.142&signature=856ddbf8ecd34fb9b3aae7ad4c8beddf.56b9f1609633f7eacbc18ecd0dd5e4be&start=1536543792.79147&custom=0&ua=62e66f1213d2881d9f80510593ffe2ec
+        
 
 if __name__ == '__main__':
     start(DNVOD)

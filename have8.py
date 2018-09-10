@@ -32,7 +32,8 @@ class HAVE8(DWM):     # http://have8.com/
     #               'v\.have8\.tv/drama/\d+/\d+/m3u8\.html']
     handle_list = ['have8\.tv/(drama|movie)/\d+/\d+/'
                    '(dailymotion|youku|openload|qq|14tv|m3u8)\.html',
-                   'autocarinsider\.com/(d)/\d+/\d+/(rapidvideo|m3u8)\.html',
+                   'autocarinsider\.com/(d)/\d+/\d+/'
+                   '(rapidvideo|m3u8|openload)',
                    ]
 
     def get_vsrc(self, hutf):
