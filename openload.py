@@ -10,13 +10,13 @@ from comm import DWM, match1, echo, start, get_kind_size, UTITLE, debug
 
 
 class OpenLoad(DWM):     # http://openload.co/
-    handle_list = ['openload', 'oload\.tv/']
+    handle_list = ['openload.co/embed/', 'oload\.tv/']
 
     def __init__(self):
         DWM.__init__(self)
         self.extra_headers['Referer'] = 'https://vjs.zencdn.net/swf/5.1.0/video-js.swf'
 
-    def query_info(self, url):
+    def query_info1(self, url):
         # https://openload.io/embed/igdtpdeGltM/
         # https://openload.co/embed/isCWWnlsZLE/
         # https://openload.io/embed/biw7ytfelzU/
@@ -56,6 +56,14 @@ class OpenLoad(DWM):     # http://openload.co/
             self.title = self.title[:-4]
         return self.title, k, [url], tsize
 
+    def query_info(self, url):
+        uid = match1(url, '''openload.co/embed/([^/]+)/''')
+        hutf = self.chrome_hutf(url)
+        vid = match1(hutf, r'>(%s[^<]+)<' % uid)
+        url = "https://openload.co/stream/%s?mime=true" % vid
+        echo(url)
+        return "", None, [url], None
+
     def test(self, args):
         #https://openload.co/embed/GN4oyoh2bQY/
         #https://openload.co/stream/GN4oyoh2bQY~1497806882~64.180.0.0~AUcZ8f9j?mime=true
@@ -70,7 +78,8 @@ class OpenLoad(DWM):     # http://openload.co/
         url = 'https://openload.co/embed/Wx_SaRAFgO4/'
         #hutf = self.phantom_hutf(url)
         #echo(hutf)
-        hutf = open("/tmp/tmpC6Kwkk").read()
+        #hutf = open("/tmp/tmpC6Kwkk").read()
+        hutf = self.chrome_hutf(url)
         ret = match1(hutf, 
                 r'>\s*([\w-]+~\d{10,}~\d+\.\d+\.0\.0~[\w-]+)\s*<',
                            r'>\s*([\w~-]+~\d+\.\d+\.\d+\.\d+~[\w~-]+)',
@@ -78,6 +87,7 @@ class OpenLoad(DWM):     # http://openload.co/
                            r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)\s*<',
                            r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)',
                 )
+        ret = match1(hutf, r'>(Wx_SaRAFgO4[^<]+)<')
         echo(ret)
 
 

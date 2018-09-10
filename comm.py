@@ -141,6 +141,16 @@ class DWM(object):
     def get_hutf(self, *param, **dd):
         return self.get_html(*param, **dd).decode('utf8', 'ignore')
 
+    def chrome_hutf(self, url):
+        echo("google-chrome wait 300 ...")
+        p = Popen(["google-chrome", "--headless", "--disable-gpu",
+                   "--dump-dom", "--repl", url], stdout=PIPE)
+        html = p.stdout.read()
+        hutf = html.decode('utf8')
+        p.wait()
+        debug(hutf)
+        return hutf
+
     def phantom_hutf(self, url, timeout=300, refer=None, postdata=None):
         echo('phantomjs wait', timeout, '...')
         cmd = ["./phantomjs", "dwm.js", str(timeout), url]
