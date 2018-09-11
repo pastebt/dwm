@@ -46,8 +46,13 @@ class DNVOD(DWM):     # http://dnvod.eu/
     def test(self, argv):
         url = 'https://www.dnvod.tv/Movie/detail.aspx?id=TEee8%2fITNg4%3d'
         url = 'https://www.dnvod.tv/Movie/Readyplay.aspx?id=OIfaQTVHEiA%3d'
-        # http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4?sourceIp=154.20.114.142&signature=856ddbf8ecd34fb9b3aae7ad4c8beddf.56b9f1609633f7eacbc18ecd0dd5e4be&start=1536543792.79147&custom=0&ua=62e66f1213d2881d9f80510593ffe2ec
-        
+        ru = 'http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4?sourceIp=154.20.114.142&signature=856ddbf8ecd34fb9b3aae7ad4c8beddf.56b9f1609633f7eacbc18ecd0dd5e4be&start=1536543792.79147&custom=0&ua=62e66f1213d2881d9f80510593ffe2ec'
+        #ru = 'http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4'
+        #hutf = self.get_hutf(url)
+        #hutf = self.chrome_hutf(url)
+        #echo(hutf)
+        echo(get_kind_size(ru))
+
 
 if __name__ == '__main__':
     start(DNVOD)

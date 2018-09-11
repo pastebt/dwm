@@ -143,8 +143,9 @@ class DWM(object):
 
     def chrome_hutf(self, url):
         echo("google-chrome wait 300 ...")
-        p = Popen(["google-chrome", "--headless", "--disable-gpu",
-                   "--dump-dom", "--repl", url], stdout=PIPE)
+        p = subprocess.Popen(["google-chrome", "--headless", "--disable-gpu",
+                              "--dump-dom", "--repl", url],
+                             stdout=subprocess.PIPE)
         html = p.stdout.read()
         hutf = html.decode('utf8')
         p.wait()
@@ -380,10 +381,15 @@ def get_kind_size(u, cookie=""):
             resp = conn.getresponse()
         except httplib.BadStatusLine:   # some not know HEAD
             conn.close()
+            act = "GET"
             conn.request("GET", q, "", hd)
             resp = conn.getresponse()
         conn.close()
         debug(resp.status, resp.reason)
+        if resp.status == 404 and act != "GET":
+            # http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4
+            act = "GET"
+            continue
         debug(resp.getheaders())
         url = resp.getheader('Location', '')
         if not url:
