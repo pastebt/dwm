@@ -142,7 +142,7 @@ class DWM(object):
         return self.get_html(*param, **dd).decode('utf8', 'ignore')
 
     def chrome_hutf(self, url):
-        echo("google-chrome wait 300 ...")
+        echo("google-chrome wait ...")
         p = subprocess.Popen(["google-chrome", "--headless", "--disable-gpu",
                               "--dump-dom", "--repl", url],
                              stdout=subprocess.PIPE)
