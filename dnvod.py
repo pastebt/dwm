@@ -3,9 +3,10 @@
 import os
 import re
 import sys
-from subprocess import Popen, PIPE
+import json
 
 from mybs import SelStr
+from chrome import get_ci
 from comm import DWM, match1, echo, start, debug, get_kind_size
 
 
@@ -13,6 +14,36 @@ class DNVOD(DWM):     # http://dnvod.eu/
     handle_list = ['dnvod']
 
     def query_info(self, url):
+        #url = 'https://www.dnvod.tv/Movie/Readyplay.aspx?id=OIfaQTVHEiA%3d'
+        ci, p = get_ci()
+        try:
+            return self.query_info_chrome(url, ci)
+        finally:
+            p.kill()
+
+    def query_info_chrome(self, url, ci):
+        sel = "#ckplayer_a1"
+        #ci = get_ci()
+        ci.Page.navigate(url=url)
+        ci.wait_event("Page.loadEventFired", timeout=60)
+        ci.DOM.getDocument()
+        res = ci.DOM.querySelector(nodeId=1, selector=sel)
+        ni = res['result']['nodeId']
+        ci.DOMDebugger.setDOMBreakpoint(nodeId=ni, type="attribute-modified")
+        ci.wait_event("Debugger.paused", timeout=100)
+        ci.Debugger.stepOut()
+        res = ci.DOM.getAttributes(nodeId=ni)
+        attrs = res['result']['attributes']
+        attrs = dict(zip(attrs[::2], attrs[1::2]))
+        src = attrs['src']
+        # try title
+        res = ci.DOM.querySelector(nodeId=1, selector="html head title")
+        ni = res['result']['nodeId']
+        res = ci.DOM.describeNode(nodeId=ni, depth=-1)
+        title = res['result']['node']['children'][0]["nodeValue"].strip()
+        return title, None, [src], None
+
+    def query_info1(self, url):
         #url = 'https://www.dnvod.eu/Movie/Readyplay.aspx?id=deYM01Pf0bo%3d'
         hutf = self.get_hutf(url)
         title = SelStr('span#bfy_title >', hutf)[0].data.strip()

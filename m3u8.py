@@ -12,7 +12,7 @@ class M3U8(DWM):
     def query_info(self, url):
         # https://vip.pp63.org/20180615/20jqyayZ/hls/index.m3u8
         hutf = self.get_hutf(url)
-        print hutf
+        echo(hutf)
         us = self._get_m3u8_urls(url, hutf)
         #return "", "mp4", us, None
         return "", None, us, None
