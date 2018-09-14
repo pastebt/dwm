@@ -38,6 +38,7 @@ class DNVOD(DWM):     # http://dnvod.eu/
         ni = res['result']['nodeId']
         res = ci.DOM.describeNode(nodeId=ni, depth=-1)
         title = res['result']['node']['children'][0]["nodeValue"].strip()
+        ci.close()
         return title, None, [src], None
 
     def query_info1(self, url):
