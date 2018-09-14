@@ -14,14 +14,10 @@ class DNVOD(DWM):     # http://dnvod.eu/
     handle_list = ['dnvod']
 
     def query_info(self, url):
-        #url = 'https://www.dnvod.tv/Movie/Readyplay.aspx?id=OIfaQTVHEiA%3d'
-        ci, p = get_ci()
-        try:
-            return self.query_info_chrome(url, ci)
-        finally:
-            p.kill()
+        return self.query_info_chrome(url)
 
-    def query_info_chrome(self, url, ci):
+    def query_info_chrome(self, url):
+        ci = get_ci(debug)
         sel = "#ckplayer_a1"
         #ci = get_ci()
         ci.Page.navigate(url=url)

@@ -12,9 +12,8 @@ from urllib.request import urlopen
 TIMEOUT = 1
 
 
-def get_ci():
-    p = Popen(["google-chrome", "--headless", "--disable-gpu",
-               "--remote-debugging-port=9222"])
+def get_ci(debug=False):
+    GenericElement.debug = debug
     ci = ChromeInterface(auto_connect=False)
     while True:
         try:
@@ -28,10 +27,11 @@ def get_ci():
     ci.Page.enable()
     ci.DOM.enable()
     ci.Debugger.enable()
-    return ci, p
+    return ci
 
 
 class GenericElement(object):
+    debug = False
     def __init__(self, name, parent):
         self.name = name
         self.parent = parent
@@ -47,6 +47,9 @@ class GenericElement(object):
             call_obj = {'id': message_id, 'method': func_name, 'params': args}
             self.parent.ws.send(json.dumps(call_obj))
             result, _ = self.parent.wait_result(message_id)
+            if self.debug:
+                print(func_name, args)
+                print(json.dumps(result, indent=2))
             return result
         return generic_function
 
@@ -60,8 +63,18 @@ class ChromeInterface(object):
         self.ws = None
         self.tabs = None
         self.timeout = timeout
+        self.google_chrome = None
         if auto_connect:
             self.connect(tab=tab)
+        else:
+            self.google_chrome = Popen(["google-chrome",
+                                    "--headless",
+                                    "--disable-gpu",
+                                    "--remote-debugging-port=9222"])
+
+    def __del__(self):
+        if self.google_chrome:
+            self.google_chrome.kill()
 
     def get_tabs(self):
         #response = requests.get('http://{}:{}/json'.format(self.host, self.port))
