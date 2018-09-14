@@ -6,7 +6,10 @@ from subprocess import Popen, PIPE
 
 #import requests
 import websocket
-from urllib.request import urlopen
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 
 
 TIMEOUT = 1
