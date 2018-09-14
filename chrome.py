@@ -10,7 +10,7 @@ try:
     from urllib.request import urlopen
 except ImportError:
     from urllib2 import urlopen
-
+    from socket import error as BlockingIOError
 
 TIMEOUT = 1
 

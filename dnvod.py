@@ -7,6 +7,7 @@ import json
 
 from mybs import SelStr
 from chrome import get_ci
+from comm import DEBUG
 from comm import DWM, match1, echo, start, debug, get_kind_size
 
 
@@ -17,7 +18,7 @@ class DNVOD(DWM):     # http://dnvod.eu/
         return self.query_info_chrome(url)
 
     def query_info_chrome(self, url):
-        ci = get_ci(debug)
+        ci = get_ci(DEBUG)
         sel = "#ckplayer_a1"
         #ci = get_ci()
         ci.Page.navigate(url=url)
