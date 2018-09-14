@@ -4,8 +4,9 @@ import json
 import time
 from subprocess import Popen, PIPE
 
-import requests
+#import requests
 import websocket
+from urllib.request import urlopen
 
 
 TIMEOUT = 1
@@ -63,8 +64,10 @@ class ChromeInterface(object):
             self.connect(tab=tab)
 
     def get_tabs(self):
-        response = requests.get('http://{}:{}/json'.format(self.host, self.port))
-        self.tabs = json.loads(response.text)
+        #response = requests.get('http://{}:{}/json'.format(self.host, self.port))
+        #self.tabs = json.loads(response.text)
+        ret = urlopen('http://%s:%d/json' % (self.host, self.port)).read()
+        self.tabs = json.loads(ret)
 
     def connect(self, tab=0, update_tabs=True):
         if update_tabs or self.tabs is None:
