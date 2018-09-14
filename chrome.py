@@ -75,7 +75,7 @@ class ChromeInterface(object):
                                     "--disable-gpu",
                                     "--remote-debugging-port=9222"])
 
-    def close(self):
+    def __del__(self):
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         if self.google_chrome:
             self.google_chrome.kill()
