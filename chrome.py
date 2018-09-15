@@ -75,11 +75,17 @@ class ChromeInterface(object):
                                     "--disable-gpu",
                                     "--remote-debugging-port=9222"])
 
-    def __del__(self):
+    def stop(self):
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
+        self.close()
         if self.google_chrome:
             print("google_chrome.kill")
             self.google_chrome.kill()
+            self.google_chrome = None
+
+    def __del__(self):
+        print("ChromeInterface.__del__", self.google_chrome)
+        self.stop()
 
     def get_tabs(self):
         #response = requests.get('http://{}:{}/json'.format(self.host, self.port))

@@ -15,12 +15,15 @@ class DNVOD(DWM):     # http://dnvod.eu/
     handle_list = ['dnvod']
 
     def query_info(self, url):
-        return self.query_info_chrome(url)
-
-    def query_info_chrome(self, url):
         ci = get_ci(DEBUG)
+        try:
+            return self.query_info_chrome(ci, url)
+        finally:
+            print("ci.stop()")
+            ci.stop()
+
+    def query_info_chrome(self, ci, url):
         sel = "#ckplayer_a1"
-        #ci = get_ci()
         ci.Page.navigate(url=url)
         ci.wait_event("Page.loadEventFired", timeout=60)
         ci.DOM.getDocument()
@@ -38,8 +41,6 @@ class DNVOD(DWM):     # http://dnvod.eu/
         ni = res['result']['nodeId']
         res = ci.DOM.describeNode(nodeId=ni, depth=-1)
         title = res['result']['node']['children'][0]["nodeValue"].strip()
-        #ci.close()
-        del(ci)
         return title, None, [src], None
 
     def query_info1(self, url):
