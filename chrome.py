@@ -78,6 +78,7 @@ class ChromeInterface(object):
     def __del__(self):
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         if self.google_chrome:
+            print("google_chrome.kill")
             self.google_chrome.kill()
 
     def get_tabs(self):
