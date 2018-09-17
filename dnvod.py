@@ -77,8 +77,8 @@ class DNVOD(DWM):     # http://dnvod.eu/
         for a in SelStr('ul[data-identity=guest] > li > div.bfan-n > div.bfan-n > a', hutf):
             #debug(a.text, a['href'])
             #urls.append((a.text, 'https://www.dnvod.eu/Movie/' + a['href']))
-            urls.append(("", 'https://www.dnvod.eu/Movie/' + a['href']))
-        debug(urls)
+            urls.append((self.title, 'https://www.dnvod.tv/Movie/' + a['href']))
+        echo(urls)
         return urls
 
     def test(self, argv):
