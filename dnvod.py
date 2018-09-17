@@ -67,11 +67,18 @@ class DNVOD(DWM):     # http://dnvod.eu/
     def get_playlist(self, url):
         #url = 'https://www.dnvod.eu/Movie/detail.aspx?id=NU%2bOQHwQObI%3d'
         #url = 'https://www.dnvod.eu/Movie/Readyplay.aspx?id=deYM01Pf0bo%3d'
-        hutf = self.get_hutf(url)
+        #hutf = self.get_hutf(url)
+        #debug(hutf)
+        #for a in SelStr('ul[data-identity=guest] > li > div.bfan-n > a', hutf):
+        #    debug(a.text, a['href'])
+        #    urls.append((a.text, 'https://www.dnvod.eu' + a['href']))
+        hutf = self.chrome_hutf(url)
         urls = []
-        for a in SelStr('ul[data-identity=guest] > li > div.bfan-n > a', hutf):
-            debug(a.text, a['href'])
-            urls.append((a.text, 'https://www.dnvod.eu' + a['href']))
+        for a in SelStr('ul[data-identity=guest] > li > div.bfan-n > div.bfan-n > a', hutf):
+            #debug(a.text, a['href'])
+            #urls.append((a.text, 'https://www.dnvod.eu/Movie/' + a['href']))
+            urls.append(("", 'https://www.dnvod.eu/Movie/' + a['href']))
+        debug(urls)
         return urls
 
     def test(self, argv):
