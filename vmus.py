@@ -12,8 +12,19 @@ from comm import DWM, match1, echo, start
 
 
 class VMUS(DWM):     #http://vmus.co/
-    handle_list = ['vmus']
+    handle_list = ['vmus\.online']
     login_url = 'http://vmus.co/wp-login.php'
+
+    def query_info(self, url):
+        #url = 'http://vmus.online/The-Outpost-S01EP01.html'
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        ol = OpenLoad()
+        ret = SelStr("title", hutf)
+        ol.title = ret[0].text
+        ret = SelStr("div.entry-content>p iframe", hutf)
+        #url = [ret[0]['src']]
+        return ol.query_info(ret[0]['src'])
 
     def login_hutf(self, url):
         # then we try to login
@@ -28,7 +39,7 @@ class VMUS(DWM):     #http://vmus.co/
         hutf = html.decode('utf8')
         return hutf
 
-    def query_info(self, url):
+    def query_info1(self, url):
         hutf = self.login_hutf(url)
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/"
@@ -46,7 +57,7 @@ class VMUS(DWM):     #http://vmus.co/
         ol.title = title
         return ol.query_info(urls[0])
 
-    def get_playlist(self, url):
+    def get_playlist1(self, url):
         # http://vmus.co/category/%E9%80%A3%E8%BC%89%E4%B8%AD/%E7%AC%AC%E4%B8%80%E5%AD%A3/%E6%AF%92%E6%A2%9Fnarcos/
         #hutf = self.get_hutf(url)
         hutf = self.login_hutf(url)
@@ -74,6 +85,20 @@ class VMUS(DWM):     #http://vmus.co/
                     urls.append((a.text, a['href']))
         return urls
 
+    def get_playlist(self, url):
+        hutf = self.get_hutf(url)
+        ret = SelStr("a.fasc-button", hutf)
+        return [(self.title, a['href']) for a in ret]
+
+    def test1(self, argv):
+        url = 'http://vmus.online/the-outpost-s01.html'
+        #hutf = self.chrome_hutf(url)
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        ret = SelStr("a.fasc-button", hutf)
+        #ret = [str(a) for a in ret]
+        ret = [(0, a['href']) for a in ret]
+        echo(ret)
 
 if __name__ == '__main__':
     start(VMUS)

@@ -62,7 +62,7 @@ class OpenLoad(DWM):     # http://openload.co/
         vid = match1(hutf, r'>(%s[^<]+)<' % uid)
         url = "https://openload.co/stream/%s?mime=true" % vid
         echo(url)
-        return "", None, [url], None
+        return self.title, None, [url], None
 
     def test(self, args):
         #https://openload.co/embed/GN4oyoh2bQY/
