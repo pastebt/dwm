@@ -57,7 +57,7 @@ class OpenLoad(DWM):     # http://openload.co/
         return self.title, k, [url], tsize
 
     def query_info(self, url):
-        uid = match1(url, '''openload.co/embed/([^/]+)/''')
+        uid = match1(url, '''openload.co/embed/([^/]+)''')
         hutf = self.chrome_hutf(url)
         vid = match1(hutf, r'>(%s[^<]+)<' % uid)
         url = "https://openload.co/stream/%s?mime=true" % vid
@@ -76,9 +76,12 @@ class OpenLoad(DWM):     # http://openload.co/
         #pass
         url = 'https://openload.co/embed/QM5ommgqrG8'
         url = 'https://openload.co/embed/Wx_SaRAFgO4/'
+        url = 'https://openload.co/embed/TkRITZPJ0-8'
         #hutf = self.phantom_hutf(url)
         #echo(hutf)
         #hutf = open("/tmp/tmpC6Kwkk").read()
+        uid = match1(url, '''openload.co/embed/([^/]+)/''')
+        echo("uid =", uid)
         hutf = self.chrome_hutf(url)
         ret = match1(hutf, 
                 r'>\s*([\w-]+~\d{10,}~\d+\.\d+\.0\.0~[\w-]+)\s*<',
@@ -87,6 +90,7 @@ class OpenLoad(DWM):     # http://openload.co/
                            r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)\s*<',
                            r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)',
                 )
+        echo(ret)
         ret = match1(hutf, r'>(Wx_SaRAFgO4[^<]+)<')
         echo(ret)
 
