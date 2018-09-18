@@ -162,6 +162,9 @@ class YOUKU(DWM):
                 urls.append((a.text, a['href']))
         return urls
 
+    def test(self, args):
+        url = 'http://list.youku.com/show/id_zcbfffbf2962411de83b1.html'
+
 
 if __name__ == '__main__':
     start(YOUKU)
