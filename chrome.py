@@ -35,6 +35,7 @@ def get_ci(debug=False):
 
 class GenericElement(object):
     debug = False
+
     def __init__(self, name, parent):
         self.name = name
         self.parent = parent
@@ -45,7 +46,8 @@ class GenericElement(object):
         def generic_function(**args):
             self.parent.pop_messages()
             self.parent.message_counter += 1
-            message_id = int('{}{}'.format(id(self), self.parent.message_counter))
+            message_id = int('{}{}'.format(id(self),
+                             self.parent.message_counter))
             message_id = self.parent.message_counter
             call_obj = {'id': message_id, 'method': func_name, 'params': args}
             self.parent.ws.send(json.dumps(call_obj))
@@ -60,7 +62,8 @@ class GenericElement(object):
 class ChromeInterface(object):
     message_counter = 0
 
-    def __init__(self, host='localhost', port=9222, tab=0, timeout=TIMEOUT, auto_connect=True):
+    def __init__(self, host='localhost', port=9222, tab=0,
+                 timeout=TIMEOUT, auto_connect=True):
         self.host = host
         self.port = port
         self.ws = None
@@ -71,9 +74,9 @@ class ChromeInterface(object):
             self.connect(tab=tab)
         else:
             self.google_chrome = Popen(["google-chrome",
-                                    "--headless",
-                                    "--disable-gpu",
-                                    "--remote-debugging-port=9222"])
+                                        "--headless",
+                                        "--disable-gpu",
+                                        "--remote-debugging-port=9222"])
 
     def stop(self):
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
@@ -103,15 +106,17 @@ class ChromeInterface(object):
 
     def connect_targetID(self, targetID):
         try:
-            wsurl = 'ws://{}:{}/devtools/page/{}'.format(self.host, self.port, targetID)
+            wsurl = 'ws://{}:{}/devtools/page/{}'.format(self.host,
+                                                         self.port,
+                                                         targetID)
             self.close()
             self.ws = websocket.create_connection(wsurl)
             self.ws.settimeout(self.timeout)
         except:
             wsurl = self.tabs[0]['webSocketDebuggerUrl']
             self.ws = websocket.create_connection(wsurl)
-            self.ws.settimeout(self.timeout)    
-        
+            self.ws.settimeout(self.timeout)
+
     def close(self):
         if self.ws:
             self.ws.close()
@@ -136,13 +141,14 @@ class ChromeInterface(object):
         matching_message = None
         while True:
             now = time.time()
-            if now-start_time > timeout:
+            if now - start_time > timeout:
                 break
             try:
                 message = self.ws.recv()
                 parsed_message = json.loads(message)
                 messages.append(parsed_message)
-                if 'method' in parsed_message and parsed_message['method'] == event:
+                if 'method' in parsed_message and \
+                   parsed_message['method'] == event:
                     matching_message = parsed_message
                     break
             except websocket._exceptions.WebSocketTimeoutException:
@@ -158,13 +164,14 @@ class ChromeInterface(object):
         matching_result = None
         while True:
             now = time.time()
-            if now-start_time > timeout:
+            if now - start_time > timeout:
                 break
             try:
                 message = self.ws.recv()
                 parsed_message = json.loads(message)
                 messages.append(parsed_message)
-                if 'result' in parsed_message and parsed_message['id'] == result_id:
+                if 'result' in parsed_message and \
+                   parsed_message['id'] == result_id:
                     matching_result = parsed_message
                     break
             except websocket._exceptions.WebSocketTimeoutException:

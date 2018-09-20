@@ -68,7 +68,7 @@ def debug(*args):
     global DEBUG
     if not DEBUG:
         return
-    echo(*args)    
+    echo(*args)
 
 
 class UO(object):
@@ -248,7 +248,8 @@ class DWM(object):
         title = "_".join(title.split('/'))
         unum = len(urls)
         outfn = self.get_outfn(title, ext, unum)
-        if not outfn: return    # file exists
+        if not outfn:
+            return    # file exists
         echo("download", outfn)
         if unum == 1:
             return self.wget_one_url(outfn, urls[0], 1)
@@ -264,7 +265,7 @@ class DWM(object):
     def wget_one_url(self, outfn, url, unum):
         echo("wget", outfn, "/", unum)
         dwnfn = outfn + ".dwm"
-        cmds = ["wget", 
+        cmds = ["wget",
                 "-U", USER_AGENT,
                 #"--wait", "30",
                 #"--tries=50",
@@ -319,8 +320,8 @@ class DWM(object):
             for url in urls:
                 echo(url)
             echo("title =", title, ext)
-            echo("Size:\t%.2f MiB (%d Bytes)" % (
-                  round(size / 1048576.0, 2), size))
+            echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2),
+                                                 size))
         else:
             self.download_urls(title, ext, urls, size)
 
@@ -336,7 +337,7 @@ class DWM(object):
         #raise Exception("Not Implement Yet")
         echo("Playlist Not Implement")
         return []
-    
+
     def clean_up(self):
         pass
 
@@ -517,10 +518,10 @@ def norm_title(title):
     for i, c in enumerate(cnum, 1):
         numap[c] = i
     debug(title)
-    m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I+re.U)
+    m = re.search("(s\d{1,2}e\d{1,2})[\.\s]*", title, flags=re.I + re.U)
     if m:
         g = m.groups()
-        return g[0].upper() + '_' + title[:m.start()] +  title[m.end():]
+        return g[0].upper() + '_' + title[:m.start()] + title[m.end():]
     se = ""
     m = re.search(sere, title)
     if m:
@@ -605,7 +606,8 @@ def start(kls):
     #    kls.download_urls = DWM.wget_urls
     #    kls.dwn_skip = args.wget_skip
     #elif not py3 and not kls.info_only:
-    #    raise Exception("you need py3 while using you-get download, or you can set --wget_skip -1")
+    #    raise Exception("you need py3 while using you-get download, "
+    #                    "or you can set --wget_skip -1")
     kls.no_check_certificate = args.no_check_certificate
     if args.no_check_certificate:
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -626,7 +628,7 @@ def run(k, args):
         debug(args.url)
         k.is_playlist = True
         cnt = 0
-        for title, url in pl: #k.get_list(args.url):
+        for title, url in pl:   # k.get_list(args.url):
             cnt = cnt + 1
             if cnt > args.playlist_top > 0:
                 break

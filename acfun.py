@@ -57,7 +57,7 @@ class ACFUN(DWM):
         info_url = 'http://www.acfun.cn/video/getVideo.aspx?id=%s' % vid
         info = json.loads(self.get_hutf(info_url))
         web = "http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=%s&ct=85&ev=2&sign=%s&time=%d" % (
-               info['sourceId'], info['encode'], time.time()*1000)
+               info['sourceId'], info['encode'], time.time() * 1000)
         #1489616965963
         #1490378161
         d = json.loads(self.get_hutf(web))
@@ -77,7 +77,7 @@ class ACFUN(DWM):
         elif m3u8:
             debug(m3u8)
             urls = self.try_m3u8(m3u8)
-            ext="ts"
+            ext = "ts"
         # title, ext, urls, size
         return title, ext, urls, l
 
@@ -95,7 +95,8 @@ class ACFUN(DWM):
             if l > m:
                 m = l
                 s = d
-        debug("stream_type =", s['stream_type'], ", total_size =", s['total_size'])
+        debug("stream_type =", s['stream_type'],
+              ", total_size =", s['total_size'])
         return s
 
     def get_playlist(self, url):
@@ -141,7 +142,8 @@ curl 'http://aplay-vod.cn-beijing.aliyuncs.com/acfun/web?vid=58be74680cf2a0edfd2
         import pprint
         pprint.PrettyPrinter(indent=4).pprint(data)
         for s in data['stream']:
-            echo(s['stream_type'], s['total_size'], s['resolution'], len(s.get('segs', ['No Segs'])))
+            echo(s['stream_type'], s['total_size'], s['resolution'],
+                 len(s.get('segs', ['No Segs'])))
 
 
 if __name__ == '__main__':
