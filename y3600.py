@@ -22,7 +22,7 @@ class Y3600(DWM):
             m = re.findall('''var main = "(.+index.m3u8.+)";''', hutf)
             echo(m)
             m3u8url = b + m[0]
- 
+
         us = self.try_m3u8(m3u8url)
 
         #echo(us)
@@ -66,7 +66,8 @@ class Y3600(DWM):
 
     def _doif(self, hutf):
         #url = "https://www.y3600.com/hanju/2017/1017.html"
-        m = re.findall('''<a onclick="doif\('([^<>]+)'.+title="([^"]+)".*>''', hutf)
+        m = re.findall('''<a onclick="doif\('([^<>]+)'.+title="([^"]+)".*>''',
+                       hutf)
         echo(m)
         return [(x[1], x[0]) for x in m]
 
@@ -111,7 +112,8 @@ class Y3600(DWM):
         url = "https://www.y3600.com/hanju/2017/1017.html"
         hutf = self.get_hutf(url)
         #m = re.findall('''<a onclick="doif\('([^<>]+)',this.+title="([^<>]+)" ing.+>''', hutf)
-        m = re.findall('''<a onclick="doif\('([^<>]+)'.+title="([^"]+)".*>''', hutf)
+        m = re.findall('''<a onclick="doif\('([^<>]+)'.+title="([^"]+)".*>''',
+                       hutf)
         echo(m)
         u = m[0][0]
         echo(u)

@@ -21,7 +21,10 @@ class IQIYI(DWM):
         i = Iqiyi(url)
         i.prepare()
 
-        i.streams_sorted = [dict([('id', stream_type['id'])] + list(i.streams[stream_type['id']].items())) for stream_type in Iqiyi.stream_types if stream_type['id'] in i.streams]
+        i.streams_sorted = [dict([('id', stream_type['id'])] +
+                            list(i.streams[stream_type['id']].items()))
+                            for stream_type in Iqiyi.stream_types
+                            if stream_type['id'] in i.streams]
         i.extract()
         #echo(i.streams_sorted)
         stream_id = i.streams_sorted[0]['id']
@@ -63,10 +66,13 @@ class IQIYI(DWM):
                 t = int(time.time() * 1000)
                 src = '76f90cbd92f94a2e925d83e8ccd22cb7'
                 key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
-                sc = hashlib.new('md5', bytes(str(t) + key + vid, 'utf-8')).hexdigest()
-                #return 'http://cache.m.iqiyi.com/jp/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
-                return 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(
-                        tvid, vid, t, sc, src)
+                sc = hashlib.new('md5',
+                                 bytes(str(t) + key + vid,
+                                       'utf-8')).hexdigest()
+                return 'http://cache.m.iqiyi.com/tmts' + \
+                       '/{0}/{1}/?t={2}&sc={3}&src={4}'.format(tvid,
+                                                               vid,
+                                                               t, sc, src)
                 #data = self.get_hutf(vmsreq)
                 #return json.loads(data)
 

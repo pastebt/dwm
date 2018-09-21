@@ -14,7 +14,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
     def query_info(self, url):
         #url = 'http://www.ttwanda.com/films/us/1693.html?xf'
         hutf = self.get_hutf(url)
-        if not '?' in url:
+        if '?' not in url:
             a = SelStr('section.p5 div a', hutf)[0]['href']
             url = url + a
             hutf = self.get_hutf(url)
@@ -45,11 +45,13 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
             echo("Can not find var play_url")
             sys.exit(1)
         if ('youku.com/' in dst and '/m3u8' in dst) \
-            or 'lecloud.com/' in dst \
-            or '/letv-uts/' in dst:
+           or 'lecloud.com/' in dst \
+           or '/letv-uts/' in dst:
             return title, None, self.try_m3u8(dst), None
         if 'ttwanda.com/ftn_handler/' in dst:
-            cs = ["%s=%s" % (c.name, c.value) for c in self.cookie.cookiejar if c.name != 'PHPSESSID']
+            cs = ["%s=%s" % (c.name, c.value)
+                  for c in self.cookie.cookiejar
+                  if c.name != 'PHPSESSID']
             echo(cs)
             self.wget_cookie = "; ".join(cs)
             k, s = get_kind_size(dst, self.wget_cookie)
@@ -63,7 +65,7 @@ class TTWanDa(DWM):     # http://www.ttwanda.com/
         return title, None, [dst], None
 
     def get_playlist(self, url):
-        if not '/tv/' in url:
+        if '/tv/' not in url:
             return []
         url = url.split('?')[0]
         hutf = self.get_hutf(url)

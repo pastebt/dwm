@@ -42,7 +42,7 @@ tss = ('ts', 'x-mpeg-ts', 'mp2t', 'MP2T')
 
 def merge(name, ext, cnt, clean=False, ists=False):
     # ext = 'x-mpeg-ts'
-    # avconv -i tmp/嘻哈帝国第一季12[99].mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
+    # avconv -i 12.mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
     oex = ext
     if ext in tss:
         ists = True

@@ -38,7 +38,7 @@ class OpenLoad(DWM):     # http://openload.co/
             echo(uid)
         m = re.search('''<span id="streamurl">([^<>]+)</span>''', hutf)
         vid = m.groups()[0]
-        if not vid.startswith(uid): # TODO, try to decode it
+        if not vid.startswith(uid):     # TODO, try to decode it
             vid = uid + "~1497803146~64.180.0.0~eBodZDZa"
         echo(vid)
         url = "https://openload.co/stream/%s?mime=true" % vid
@@ -83,13 +83,13 @@ class OpenLoad(DWM):     # http://openload.co/
         uid = match1(url, '''openload.co/embed/([^/]+)/''')
         echo("uid =", uid)
         hutf = self.chrome_hutf(url)
-        ret = match1(hutf, 
-                r'>\s*([\w-]+~\d{10,}~\d+\.\d+\.0\.0~[\w-]+)\s*<',
-                           r'>\s*([\w~-]+~\d+\.\d+\.\d+\.\d+~[\w~-]+)',
-                           r'>\s*([\w-]+~\d{10,}~(?:[a-f\d]+:){2}:~[\w-]+)\s*<',
-                           r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)\s*<',
-                           r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)',
-                )
+        ret = match1(hutf,
+                     r'>\s*([\w-]+~\d{10,}~\d+\.\d+\.0\.0~[\w-]+)\s*<',
+                     r'>\s*([\w~-]+~\d+\.\d+\.\d+\.\d+~[\w~-]+)',
+                     r'>\s*([\w-]+~\d{10,}~(?:[a-f\d]+:){2}:~[\w-]+)\s*<',
+                     r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)\s*<',
+                     r'>\s*([\w~-]+~[a-f0-9:]+~[\w~-]+)',
+                     )
         echo(ret)
         ret = match1(hutf, r'>(Wx_SaRAFgO4[^<]+)<')
         echo(ret)

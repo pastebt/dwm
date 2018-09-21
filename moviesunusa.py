@@ -59,8 +59,9 @@ class MSU1(DWM):     # http://moviesunusa.net/
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/"
         urls = match1(hutf,
-          '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
-          '\<meta name="og:url" content="(https://openload.(c|i)o/embed/\S+)"\>')
+                      '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
+                      '\<meta name="og:url" '
+                      'content="(https://openload.(c|i)o/embed/\S+)"\>')
         echo(urls)
 
         title = match1(hutf, '<meta name="description" content="([^<>]+)">')
@@ -82,7 +83,8 @@ class MSU1(DWM):     # http://moviesunusa.net/
         hutf = html.decode('utf8', 'ignore')
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
-        nodes = mp.select("div.yarpp-related > div > font > ul > li > strong > a")
+        nodes = mp.select("div.yarpp-related > div > "
+                          "font > ul > li > strong > a")
         urls = []
         for n in nodes:
             if n['rel'] == 'bookmark':

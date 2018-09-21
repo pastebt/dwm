@@ -4,7 +4,7 @@
 import re
 import sys
 import json
-import base64
+from base64 import b64decode
 try:
     import urllib.parse as urllib
 except ImportError:
@@ -39,7 +39,7 @@ class HYG(DWM):     # http://haiuken.com/ 海宇根
         hutf = self.get_html("http://haiuken.com/ajax/theatre/%s/" % vid,
                              postdata=urllib.urlencode(d).encode("utf8"))
         ret = json.loads(hutf)
-        url = base64.b64decode(ret['Data']['Error'].encode('utf8')).decode('utf8')
+        url = b64decode(ret['Data']['Error'].encode('utf8')).decode('utf8')
         return title, None, [url], None
 
 

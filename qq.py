@@ -27,6 +27,7 @@ SALT_LEN = 2
 ZERO_LEN = 7
 SEED = 0xdead
 
+
 def rand():
     global SEED
     if SEED == 0:
@@ -53,7 +54,7 @@ def unpack(data):
     data = ''.join([chr(b) for b in data])
     target = []
     for i in range(0, len(data), 4):
-        target.extend(struct.unpack('>I', data[i:i+4]))
+        target.extend(struct.unpack('>I', data[i:i + 4]))
     return target
 
 
@@ -64,9 +65,9 @@ def tea_encrypt(v, key):
     for i in range(ROUNDS):
         s += DELTA
         s &= 0xffffffff
-        v[0] += (v[1]+s) ^ ((v[1]>>5)+key[1]) ^ ((v[1]<<4)+key[0])
+        v[0] += (v[1] + s) ^ ((v[1] >> 5) + key[1]) ^ ((v[1] << 4) + key[0])
         v[0] &= 0xffffffff
-        v[1] += (v[0]+s) ^ ((v[0]>>5)+key[3]) ^ ((v[0]<<4)+key[2])
+        v[1] += (v[0] + s) ^ ((v[0] >> 5) + key[3]) ^ ((v[0] << 4) + key[2])
         v[1] &= 0xffffffff
     return pack(v)
 
@@ -95,12 +96,12 @@ def oi_symmetry_encrypt2(raw_data, key):
     for i in range(8, len(data), 8):
         d1 = data[i:]
         for j in range(8):
-            d1[j] = d1[j] ^ enc[i-8+j]
+            d1[j] = d1[j] ^ enc[i - 8 + j]
         d1 = tea_encrypt(d1, key)
         for j in range(8):
-            d1[j] = d1[j] ^ data[i-8+j] ^ temp[j]
+            d1[j] = d1[j] ^ data[i - 8 + j] ^ temp[j]
             enc.append(d1[j])
-            temp[j] = enc[i-8+j]
+            temp[j] = enc[i - 8 + j]
 
     return enc
 
@@ -114,8 +115,8 @@ KEY = [
 def packstr(data):
     l = len(data)
     t = []
-    t.append((l&0xFF00) >> 8)
-    t.append(l&0xFF)
+    t.append((l & 0xFF00) >> 8)
+    t.append(l & 0xFF)
     t.extend([ord(c) for c in data])
     return t
 
@@ -123,11 +124,12 @@ def packstr(data):
 def strsum(data):
     s = 0
     for c in data:
-        s = s*131 + c
+        s = s * 131 + c
     return 0x7fffffff & s
 
 
-def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334', platform=10902, stdfrom='bcng'):
+def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334',
+                platform=10902, stdfrom='bcng'):
     data = []
     data.extend(pack([21507, 3168485562]))
     data.extend(pack([platform]))
@@ -135,7 +137,7 @@ def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334', platform=1090
     if not t:
         t = time.time()
     seconds = int(t)
-    microseconds = int(1000000*(t - int(t)))
+    microseconds = int(1000000 * (t - int(t)))
     data.extend(pack([microseconds, seconds]))
     data.extend(packstr(stdfrom))
     # rand = random.random()
@@ -149,12 +151,13 @@ def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334', platform=1090
     data.extend([0x00, 0x00, 0x00, 0x00])
 
     l = len(data)
-    data.insert(0, l&0xFF)
-    data.insert(0, (l&0xFF00) >> 8)
+    data.insert(0, l & 0xFF)
+    data.insert(0, (l & 0xFF00) >> 8)
 
     enc = oi_symmetry_encrypt2(data, KEY)
 
-    pad = [0x00, 0x00, 0x00, 0x00, 0xff&rand(), 0xff&rand(), 0xff&rand(), 0xff&rand()]
+    pad = [0x00, 0x00, 0x00, 0x00, 0xff & rand(),
+           0xff & rand(), 0xff & rand(), 0xff & rand()]
     pad[0] = pad[4] ^ 71 & 0xFF
     pad[1] = pad[5] ^ -121 & 0xFF
     pad[2] = pad[6] ^ -84 & 0xFF
@@ -163,7 +166,8 @@ def echo_ckeyv3(vid, guid, r, t=None, player_version='3.2.19.334', platform=1090
     pad.extend(enc)
     pad.extend(pack([strsum(data)]))
 
-    return base64.b64encode(''.join([chr(b) for b in pad]), '_-').replace('=', '')
+    return base64.b64encode(''.join([chr(b) for b in pad]),
+                            '_-').replace('=', '')
 
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:41.0) Gecko/20100101 Firefox/41.0'
@@ -212,7 +216,7 @@ class QQ(DWM):  # v.qq.com
             'appver': PLAYER_VERSION,
             'ran': rand,
         }
-    
+
         hutf = self.get_hutf('http://vv.video.qq.com/getvkey',
                              postdata=urllib.urlencode(params))
         mp = MyHtmlParser(tidy=False)
@@ -253,7 +257,7 @@ class QQ(DWM):  # v.qq.com
                              postdata=urllib.urlencode(params))
         mp = MyHtmlParser(tidy=False)
         mp.feed(hutf)
-    
+
         return {
             'filename': mp.select('vi>fn')[0].text,
             'br': float(mp.select('vi>br')[0].text),
@@ -303,7 +307,7 @@ class QQ(DWM):  # v.qq.com
             'fp2p': 1,
             'dtype': 3,
             'linkver': 2,
-            'ehost': url, 
+            'ehost': url,
             'fhdswitch': 0,
             'cKey': ckey,
             'vid': vid,
@@ -314,7 +318,7 @@ class QQ(DWM):  # v.qq.com
             'defnpayver': 1,
             'charge': 0,
             'ip': '',
-            'otype': 'xml', 
+            'otype': 'xml',
             'platform': PLATFORM,
         }
         if fmt:
@@ -359,9 +363,9 @@ class QQ(DWM):  # v.qq.com
                 video_type = 'mp4'
             else:
                 video_type = 'unknown'
-    
+
             video_id = vi.select('vid')[0].text
-    
+
             cdn_host = vi.select('ul>ui>url')[0].text
             # this will much speed up
             cdn_host = "http://videohy.tc.qq.com/vlive.qqvideo.tc.qq.com"
@@ -455,8 +459,9 @@ class QQ(DWM):  # v.qq.com
         vlifs = int(mp.select('vl > vi > fs')[0].text)
         fm = mi.select('name')[0].text.strip()
         if vlifs < mz:
-            echo('need query again, current size=%d, best size=%d' % (vlifs, mz))
-            echo('new query with fmt=' + fm )
+            echo('need query again, current size=%d, best size=%d' % (vlifs,
+                                                                      mz))
+            echo('new query with fmt=' + fm)
             t, vid, mp = self.getvinfo(url, fmt=fm)
         for ui in mp.select("vl > vi > ul > ui"):
             ur = ui.select('url')[0].text.strip()

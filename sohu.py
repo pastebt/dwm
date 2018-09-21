@@ -16,7 +16,7 @@ class SOHU(DWM):     # http://sohu.com/
     handle_list = ['/tv\.sohu\.com/']
 
     def __init__(self):
-        DWM.__init__(self) #, proxy='auto')
+        DWM.__init__(self)  # , proxy='auto')
         ip = "220.181.111.%d" % randint(1, 254)
         self.extra_headers['X-Forwarded-For'] = ip
         self.extra_headers['Client-IP'] = ip
@@ -27,9 +27,9 @@ class SOHU(DWM):     # http://sohu.com/
 
     def real_url(self, host, vid, tvid, new, clipURL, ck):
         url = 'http://' + host + '/?prot=9&prod=flash&pt=1&file='
-        url = url + clipURL + '&new=' + new + '&key='+ ck
+        url = url + clipURL + '&new=' + new + '&key=' + ck
         url = url + '&vid=' + str(vid) + '&uid='
-        url = url + str(int(time.time()*1000)) + '&t='
+        url = url + str(int(time.time() * 1000)) + '&t='
         url = url + str(random()) + '&rb=1'
         return json.loads(self.get_hutf(url))['url']
 
@@ -42,14 +42,14 @@ class SOHU(DWM):     # http://sohu.com/
         hutf = self.get_data_by_vid(vid)
         debug(hutf)
         data = json.loads(hutf)
-        for qtyp in ["oriVid","superVid","highVid" ,"norVid","relativeId"]:
-           hqvid = data['data'][qtyp]
-           if hqvid != 0 and hqvid != vid :
-               break
+        for qtyp in ["oriVid", "superVid", "highVid", "norVid", "relativeId"]:
+            hqvid = data['data'][qtyp]
+            if hqvid != 0 and hqvid != vid:
+                break
         debug(qtyp)
         data = json.loads(self.get_data_by_vid(hqvid))
         debug(data)
- 
+
         host = data['allot']
         prot = data['prot']
         tvid = data['tvid']
@@ -61,14 +61,13 @@ class SOHU(DWM):     # http://sohu.com/
         for new, cu, ck in zip(data['su'], data['clipsURL'], data['ck']):
             urls.append(("%s%02d.mp4" % (title, len(ret) + 1),
                         self.real_url(host, vid, tvid, new, cu, ck)))
-        debug("title=%s, size=%d" % (title,size))
+        debug("title=%s, size=%d" % (title, size))
         debug(urls)
-
 
     def test(self):
         url = 'http://tv.sohu.com/s2014/hjhealer/'
 
- 
+
 if __name__ == '__main__':
     import comm
     comm.DEBUG = True

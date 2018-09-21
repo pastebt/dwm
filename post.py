@@ -96,8 +96,8 @@ def post_one(fn, conn, dst):
     bun = "-----------------12123135---61b3e9bf8df4ee45---------------"
     fo = UpFile(fn, 'attachment', bun)
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
-               "Content-Length": str(fo.size())
-             }
+               "Content-Length": str(fo.size()),
+               }
     conn.request("POST", dst, fo, headers)
     resp = conn.getresponse()
     #print

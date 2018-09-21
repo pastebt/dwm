@@ -11,7 +11,7 @@ from mybs import MyHtmlParser, SelStr
 from comm import DWM, match1, echo, start
 
 
-class VMUS(DWM):     #http://vmus.co/
+class VMUS(DWM):     # http://vmus.co/
     handle_list = ['vmus\.online']
     login_url = 'http://vmus.co/wp-login.php'
 
@@ -43,8 +43,10 @@ class VMUS(DWM):     #http://vmus.co/
         hutf = self.login_hutf(url)
         #<meta name="og:url" content="https://openload.co/embed/isCWWnlsZLE/">
         #<iframe src="https://openload.co/embed/isCWWnlsZLE/"
-        urls = match1(hutf, '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
-          '\<meta name="og:url" content="(https://openload.(c|i)o/embed/\S+)"\>')
+        urls = match1(hutf,
+                      '\<iframe src="(https://openload.(c|i)o/embed/\S+)" ',
+                      '\<meta name="og:url" '
+                      'content="(https://openload.(c|i)o/embed/\S+)"\>')
         echo(urls)
 
         title = match1(hutf, '<meta property="og:title" content="([^<>]+)"')

@@ -43,7 +43,7 @@ class VIDEO66(DWM):
             echo(u)
             self.extra_headers['Referer'] = url
             html = self.get_html(u)
-            
+
 
 if __name__ == '__main__':
     start(VIDEO66)

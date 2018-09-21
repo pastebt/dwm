@@ -247,8 +247,8 @@ class TagNode(Node):
 
     def show(self, textonly=False):
         if not textonly:
-            if self.raw_text and (not self.children
-                                  or self.raw_text[-2] != '/'):
+            if self.raw_text and \
+               (not self.children or self.raw_text[-2] != '/'):
                 yield self.raw_text
                 if self.raw_text[-2] == '/':
                     return
@@ -327,8 +327,8 @@ class MyHtmlParser(HTMLParser):
             return
         #print "now_node.tag = [%s]" % self.now_node.tag
         #print str(self.now_node)
-        raise Exception("tag pair miss match: %s %s" % (
-                         self.now_node.tag, tag))
+        raise Exception("tag pair miss match: %s %s" % (self.now_node.tag,
+                                                        tag))
 
     def handle_data(self, data):
         #print "data:", data

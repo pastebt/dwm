@@ -27,7 +27,6 @@ class QDRAMA(DWM):
         ns = SelStr("div.items.sizing li a", self.get_hutf(url))
         return [(a.text, a['href']) for a in ns]
 
-
     def test(self, args):
         import time
         from urllib2 import urlopen
