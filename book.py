@@ -5,10 +5,10 @@ import sys
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from comm import DWM, echo, start, py3
+from comm import DWM, echo, start, match1
 
 
-class M3U8(DWM):
+class BOOKDN(DWM):
     handle_list = ['bookdown.com.cn']
 
     def query_info(self, url):
@@ -19,7 +19,7 @@ class M3U8(DWM):
         #return "", "mp4", us, None
         return "", None, us, None
 
-    def test(self, args):
+    def test1(self, args):
         # http://m.bookdown.com.cn/read/31314.html
         url = 'http://m.bookdown.com.cn/read/31314.html'
         #hutf = self.get_hutf(url)
@@ -28,7 +28,7 @@ class M3U8(DWM):
         #print m
         #hutf = self.get_html("http://m.bookdown.com.cn/read/31314_2.html")
         #print(hutf)
-        url = "http://m.bookdown.com.cn/read/31314_1.html"
+        #url = "http://m.bookdown.com.cn/read/31314_1.html"
         #url = "http://m.bookdown.com.cn/read/31314_1_2.html"
         while True:
             print >> sys.stderr, url
@@ -48,5 +48,26 @@ class M3U8(DWM):
             url = m[0]
             #break
 
+    def test(self, args):
+        url = "http://www.bookdown.com.cn/bookinfo/30258.html"
+        #url = "http://www.bookdown.com.cn/read/30258_1.html"
+        ret = match1(url, "/bookinfo/(\d+)\.html", "/read/(\d+).*\.html")
+        bid = int(ret[0])
+        echo("bid =", bid)
+        url = "http://www.bookdown.com.cn/read/%d_1.html" % bid
+        while True:
+            #print >> sys.stderr, url
+            hutf = self.get_hutf(url)
+            #echo(hutf)
+            for div in SelStr('div#view_content_txt', hutf):
+                echo(re.sub(u"分节阅读.+，请点击下一页继续阅读。", "",
+                     re.sub("&nbsp;", " ", div.text)))
+            al = SelStr("a#nextPage", hutf)
+            if not al:
+                break
+            url = al[0]['href']
+            #break
+        
+
 if __name__ == '__main__':
-    start(M3U8)
+    start(BOOKDN)
