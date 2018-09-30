@@ -11,31 +11,96 @@ from mybs import SelStr
 from comm import DWM, match1, echo, start, debug
 
 
+class I2(DWM):
+    # http://cn-proxy.com/
+    def __init__(self):
+        #DWM.__init__(self)
+        #DWM.__init__(self, proxy='auto')
+        #DWM.__init__(self, proxy={'http': 'https://secure.uku.im:8443'})
+        #DWM.__init__(self, proxy={'http': 'https://secure.uku.im:993'})
+        DWM.__init__(self, proxy={'http': 'http://117.177.243.6:8080'})
+        #ip = "220.181.111.%d" % random.randint(1, 254)
+        ip = "117.177.243.6"
+        self.extra_headers['X-Forwarded-For'] = ip
+        self.extra_headers['Client-IP'] = ip
+
+    def getVMS(self, tvid, vid):
+        t = int(time.time() * 1000)
+        src = '76f90cbd92f94a2e925d83e8ccd22cb7'
+        key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
+        sc = hashlib.new('md5',
+                         bytes(str(t) + key + vid,
+                               'utf-8')).hexdigest()
+        u = 'http://cache.m.iqiyi.com/tmts' + \
+            '/{0}/{1}/?t={2}&sc={3}&src={4}'.format(tvid,
+                                                    vid,
+                                                    t, sc, src)
+        #data = self.get_hutf(vmsreq)
+        data = self.get_hutf(u)
+        echo(data)
+        return json.loads(data)
+
+
 class IQIYI(DWM):
     handle_list = [".iqiyi.com/"]
 
+    #def __init__(self):
+    #    DWM.__init__(self, proxy={'http': 'https://secure.uku.im:8443'})
+    #    ip = "220.181.111.%d" % random.randint(1, 254)
+    #    self.extra_headers['X-Forwarded-For'] = ip
+    #    self.extra_headers['Client-IP'] = ip
+
     def query_info(self, url):
         # title, ext, urls, totalsize
-        sys.path.insert(1, '../you-get/src')
-        from you_get.extractors.iqiyi import Iqiyi
-        i = Iqiyi(url)
-        i.prepare()
+        #url = "http://www.iqiyi.com/v_19rr26qr38.html"
+        #url = "https://www.iqiyi.com/v_19rr04z9is.html?list=19rrm106om"
+        #url = "https://www.iqiyi.com/v_19rr04z9is.html"
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        tvid = match1(hutf, """param\['tvid'\] = "(\d+)";""")
+        vid = match1(hutf, """param\['vid'\] = "([^"]+)";""")
+        echo("tvid=", tvid, ", vid=", vid)
+        dat = I2().getVMS(tvid, vid)
+        #echo(dat)
 
-        i.streams_sorted = [dict([('id', stream_type['id'])] +
-                            list(i.streams[stream_type['id']].items()))
-                            for stream_type in Iqiyi.stream_types
-                            if stream_type['id'] in i.streams]
-        i.extract()
-        #echo(i.streams_sorted)
-        stream_id = i.streams_sorted[0]['id']
-        echo(stream_id)
-        echo(i.title)
-        #echo(i.streams)
-        urls = i.streams[stream_id]['src']
-        ext = i.streams[stream_id]['container']
-        total_size = i.streams[stream_id]['size']
-        title = self.align_title_num(i.title)
-        return title, ext, urls, total_size
+        #echo(dat)
+        for vd in (4,   # TD: '720p'
+                   17,  # TD_H265': 720p H265
+                   2,   # HD: '540p'
+                    ):
+            for stream in dat['data']['vidl']:
+                if vd == stream["vd"]:
+                    echo("4, 17, 2, vd =", vd)
+                    url = stream['m3u']
+                    #return
+        else:
+            echo("vd =", dat['data']['vidl'][0]['vd'])
+            url = dat['data']['vidl'][0]['m3u']
+        hutf = self.get_hutf(url)
+        us = self._get_m3u8_urls(url, hutf)
+        # title, ext, urls, totalsize
+        return "", "ts", us, None
+
+        #sys.path.insert(1, '../you-get/src')
+        #from you_get.extractors.iqiyi import Iqiyi
+        #i = Iqiyi(url)
+        #i.prepare()
+
+        #i.streams_sorted = [dict([('id', stream_type['id'])] +
+        #                    list(i.streams[stream_type['id']].items()))
+        #                    for stream_type in Iqiyi.stream_types
+        #                    if stream_type['id'] in i.streams]
+        #i.extract()
+        ##echo(i.streams_sorted)
+        #stream_id = i.streams_sorted[0]['id']
+        #echo(stream_id)
+        #echo(i.title)
+        ##echo(i.streams)
+        #urls = i.streams[stream_id]['src']
+        #ext = i.streams[stream_id]['container']
+        #total_size = i.streams[stream_id]['size']
+        #title = self.align_title_num(i.title)
+        #return title, ext, urls, total_size
 
     def get_playlist(self, page_url):
         # http://www.iqiyi.com/a_19rrhb9eet.html 太阳的后裔
@@ -54,27 +119,6 @@ class IQIYI(DWM):
         # https://www.find-ip.net/proxy-checker
         url = 'http://www.iqiyi.com/v_19rrkxmiss.html'
 
-        class I2(DWM):
-            def __init__(self):
-                DWM.__init__(self, proxy={'http': 'https://secure.uku.im:993'})
-                #DWM.__init__(self, proxy='auto')
-                ip = "220.181.111.%d" % random.randint(1, 254)
-                self.extra_headers['X-Forwarded-For'] = ip
-                self.extra_headers['Client-IP'] = ip
-
-            def getVMS(self, tvid, vid):
-                t = int(time.time() * 1000)
-                src = '76f90cbd92f94a2e925d83e8ccd22cb7'
-                key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
-                sc = hashlib.new('md5',
-                                 bytes(str(t) + key + vid,
-                                       'utf-8')).hexdigest()
-                return 'http://cache.m.iqiyi.com/tmts' + \
-                       '/{0}/{1}/?t={2}&sc={3}&src={4}'.format(tvid,
-                                                               vid,
-                                                               t, sc, src)
-                #data = self.get_hutf(vmsreq)
-                #return json.loads(data)
 
         i2 = I2()
         #i2.get_hutf(url)
@@ -86,7 +130,7 @@ class IQIYI(DWM):
         echo(hutf)
         echo(json.loads(hutf))
 
-    def test(self, args):
+    def test2(self, args):
         # 'http://cache.video.qiyi.com/vms?key=fvip&src=1702633101b340d8917a69cf8a4b8c7c&tvId=499243300&vid=6ec75484a71ccca68486ee920a1c773b&vinfo=1&tm=492&qyid=64244abf73c06236a718587ee55ddb39&puid=&authKey=d4e33437de36048589d6a49e46f8ae9f&um=0&pf=b6c13e26323c537d&thdk=&thdt=&rs=1&k_tag=1&qdx=n&qdv=2&vf=c5a6346d206f397775f9fd35fc844736'
         # 'http://cache.video.qiyi.com/vms?key=fvip&tvId=499243300&vid=6ec75484a71ccca68486ee920a1c773b&tm=492&qyid=64244abf73c06236a718587ee55ddb39'
         # 'http://cache.m.iqiyi.com/dc/dt/a721127bx2f0584c5x777a6171/20161125/1c/86/d1b62f6e4a1186a01ec77f84aeaba6c0.m3u8?np_tag=nginx_part_tag&qd_sc=023d7e9717afb3431fa1eef3394e1ee5&t_sign=-0-76f90cbd92f94a2e925d83e8ccd22cb7-499243300_04022000001000000000_17'
@@ -98,6 +142,41 @@ class IQIYI(DWM):
         hutf = html.decode("utf8")
         debug(hutf)
 
+    def test2(self, args):
+        url = "http://dx.data.video.iqiyi.com/videos/v0/20180911/8b/82/86d20569cb83daa5e19d6d428ee79507.ts?qypid=1324706200_04022000001000000000_4&start=0&end=3020123&hsize=3318&tag=0&v=&contentlength=1313180&qdv=1&qd_uid=&qd_vip=0&qd_src=3_31_312&qd_tm=1538348256983&qd_ip=75b1f306&qd_p=75b1f306&qd_k=0555163e0571399c549d560b84d87aec&sgti=&dfp=&qd_sc=2d4a29eb8223e640d4859a2b67075b82"
+        self.wget_one_url("outfn", url, "12")
+
+    def test(self, args):
+        #url = "http://www.iqiyi.com/v_19rr26qr38.html"
+        #url = "https://www.iqiyi.com/v_19rr04z9is.html?list=19rrm106om"
+        url = "https://www.iqiyi.com/v_19rr04z9is.html"
+        hutf = self.get_hutf(url)
+        #echo(hutf)
+        tvid = match1(hutf, """param\['tvid'\] = "(\d+)";""")
+        vid = match1(hutf, """param\['vid'\] = "([^"]+)";""")
+        echo("tvid=", tvid, ", vid=", vid)
+        dat = I2().getVMS(tvid, vid)
+        #echo(dat)
+
+        #echo(dat)
+        for vd in (4,   # TD: '720p'
+                   17,  # TD_H265': 720p H265
+                   2,   # HD: '540p'
+                    ):
+            for stream in dat['data']['vidl']:
+                if vd == stream["vd"]:
+                    echo("4, 17, 2, vd =", vd)
+                    echo(stream['m3u'])
+                    return
+        else:
+            echo("vd =", dat['data']['vidl'][0]['vd'])
+            echo(dat['data']['vidl'][0]['m3u'])
+
+    #def test(self, args):
+    #    fin = open("i.2.json")
+    #    echo(fin.readline())
+    #    dat = json.load(fin)
 
 if __name__ == '__main__':
-    start(IQIYI)
+    #start(IQIYI)
+    IQIYI().test("")

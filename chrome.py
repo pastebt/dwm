@@ -21,8 +21,8 @@ def get_ci(debug=False):
     while True:
         try:
             ci.connect()
-        except:
-            print("sleep")
+        except Exception as e:
+            print("sleep", e)
             time.sleep(1)
         else:
             break
@@ -44,7 +44,7 @@ class GenericElement(object):
         func_name = '{}.{}'.format(self.name, attr)
 
         def generic_function(**args):
-            self.parent.pop_messages()
+            #self.parent.pop_messages()
             self.parent.message_counter += 1
             message_id = int('{}{}'.format(id(self),
                              self.parent.message_counter))

@@ -164,7 +164,7 @@ class YOUKU(DWM):
 
     def test(self, args):
         url = 'http://list.youku.com/show/id_zcbfffbf2962411de83b1.html'
-
+        url = 'http://v.youku.com/v_show/id_XMTEzMjYzMTIw.html'
 
 if __name__ == '__main__':
     start(YOUKU)

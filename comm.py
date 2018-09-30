@@ -87,6 +87,7 @@ class DWM(object):
     get_html_url = ''
     no_proxy = False
     wget_cookie = {}
+    no_check_certificate = False
 
     def __init__(self, proxy=None):
         global USER_AGENT
@@ -100,6 +101,7 @@ class DWM(object):
             #self.proxyh = ProxyHandler({'http': "http://211.155.86.25:8888"})
             #self.proxyh = ProxyHandler({'http': "proxy.uku.im:8888"})
             self.proxyh = ProxyHandler({'http': "https://secure.uku.im:8443"})
+            #self.proxyh = ProxyHandler({'http': "https://proxy.uku.im:443"})
             self.opener = build_opener(self.proxyh, self.redirh, self.cookie)
         else:
             self.proxyh = ProxyHandler(proxy)
@@ -407,6 +409,8 @@ def get_kind_size(u, cookie=""):
     for k in kind.split(';'):
         if 'video' in k:
             kind = k.split('/')[-1]
+        if k == 'application/octet-stream':
+            kind = 'ts'
     return kinds.get(kind, kind), size
 
 
