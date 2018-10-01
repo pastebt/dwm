@@ -96,8 +96,8 @@ class IQIYI(DWM):
 
     def get_playlist(self, page_url):
         #http://www.iqiyi.com/playlist521743802.html
-        if '/playlist' in url:
-            hutf = self.get_hutf(url)
+        if '/playlist' in page_url:
+            hutf = self.get_hutf(page_url)
             els = SelStr("div.site-piclist_pic > a.site-piclist_pic_link",
                          hutf)
             return [(e['title'], e['href']) for e in els]
