@@ -289,11 +289,14 @@ class DWM(object):
         else:
             cmds += ["-O", dwnfn, url]
         debug(cmds)
-        p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
-        p.wait()
-        #if os.stat(dwnfn).st_size == totalsize:
-        if p.returncode == 0:
-            os.rename(dwnfn, outfn)
+        for i in range(6):
+            p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
+            p.wait()
+            #if os.stat(dwnfn).st_size == totalsize:
+            if p.returncode == 0:
+                os.rename(dwnfn, outfn)
+                break
+            sleep(5 + i)
 
     #def get_one(self, url, t="UnknownTitle", n=False):
     def get_one(self, url, t=UTITLE, n=False):
