@@ -40,7 +40,7 @@ class I2(DWM):
              tvid, vid, t, sc, src)
         #data = self.get_hutf(vmsreq)
         data = self.get_hutf(u)
-        echo(data)
+        debug(data)
         return json.loads(data)
 
 
