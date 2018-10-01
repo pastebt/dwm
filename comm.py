@@ -289,7 +289,7 @@ class DWM(object):
         else:
             cmds += ["-O", dwnfn, url]
         debug(cmds)
-        for i in range(6):
+        for i in range(10):
             p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
             p.wait()
             #if os.stat(dwnfn).st_size == totalsize:

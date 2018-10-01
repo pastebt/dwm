@@ -47,37 +47,61 @@ class I2(DWM):
 class IQIYI(DWM):
     handle_list = [".iqiyi.com/"]
 
+    def get_vd_url(self, dat):
+        for vd in (4,   # TD: '720p'
+                   17,  # TD_H265': 720p H265
+                   2,   # HD: '540p'
+                   5,   # BD: 1080p
+                    ):
+            for stream in dat['data']['vidl']:
+                if vd == stream["vd"]:
+                    echo("4, 17, 2, 5, vd =", vd)
+                    url = stream['m3u']
+                    return vd, url
+        else:
+            vd = dat['data']['vidl'][0]['vd']
+            #echo("vd =", dat['data']['vidl'][0]['vd'])
+            url = dat['data']['vidl'][0]['m3u']
+            return vd, url
+
     def query_info(self, url):
         # title, ext, urls, totalsize
         #url = "http://www.iqiyi.com/v_19rr26qr38.html"
         #url = "https://www.iqiyi.com/v_19rr04z9is.html?list=19rrm106om"
         #url = "https://www.iqiyi.com/v_19rr04z9is.html"
         hutf = self.get_hutf(url)
-        title = SelStr('meta[property=og:title]', hutf)[0]["content"]
+        for s in ('meta[name=irTitle]',
+                  'meta[property=og:title]'):
+            try:
+                title = SelStr(s, hutf)[0]["content"]
+                break
+            except IndexError:
+                title = self.title
         #echo(hutf)
         tvid = match1(hutf, """param\['tvid'\] = "(\d+)";""")
         vid = match1(hutf, """param\['vid'\] = "([^"]+)";""")
         echo("tvid=", tvid, ", vid=", vid)
         dat = I2().getVMS(tvid, vid)
         #echo(dat)
-        for vd in (4,   # TD: '720p'
-                   17,  # TD_H265': 720p H265
-                   2,   # HD: '540p'
-                    ):
-            for stream in dat['data']['vidl']:
-                if vd == stream["vd"]:
-                    echo("4, 17, 2, vd =", vd)
-                    url = stream['m3u']
-                    #return
-        else:
-            echo("vd =", dat['data']['vidl'][0]['vd'])
-            url = dat['data']['vidl'][0]['m3u']
+        vd, url = self.get_vd_url(dat)
+        #title = "%s_vd%02d" % (title, vd)
+        echo(title)
+        #return
         hutf = self.get_hutf(url)
         us = self._get_m3u8_urls(url, hutf)
+        if '.ts?' in us[0]:
+            return title, "ts", us, None
         # title, ext, urls, totalsize
-        return title, "ts", us, None
+        return title, None, us, None
 
     def get_playlist(self, page_url):
+        #http://www.iqiyi.com/playlist521743802.html
+        if '/playlist' in url:
+            hutf = self.get_hutf(url)
+            els = SelStr("div.site-piclist_pic > a.site-piclist_pic_link",
+                         hutf)
+            return [(e['title'], e['href']) for e in els]
+
         # http://www.iqiyi.com/a_19rrhb9eet.html 太阳的后裔
         echo("get_list phantomjs wait 200 ...")
         p = Popen(["./phantomjs", "dwm.js", "200", page_url], stdout=PIPE)
@@ -91,13 +115,36 @@ class IQIYI(DWM):
         return urls
 
     def test(self, args):
-        url = "https://www.iqiyi.com/v_19rr04z9is.html"
+        url = "http://www.iqiyi.com/v_19rqzugacg.html"
+        hutf = self.get_hutf(url)
+        tvid = match1(hutf, """param\['tvid'\] = "(\d+)";""")
+        vid = match1(hutf, """param\['vid'\] = "([^"]+)";""")
+        echo("tvid=", tvid, ", vid=", vid)
+        dat = I2().getVMS(tvid, vid)
+        for stream in dat['data']['vidl']:
+            #if vd == stream["vd"]:
+            echo("vd =", stream["vd"])
+        return
+
+        url = "http://www.iqiyi.com/playlist521743802.html"
+        hutf = self.get_hutf(url)
+        echo(hutf)
+        els = SelStr("div.site-piclist_pic > a.site-piclist_pic_link", hutf)
+        for e in els:
+            echo(e['href'])
+        return
+
+        #url = "https://www.iqiyi.com/v_19rr04z9is.html"
         #url = 'http://www.iqiyi.com/v_19rrkxmiss.html'
+        url = "http://www.iqiyi.com/v_19rqzugacg.html?list=19rrm106om"
+        url = "http://www.iqiyi.com/v_19rqztf338.html?list=19rrm106om"
 
         hutf = self.get_hutf(url)
-        title = SelStr('meta[property=og:title]', hutf)[0]["content"]
+        echo(hutf)
+        #title = SelStr('meta[property=og:title]', hutf)[0]["content"]
+        title = SelStr('meta[name=irTitle]', hutf)[0]["content"]
         echo(title)
-
+        return
         i2 = I2()
         #i2.get_hutf(url)
         tvid = "453406400"
