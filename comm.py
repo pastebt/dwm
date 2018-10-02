@@ -296,7 +296,7 @@ class DWM(object):
             if p.returncode == 0:
                 os.rename(dwnfn, outfn)
                 break
-            sleep(5 + i)
+            sleep(1 + i)
 
     #def get_one(self, url, t="UnknownTitle", n=False):
     def get_one(self, url, t=UTITLE, n=False):
