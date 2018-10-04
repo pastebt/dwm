@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import json
+from time import sleep
 
 from mybs import SelStr
 from chrome import get_ci
@@ -32,6 +33,7 @@ class DNVOD(DWM):     # http://dnvod.eu/
         ci.DOMDebugger.setDOMBreakpoint(nodeId=ni, type="attribute-modified")
         ci.wait_event("Debugger.paused", timeout=100)
         ci.Debugger.stepOut()
+        sleep(2)
         res = ci.DOM.getAttributes(nodeId=ni)
         attrs = res['result']['attributes']
         attrs = dict(zip(attrs[::2], attrs[1::2]))
@@ -86,6 +88,7 @@ class DNVOD(DWM):     # http://dnvod.eu/
         url = 'https://www.dnvod.tv/Movie/Readyplay.aspx?id=OIfaQTVHEiA%3d'
         ru = 'http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4?sourceIp=154.20.114.142&signature=856ddbf8ecd34fb9b3aae7ad4c8beddf.56b9f1609633f7eacbc18ecd0dd5e4be&start=1536543792.79147&custom=0&ua=62e66f1213d2881d9f80510593ffe2ec'
         #ru = 'http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4'
+        url = "https://www.dnvod.tv/play?id=TW29RCmFL4o%3D"
         #hutf = self.get_hutf(url)
         #hutf = self.chrome_hutf(url)
         #echo(hutf)
