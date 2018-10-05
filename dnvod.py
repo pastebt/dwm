@@ -16,6 +16,16 @@ class DNVOD(DWM):     # http://dnvod.eu/
     handle_list = ['dnvod']
 
     def query_info(self, url):
+        hutf = self.chrome_hutf(url)
+        #echo(hutf)
+        title = SelStr("html head title", hutf)[0].text
+        echo("title =", title)
+        ret = SelStr("video#video_player", hutf)
+        echo(ret)
+        if ret:
+            u = ret[0]["src"]
+            return title, None, [u], None
+        #return
         ci = get_ci(DEBUG)
         try:
             return self.query_info_chrome(ci, url)
@@ -90,9 +100,9 @@ class DNVOD(DWM):     # http://dnvod.eu/
         #ru = 'http://server3.dnvod.tv/hvod/lxj-tscgwlb-50-022061041.mp4'
         url = "https://www.dnvod.tv/play?id=TW29RCmFL4o%3D"
         #hutf = self.get_hutf(url)
-        #hutf = self.chrome_hutf(url)
-        #echo(hutf)
-        echo(get_kind_size(ru))
+        hutf = self.chrome_hutf(url)
+        echo(hutf)
+        #echo(get_kind_size(ru))
 
 
 if __name__ == '__main__':
