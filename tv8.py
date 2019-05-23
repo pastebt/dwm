@@ -10,7 +10,7 @@ class TV8(DWM):
     handle_list = ['/tv8\.fun/', '.dayi.ca/']
 
     def query_info(self, url):
-        url = 'http://www.dayi.ca/ys/?p=2386&page=52'
+        #url = 'http://www.dayi.ca/ys/?p=2386&page=52'
         hutf = self.get_hutf(url)
         #echo(hutf)
         ct = SelStr("div#content-outer div#content", hutf)[0]

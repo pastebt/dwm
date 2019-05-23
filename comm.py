@@ -402,7 +402,8 @@ def get_kind_size(u, cookie=""):
             size = int(resp.getheader('Content-Length', '0'))
             kind = resp.getheader('Content-Type', '')
             # application/vnd.apple.mpegURL
-            if kind.endswith(".mpegURL"):
+            #if kind.endswith(".mpegURL"):
+            if kind.lower().endswith(".mpegurl"):
                 return "m3u8", size
             if not size:
                 url = u
