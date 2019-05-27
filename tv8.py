@@ -10,9 +10,9 @@ class TV8(DWM):
     handle_list = ['/tv8\.fun/', '.dayi.ca/']
 
     def query_info(self, url):
-        #url = 'http://www.dayi.ca/ys/?p=2386&page=52'
+        # url = 'http://www.dayi.ca/ys/?p=2386&page=52'
         hutf = self.get_hutf(url)
-        #echo(hutf)
+        # echo(hutf)
         ct = SelStr("div#content-outer div#content", hutf)[0]
         title = ct.select('h3')[0].text
         p = ct.select('p')[0]
@@ -25,9 +25,9 @@ class TV8(DWM):
         return title, None, us, None
 
     def get_playlist(self, url):
-        #url = 'http://tv8.fun/20170328-人民的名义/'
+        # url = 'http://tv8.fun/20170328-人民的名义/'
         hutf = self.get_hutf(url)
-        #echo(hutf)
+        # echo(hutf)
         img = SelStr("div.entry-content p img", hutf)
         if img:
             title = img[0]['alt']
@@ -45,9 +45,9 @@ class TV8(DWM):
 
     def test(self, argv):
         # try_m3u8
-        #echo(self.get_playlist('http://tv8.fun/20170328-人民的名义/'))
+        # echo(self.get_playlist('http://tv8.fun/20170328-人民的名义/'))
         url = 'http://www.dayi.ca/ys/?p=2386&page=52'
-        
+
 
 if __name__ == '__main__':
     start(TV8)
