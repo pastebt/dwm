@@ -79,7 +79,6 @@ class UO(object):
 
 class DWM(object):
     out_dir = './'
-    #dwn_skip = 0
     info_only = False
     align_num = 0
     is_playlist = False
@@ -88,6 +87,7 @@ class DWM(object):
     no_proxy = False
     wget_cookie = {}
     no_check_certificate = False
+    skim_output = False
 
     def __init__(self, proxy=None):
         global USER_AGENT
@@ -277,6 +277,10 @@ class DWM(object):
                 #"--no-check-certificate",
                 #"-S",
                 ]
+
+        if self.skim_output:
+            cmds.append("--quiet")
+
         if self.no_check_certificate:
             cmds.append("--no-check-certificate")
 
@@ -586,6 +590,8 @@ def start(kls):
                    help='not check https certificate')
     p.add_argument('--no_proxy', action='store_true',
                    help='disable auto proxy')
+    p.add_argument('--skim_output', action='store_true',
+                   help='only output data for WUI')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     p.add_argument('--testing', action='store_true',
@@ -610,17 +616,11 @@ def start(kls):
     kls.align_num = args.align_num
     kls.login_cookie = args.cookie
     kls.login_agent = args.user_agent
-    #if args.wget_skip >= 0:
-    #    kls.download_urls = DWM.wget_urls
-    #    kls.dwn_skip = args.wget_skip
-    #elif not py3 and not kls.info_only:
-    #    raise Exception("you need py3 while using you-get download, "
-    #                    "or you can set --wget_skip -1")
     kls.no_check_certificate = args.no_check_certificate
     if args.no_check_certificate:
         ssl._create_default_https_context = ssl._create_unverified_context
     kls.download_urls = DWM.wget_urls
-    #kls.dwn_skip = args.wget_skip
+    kls.skim_output = args.skim_ouput
     k = kls()
     k.parsed_args = args
     if args.testing:
