@@ -20,6 +20,7 @@ try:
 
     def echo(*args):
         sys.stdout.write(" ".join(map(str, args)) + "\n")
+        sys.stdout.flush()
 
     def U(dat):
         return dat
@@ -47,6 +48,7 @@ except ImportError:
                 sys.stdout.write(str(arg))
             sys.stdout.write(" ")
         sys.stdout.write("\n")
+        sys.stdout.flush()
 
     def U(dat):
         if not isinstance(dat, unicode):
@@ -202,7 +204,8 @@ class DWM(object):
             return None
         if not os.path.exists(self.out_dir):
             os.makedirs(self.out_dir)
-        return outfn
+        #return outfn
+        return of
 
     def align_title_num(self, t):
         t2 = '-'.join(t.split('/'))
@@ -620,7 +623,7 @@ def start(kls):
     if args.no_check_certificate:
         ssl._create_default_https_context = ssl._create_unverified_context
     kls.download_urls = DWM.wget_urls
-    kls.skim_output = args.skim_ouput
+    kls.skim_output = args.skim_output
     k = kls()
     k.parsed_args = args
     if args.testing:
