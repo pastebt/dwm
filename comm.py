@@ -250,6 +250,7 @@ class DWM(object):
         if ext is None:
             k, s = get_kind_size(urls[0])
             ext = k
+        #echo("ext=%s, tsize=%d" % (ext, tsize))
         title = "_".join(title.split('/'))
         unum = len(urls)
         outfn = self.get_outfn(title, ext, unum)
@@ -257,7 +258,7 @@ class DWM(object):
             return    # file exists
         echo("download", outfn)
         if unum == 1:
-            return self.wget_one_url(outfn, urls[0], 1)
+            return self.wget_one_url(outfn, urls[0], 1, tsize)
         #for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
         for cnt, url in enumerate(urls):
             echo("progress = %.1f%%" % (100.0 * cnt / len(urls)))
@@ -267,7 +268,7 @@ class DWM(object):
         echo("progress = 100%")
         self.use_dwm_merge(urls, title, ext, False)
 
-    def wget_one_url(self, outfn, url, unum):
+    def wget_one_url(self, outfn, url, unum, totalsize=0):
         echo("wget", outfn, "/", unum)
         dwnfn = outfn + ".dwm"
         cmds = ["wget",
@@ -275,14 +276,16 @@ class DWM(object):
                 #"--wait", "30",
                 #"--tries=50",
                 "--read-timeout=30",
-                "-c",
+                "--continue",
                 "--no-use-server-timestamps",
-                #"--no-check-certificate",
                 #"-S",
+                #"--no-verbose",
                 ]
 
         if self.skim_output:
             cmds.append("--quiet")
+            #cmds.append("--show-progress")
+            #cmds.append("--progress=bar:force")
 
         if self.no_check_certificate:
             cmds.append("--no-check-certificate")
@@ -298,8 +301,17 @@ class DWM(object):
         debug(cmds)
         for i in range(10):
             p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
-            p.wait()
-            #if os.stat(dwnfn).st_size == totalsize:
+            if self.skim_output and totalsize > 0:
+                p.poll()
+                while p.returncode is None:
+                    if os.path.exists(dwnfn):
+                        echo("progress = %.1f%%" % (
+                              100.0 * os.stat(dwnfn).st_size / totalsize))
+                    sleep(2)
+                    p.poll()
+            else:
+                p.wait()
+
             if p.returncode == 0:
                 os.rename(dwnfn, outfn)
                 break
@@ -322,13 +334,14 @@ class DWM(object):
         else:
             echo('nt =', nt)
         title = self.align_title_num(title)
-        if self.info_only:
+        if self.info_only or len(urls) == 1:
             if ext is None or size is None:
                 e, s = self.get_total_size(urls)
                 if ext is None:
                     ext = e
                 if size is None:
                     size = s
+        if self.info_only:
             for url in urls:
                 echo(url)
             echo("title =", title, ext)

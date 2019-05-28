@@ -38,6 +38,7 @@ class DM(DWM):     # http://www.dailymotion.com/embed/video/
 
     def test(self):
         url = 'http://www.dailymotion.com/video/k336RLStrzbIGzl96CY'
+        url = 'http://www.dailymotion.com/embed/video/k6ELdHzeVXWQmemlHkY&info=0'
 
 
 if __name__ == '__main__':
