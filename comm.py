@@ -333,6 +333,9 @@ class DWM(object):
             title = nt
         else:
             echo('nt =', nt)
+        if self.info_only:
+            for url in urls:
+                echo(url)
         title = self.align_title_num(title)
         if self.info_only or len(urls) == 1:
             if ext is None or size is None:
@@ -341,9 +344,6 @@ class DWM(object):
                     ext = e
                 if size is None:
                     size = s
-        if self.info_only:
-            for url in urls:
-                echo(url)
             echo("title =", title, ext)
             echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2),
                                                  size))
