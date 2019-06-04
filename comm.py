@@ -347,7 +347,7 @@ class DWM(object):
             echo("title =", title, ext)
             echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2),
                                                  size))
-        else:
+        if not self.info_only:
             self.download_urls(title, ext, urls, size)
 
     def try_playlist(self, ispl, url):
