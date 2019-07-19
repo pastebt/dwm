@@ -18,8 +18,11 @@ class TV8(DWM):
         p = ct.select('p')[0]
         title = title + '_' + p.text.split()[0]
         echo(title)
+        #echo(p.text)
         u = match1(p.text, 'video:(\S+)')
-        u = u.strip('"').strip("'")
+        #u = u.strip('"').strip("'")
+        if u[0] in ("'", '"'):
+            u = u.split(u[0])[1]
         echo(u)
         us = self.try_m3u8(u)
         return title, None, us, None
@@ -46,7 +49,9 @@ class TV8(DWM):
     def test(self, argv):
         # try_m3u8
         # echo(self.get_playlist('http://tv8.fun/20170328-人民的名义/'))
-        url = 'http://www.dayi.ca/ys/?p=2386&page=52'
+        # 'http://www.dayi.ca/ys/?p=3004&page=2'
+        #url = 'http://www.dayi.ca/ys/?p=2386&page=52'
+        url = 'http://www.dayi.ca/ys/?p=3004&page=1'
 
 
 if __name__ == '__main__':

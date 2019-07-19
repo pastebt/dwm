@@ -275,7 +275,7 @@ class DWM(object):
                 "-U", USER_AGENT,
                 #"--wait", "30",
                 #"--tries=50",
-                "--read-timeout=30",
+                "--read-timeout=60",
                 "--continue",
                 "--no-use-server-timestamps",
                 #"-S",
