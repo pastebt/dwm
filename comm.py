@@ -2,6 +2,7 @@
 
 import os
 import re
+import ssl
 import sys
 import zlib
 import argparse
@@ -391,7 +392,8 @@ def get_kind_size(u, cookie=""):
         debug('get_kind_size, url =', url)
         url_parts = urlparse.urlsplit(url)
         if url_parts[0] == 'https':
-            conn = httplib.HTTPSConnection(url_parts[1])
+            conn = httplib.HTTPSConnection(url_parts[1],
+                                context=ssl._create_unverified_context())
         else:
             conn = httplib.HTTPConnection(url_parts[1])
         # print url_parts
