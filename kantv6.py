@@ -15,12 +15,13 @@ class KANTV6(DWM):
     def query_info(self, url):
         # https://www.kantv6.com/tvdrama/301948271219001-161948271219033
         # https://www.kantv6.com/index.php/video/play?tvid=301948271219001&part_id=161948271219033&line=1&seo=tvdrama
-        hutf = self.chrome_hutf(url)
-        title = SelStr("h4.mtg-videoplay-title", hutf)[0].text
-        echo(title)
-        title = title.replace("&nbsp;", "_")
-        echo(title)
+        #hutf = self.chrome_hutf(url)
+        #title = SelStr("h4.mtg-videoplay-title", hutf)[0].text
+        #echo(title)
+        #title = title.replace("&nbsp;", "_")
+        #echo(title)
         #return
+        title = self.get_title(url)
         m = re.search("/(tvdrama)/(\d+)-(\d+)", url)
         sect, tvid, ptid = m.groups()
         du = "https://www.kantv6.com/index.php/video/play"
@@ -37,8 +38,27 @@ class KANTV6(DWM):
 
     def test(self, argv):
         url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
-        hutf = sel.chrome_hutf(url)
-        echo(hutf)
+        self.get_title(url)
+
+    def get_title(self, url):
+        while True:
+            til = self.get_title_one(url)
+            if til:
+                break
+        echo("title", til)
+    
+    def get_title_one(self, url):
+        hutf = self.chrome_hutf(url)
+        #echo(hutf)
+        h4 = SelStr("h4.mtg-videoplay-title", hutf)[0]
+        t = h4("span")[0].text.strip()
+        p = h4("span#cPartNum")[0].text.strip()
+        if t and p:
+            return t + '_' + p
+        return ""
+        
+        #title = title.replace("&nbsp;", "_")
+        #echo(title)
 
 
 if __name__ == '__main__':
