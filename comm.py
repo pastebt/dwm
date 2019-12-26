@@ -623,6 +623,8 @@ def start(kls):
         if kls is None:
             echo("Not support ", args.url)
             sys.exit(1)
+    if args.title == "":
+        args.title = UTITLE
     if py3:
         kls.title = args.title
     else:
