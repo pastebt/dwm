@@ -321,6 +321,7 @@ class DWM(object):
     #def get_one(self, url, t="UnknownTitle", n=False):
     def get_one(self, url, t=UTITLE, n=False):
         title, ext, urls, size = self.query_info(url)
+        debug("get_one from query_info title=", title)
         if not urls:
             echo("Empty urls")
             return
@@ -330,6 +331,7 @@ class DWM(object):
             else:
                 title = t
         nt = norm_title(title)
+        debug("norm_title return", nt)
         if n:
             title = nt
         else:

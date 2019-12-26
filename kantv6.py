@@ -28,6 +28,7 @@ class KANTV6(DWM):
         du = "%s?tvid=%s&part_id=%s&line=1&seo=%s" % (du, tvid, ptid, sect)
         dat = self.get_hutf(du)
         dat = json.loads(dat)
+        #u38 = 'https:' + dat['data']['url']
         us = self.try_m3u8('https:' + dat['data']['url'])
         return title, None, us, None
 
@@ -46,6 +47,7 @@ class KANTV6(DWM):
             if til:
                 break
         echo("title", til)
+        return til
     
     def get_title_one(self, url):
         hutf = self.chrome_hutf(url)
