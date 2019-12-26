@@ -6,7 +6,7 @@ import json
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from comm import DWM, echo, start
+from comm import DWM, echo, start, debug
 
 
 class KANTV6(DWM):
@@ -21,14 +21,18 @@ class KANTV6(DWM):
         #title = title.replace("&nbsp;", "_")
         #echo(title)
         #return
-        title = self.get_title(url)
         m = re.search("/(tvdrama)/(\d+)-(\d+)", url)
         sect, tvid, ptid = m.groups()
+        title = self.get_title(tvid, ptid, sect)
+        #return
         du = "https://www.kantv6.com/index.php/video/play"
         du = "%s?tvid=%s&part_id=%s&line=1&seo=%s" % (du, tvid, ptid, sect)
         dat = self.get_hutf(du)
         dat = json.loads(dat)
-        #u38 = 'https:' + dat['data']['url']
+        title = title + "_" + dat['data']['part_title']
+        debug(json.dumps(dat, indent=2))
+        echo("title", title)
+        #return
         us = self.try_m3u8('https:' + dat['data']['url'])
         return title, None, us, None
 
@@ -37,30 +41,32 @@ class KANTV6(DWM):
                     self.get_hutf(url))
         return [(a.text, a['href']) for a in ns]
 
-    def test(self, argv):
-        url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
-        self.get_title(url)
-
-    def get_title(self, url):
-        while True:
-            til = self.get_title_one(url)
-            if til:
-                break
-        echo("title", til)
-        return til
+    def get_title(self, tvid, ptid, sect):
+        u = "https://www.kantv6.com/index.php/video/info"
+        u = "%s?tvid=%s&seo=%s" % (u, tvid, sect)
+        dat = self.get_hutf(u)
+        dat = json.loads(dat)
+        debug(json.dumps(dat, indent=2))
+        return dat['data']['title']
     
-    def get_title_one(self, url):
-        hutf = self.chrome_hutf(url)
-        #echo(hutf)
-        h4 = SelStr("h4.mtg-videoplay-title", hutf)[0]
-        t = h4("span")[0].text.strip()
-        p = h4("span#cPartNum")[0].text.strip()
-        if t and p:
-            return t + '_' + p
-        return ""
+    #def get_title_one(self, url):
+    #    hutf = self.chrome_hutf(url)
+    #    #echo(hutf)
+    #    h4 = SelStr("h4.mtg-videoplay-title", hutf)[0]
+    #    t = h4("span")[0].text.strip()
+    #    p = h4("span#cPartNum")[0].text.strip()
+    #    if t and p:
+    #        return t + '_' + p
+    #    return ""
         
         #title = title.replace("&nbsp;", "_")
         #echo(title)
+
+    def test(self, argv):
+        url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
+        url = 'https://www.kantv6.com/index.php/video/part?tvid=301948271219001'
+        url = 'https://www.kantv6.com/index.php/video/info?tvid=301948271219001&seo=tvdrama'
+        self.get_title(url)
 
 
 if __name__ == '__main__':
