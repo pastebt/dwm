@@ -247,6 +247,20 @@ class DWM(object):
                 raise r
             self.use_dwm_merge(urls, title, ext)
 
+    def download_m3u8(self, title, ext, url, tsize):
+        outfn = self.get_outfn(title, ext, unum)
+        #if not title.endswith(".mp4"):
+        #    title += ".mp4"
+        cmds = ["avconv",
+                "-i", url,
+                "-acodec", "copy",
+                "-vcodec", "copy",
+                outfn,
+                ]
+        debug(cmds)
+        p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
+        p.wait()
+
     def wget_urls(self, title, ext, urls, tsize):
         if ext is None:
             k, s = get_kind_size(urls[0])

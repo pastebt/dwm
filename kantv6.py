@@ -78,6 +78,10 @@ class KANTV6(DWM):
         return sect, tvid, ""
 
     def test(self, argv):
+        mu = self.get_m3u8(argv.url)
+        echo(mu)
+
+    def test1(self, argv):
         url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
         url = 'https://www.kantv6.com/index.php/video/part?tvid=301948271219001'
         url = 'https://www.kantv6.com/index.php/video/info?tvid=301948271219001&seo=tvdrama'
