@@ -1,10 +1,13 @@
 # -*- coding: utf8 -*-
 
+import re
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
 from comm import DWM, echo, start
 
+
+# https://tools.ietf.org/html/rfc8216#page-15
 
 class M3U8(DWM):
     handle_list = ['\.m3u8']
@@ -24,7 +27,20 @@ class M3U8(DWM):
         url = 'http://video.zuidajiexi.com/ppvod/54EC0F37D50BAE9A41F39A070CA7FDB5.m3u8'
         #url = 'http://yingshi.yazyzw.com/20170822/0hOHYQLl/index.m3u8'
         #url = 'http://yingshi.yazyzw.com/ppvod/CE6246563AF188F1E783CC204EEE750C.m3u8'
-        echo(self.query_info(url))
+        #echo(self.query_info(url))
+        data = open(argv.url).read()
+        lines = data.split('\n')
+        #EXT-X-KEY:METHOD=AES-128,URI="a0ef9dd2fe9edf72d4162b50d096089d.key"
+        for line in lines:
+            line = line.strip()
+            if not line or line[0] != '#':
+                continue
+            #print line
+            m = re.search('#EXT-X-KEY:.+URI="([^"]+)"', line)
+            if m:
+                print m.groups()
+                print m.group(1)
+                
 
 
 if __name__ == '__main__':

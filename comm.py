@@ -247,8 +247,52 @@ class DWM(object):
                 raise r
             self.use_dwm_merge(urls, title, ext)
 
-    def download_m3u8(self, title, ext, url, tsize):
-        outfn = self.get_outfn(title, ext, unum)
+    def get_real_url(self, bu, rt, uri):
+        if "://" in uri:
+            u = uri
+        elif uri[0] == '/':
+            u = rt + uri
+        else:
+            u = bu + uri
+        return u
+
+    def try_key(self, bu, rt, dn, line):
+        m = re.search('#EXT-X-KEY:.+URI="([^"]+)"', line)
+        if not m:
+            return line
+        u = self.get_real_url(bu, rt, m.group(1))
+        n = os.path.basename(u)
+        self.wget_one_url(os.path.join(dn, n), u, 0)
+        return line.replace(m.group(1), n)
+
+    def wget_m3u8(self, title, url):
+        dn = os.path.join(self.out_dir, title + ".dwm")
+        if not os.path.exists(dn):
+            os.makedirs(dn)
+        data = self.get_hutf(url)
+        fout = open(os.path.join(dn, title + ".m3u8"), "w")
+        #    fout.write(hutf)
+        bu = os.path.dirname(url) + "/"
+        rt = "/".join(url.split('/')[:3])
+        for line in data.split('\n'):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                line = self.try_key(bu, rt, dn, line)
+                fout.write(line + "\n")
+                continue
+            u = self.get_real_url(bu, rt, line)
+            n = os.path.basename(u)
+            fout.write(n + "\n")
+            #self.wget_one_url(os.path.join(dn, n), u, 0)
+
+    def download_m3u8(self, title, url):
+        if self.skim_output:
+            self.wget_m3u8(title, url)
+        else:
+            self.avconv_m3u8(title, "mp4", url)
+
+    def avconv_m3u8(self, title, ext, url):
+        outfn = self.get_outfn(title, ext)
         #if not title.endswith(".mp4"):
         #    title += ".mp4"
         cmds = ["avconv",
@@ -260,6 +304,7 @@ class DWM(object):
         debug(cmds)
         p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
         p.wait()
+        echo(outfn)
 
     def wget_urls(self, title, ext, urls, tsize):
         if ext is None:
@@ -365,7 +410,10 @@ class DWM(object):
             echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2),
                                                  size))
         if not self.info_only:
-            self.download_urls(title, ext, urls, size)
+            if ext == 'm3u8':
+                self.download_m3u8(title, urls)
+            else:
+                self.download_urls(title, ext, urls, size)
 
     def try_playlist(self, ispl, url):
         if ispl:

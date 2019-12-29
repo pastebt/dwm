@@ -16,8 +16,9 @@ class KANTV6(DWM):
         title, mu = "", url
         if 'm3u8' not in url:
             title, mu = self.get_m3u8(url)
-        us = self.try_m3u8(mu)
-        return title, None, us, None
+        return title, "m3u8", mu, None
+        #us = self.try_m3u8(mu)
+        #return title, None, us, None
 
     def get_m3u8(self, url):
         # https://www.kantv6.com/tvdrama/301948271219001-161948271219033
@@ -80,6 +81,12 @@ class KANTV6(DWM):
     def test(self, argv):
         mu = self.get_m3u8(argv.url)
         echo(mu)
+        sect, tvid, ptid = self.get_stp(argv.url)
+        u = 'https://www.kantv6.com/index.php/video/part'
+        u = '%s?tvid=%s' % (u, tvid)
+        dat = self.get_hutf(u)
+        dat = json.loads(dat)
+        debug(json.dumps(dat, indent=2))
 
     def test1(self, argv):
         url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
