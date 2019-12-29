@@ -308,7 +308,7 @@ class DWM(object):
 
     def avconv_m3u8(self, title, ext, url):
         outfn = self.get_outfn(title, ext)
-        m3u8_merge(outfn, url)
+        m3u8_merge(url, outfn)
         ##if not title.endswith(".mp4"):
         ##    title += ".mp4"
         #cmds = ["avconv",

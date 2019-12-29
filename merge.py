@@ -130,6 +130,8 @@ def usage():
 def main():
     if len(sys.argv) == 3 and sys.argv[1] == 'm3u8':
         name = sys.argv[2]
+        if name.endswith(".dwm"):
+            name = name[:-4]
         outfn = name + ".mp4"
         url = "%s.dwm/%s.m3u8" % (name, name)
         m3u8_merge(url, outfn)
