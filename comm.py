@@ -274,16 +274,24 @@ class DWM(object):
         #    fout.write(hutf)
         bu = os.path.dirname(url) + "/"
         rt = "/".join(url.split('/')[:3])
-        for line in data.split('\n'):
-            line = line.strip()
+        lines = [l.strip() for l in data.split('\n')]
+        unum = len([l for l in lines if l and l[0] != '#'])
+        echo("unum =", unum)
+        cnt = 0
+        for line in lines:
             if not line or line.startswith("#"):
                 line = self.try_key(bu, rt, dn, line)
                 fout.write(line + "\n")
+                fout.flush()
                 continue
             u = self.get_real_url(bu, rt, line)
             n = os.path.basename(u)
             fout.write(n + "\n")
-            #self.wget_one_url(os.path.join(dn, n), u, 0)
+            fout.flush()
+            cnt += 1
+            echo("progress = %.1f%%" % (100.0 * cnt / unum))
+            self.wget_one_url(os.path.join(dn, n), u, unum)
+        echo("progress = 100%")
 
     def download_m3u8(self, title, url):
         if self.skim_output:
@@ -329,7 +337,10 @@ class DWM(object):
         self.use_dwm_merge(urls, title, ext, False)
 
     def wget_one_url(self, outfn, url, unum, totalsize=0):
-        echo("wget", outfn, "/", unum)
+        if unum > 1:
+            echo("wget", outfn, "/", unum)
+        else:
+            echo("wget", outfn)
         dwnfn = outfn + ".dwm"
         cmds = ["wget",
                 "-U", USER_AGENT,
