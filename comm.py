@@ -274,37 +274,55 @@ class DWM(object):
         fout = open(fm3u8, "w")
         bu = os.path.dirname(url) + "/"
         rt = "/".join(url.split('/')[:3])
-        lines = [l.strip() for l in data.split('\n')]
-        unum = len([l for l in lines if l and l[0] != '#'])
-        echo("unum =", unum)
-        cnt = 0
+        #lines = [l.strip() for l in data.split('\n')]
+        #unum = len([l for l in lines if l and l[0] != '#'])
+        #echo("unum =", unum)
+        #cnt = 0
+        dats = []
         for line in lines:
             if not line or line.startswith("#"):
                 line = self.try_key(bu, rt, dn, line)
                 fout.write(line + "\n")
-                fout.flush()
+                #fout.flush()
                 continue
             u = self.get_real_url(bu, rt, line)
             n = os.path.basename(u)
             fout.write(n + "\n")
-            fout.flush()
-            cnt += 1
-            echo("progress = %.1f%%" % (100.0 * cnt / unum))
-            self.wget_one_url(os.path.join(dn, n), u, unum)
+            dats.append((os.path.join(dn, n), u))
+            #fout.flush()
+            #cnt += 1
+            #echo("progress = %.1f%%" % (100.0 * cnt / unum))
+            #self.wget_one_url(os.path.join(dn, n), u, unum)
+        fout.write("#%s\n" % url)
         fout.close()
-        echo("progress = 100%")
-        echo("merge")
-        self.avconv_m3u8(title, "mp4", fm3u8)
+        cnt = 0, 0
+        unum = len(dats)
+        echo("unum =", unum)
+        for t, u in dats:
+            ret = self.wget_one_url(t, u, unum)
+            if ret == 0:
+                cnt += 1
+                echo("progress = %.1f%%" % (100.0 * cnt / unum))
+        if cnt == unum:
+            echo("progress = 100%")
+            echo("merge")
+            self.avconv_m3u8(title, "mp4", fm3u8)
+        else:
+            echo("some download failed, skip merge")
 
     def download_m3u8(self, title, url):
         outfn = self.get_outfn(title, "mp4")
         if not outfn:
             return    # file exists
         echo("download", outfn)
-        if self.skim_output:
-            self.wget_m3u8(title, url)
-        else:
+        #if self.skim_output:
+        #    self.wget_m3u8(title, url)
+        #else:
+        #    self.avconv_m3u8(title, "mp4", url)
+        if self.parsed_args.avconv_m3u8:
             self.avconv_m3u8(title, "mp4", url)
+        else:
+            self.wget_m3u8(title, url)
 
     def avconv_m3u8(self, title, ext, url):
         outfn = self.get_outfn(title, ext)
@@ -399,6 +417,7 @@ class DWM(object):
                 os.rename(dwnfn, outfn)
                 break
             sleep(1 + i)
+        return p.returncode
 
     #def get_one(self, url, t="UnknownTitle", n=False):
     def get_one(self, url, t=UTITLE, n=False):
@@ -666,7 +685,8 @@ def start(kls):
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
     p.add_argument('-o', '--output', metavar='dir|url', action='store',
-                   help='where download file go, dir or url to post',
+                   #help='where download file go, dir or url to post',
+                   help='where download file go, dir',
                    default='.')
     p.add_argument('-n', '--norm_title', action='store_true',
                    help='normalize title')
@@ -697,6 +717,8 @@ def start(kls):
                    help='disable auto proxy')
     p.add_argument('--skim_output', action='store_true',
                    help='only output data for WUI')
+    p.add_argument('--avconv_m3u8', action='store_true',
+                   help='download m3u8 by avconv')
     p.add_argument('--debug', action='store_true',
                    help='display debug message')
     p.add_argument('--testing', action='store_true',
