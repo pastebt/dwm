@@ -311,6 +311,7 @@ class DWM(object):
         #if not title.endswith(".mp4"):
         #    title += ".mp4"
         cmds = ["avconv",
+                "-allowed_extensions", "ALL",
                 "-i", url,
                 "-acodec", "copy",
                 "-vcodec", "copy",
