@@ -102,12 +102,38 @@ def merge(name, ext, cnt, clean=False, ists=False):
             os.remove(f + ".ts")
 
 
+def m3u8_merge(url, outfn):
+    #outfn = name + ".mp4"
+    #url = "%s.dwm/%s.m3u8" % (name, name)
+    cmds = ["avconv",
+            "-allowed_extensions", "ALL",
+            "-i", url,
+            "-acodec", "copy",
+            "-vcodec", "copy",
+            "-f", "mp4",
+            outfn + ".dwm",
+            ]
+    #debug(cmds)
+    p = Popen(cmds, env={"LANG": "en_CA.UTF-8"})
+    p.wait()
+    if p.returncode == 0:
+        os.rename(outfn + ".dwm", outfn)
+        echo(outfn)
+
+
 def usage():
     echo('Usage:', sys.argv[0], "name ext url_num [ists]")
+    echo('Usage:', sys.argv[0], "m3u8 name")
     sys.exit(1)
 
 
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == 'm3u8':
+        name = sys.argv[2]
+        outfn = name + ".mp4"
+        url = "%s.dwm/%s.m3u8" % (name, name)
+        m3u8_merge(url, outfn)
+        return
     if len(sys.argv) not in (4, 5):
         usage()
     try:

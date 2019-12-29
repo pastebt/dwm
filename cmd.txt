@@ -10,3 +10,5 @@ avconv -i gf1.avi -acodec mp3 -vcodec copy out.mp4
 for I in 10 11 12 13 14 15 16 17 18 19; do ./dwm.py -P -o tmp http://www.ttwanda.com/tv/cntv/1622.html?yk-$I; done
 
  ./dwm.py -p -o tmp --playlist_top 2 http://www.ttwanda.com/tv/cntv/2176.html?le-10
+
+avconv -allowed_extensions ALL -i 了不起的 麦瑟尔夫人\ 第二季_第1集.dwm/了不起的麦瑟尔夫人\ 第二季_第1集.m3u8 -acodec copy -vcodec copy -f mp4  s2p1.dwm

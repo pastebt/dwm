@@ -58,7 +58,7 @@ except ImportError:
 
 import ssl
 
-from merge import merge, tss
+from merge import merge, tss, m3u8_merge
 
 #USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
 #USER_AGENT += 'Gecko/20100101 Firefox/33.0'
@@ -308,19 +308,23 @@ class DWM(object):
 
     def avconv_m3u8(self, title, ext, url):
         outfn = self.get_outfn(title, ext)
-        #if not title.endswith(".mp4"):
-        #    title += ".mp4"
-        cmds = ["avconv",
-                "-allowed_extensions", "ALL",
-                "-i", url,
-                "-acodec", "copy",
-                "-vcodec", "copy",
-                outfn,
-                ]
-        debug(cmds)
-        p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
-        p.wait()
-        echo(outfn)
+        m3u8_merge(outfn, url)
+        ##if not title.endswith(".mp4"):
+        ##    title += ".mp4"
+        #cmds = ["avconv",
+        #        "-allowed_extensions", "ALL",
+        #        "-i", url,
+        #        "-acodec", "copy",
+        #        "-vcodec", "copy",
+        #        "-f", "mp4",
+        #        outfn + ".dwm",
+        #        ]
+        #debug(cmds)
+        #p = subprocess.Popen(cmds, env={"LANG": "en_CA.UTF-8"})
+        #p.wait()
+        #if p.returncode == 0:
+        #    os.rename(outfn + ".dwm", outfn)
+        #    echo(outfn)
 
     def wget_urls(self, title, ext, urls, tsize):
         if ext is None:
