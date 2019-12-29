@@ -24,8 +24,9 @@ class TV8(DWM):
         if u[0] in ("'", '"'):
             u = u.split(u[0])[1]
         echo(u)
-        us = self.try_m3u8(u)
-        return title, None, us, None
+        #us = self.try_m3u8(u)
+        #return title, None, us, None
+        return title, "m3u8", u, None
 
     def get_playlist(self, url):
         # url = 'http://tv8.fun/20170328-人民的名义/'

@@ -270,8 +270,8 @@ class DWM(object):
         if not os.path.exists(dn):
             os.makedirs(dn)
         data = self.get_hutf(url)
-        fout = open(os.path.join(dn, title + ".m3u8"), "w")
-        #    fout.write(hutf)
+        fm3u8 = os.path.join(dn, title + ".m3u8")
+        fout = open(fm3u8, "w")
         bu = os.path.dirname(url) + "/"
         rt = "/".join(url.split('/')[:3])
         lines = [l.strip() for l in data.split('\n')]
@@ -291,9 +291,16 @@ class DWM(object):
             cnt += 1
             echo("progress = %.1f%%" % (100.0 * cnt / unum))
             self.wget_one_url(os.path.join(dn, n), u, unum)
+        fout.close()
         echo("progress = 100%")
+        echo("merge")
+        self.avconv_m3u8(title, "mp4", fm3u8)
 
     def download_m3u8(self, title, url):
+        outfn = self.get_outfn(title, "mp4")
+        if not outfn:
+            return    # file exists
+        echo("download", outfn)
         if self.skim_output:
             self.wget_m3u8(title, url)
         else:
