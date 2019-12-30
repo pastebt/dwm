@@ -279,7 +279,7 @@ class DWM(object):
         #echo("unum =", unum)
         #cnt = 0
         dats = []
-        for line in lines:
+        for line in data.split('\n'):
             if not line or line.startswith("#"):
                 line = self.try_key(bu, rt, dn, line)
                 fout.write(line + "\n")
@@ -295,7 +295,7 @@ class DWM(object):
             #self.wget_one_url(os.path.join(dn, n), u, unum)
         fout.write("#%s\n" % url)
         fout.close()
-        cnt = 0, 0
+        cnt = 0
         unum = len(dats)
         echo("unum =", unum)
         for t, u in dats:

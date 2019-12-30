@@ -59,7 +59,14 @@ class KANTV6(DWM):
         debug(json.dumps(dat, indent=2))
         #bu = 'https://www.kantv6.com/%s/%s-' % (sect, tvid)
         debug(t)
-        return [(t + '_' + a['part_title'], "https:" + a['url']) for a in dat['data']['partList']]
+        #return [(t + '_' + a['part_title'], "https:" + a['url']) for a in dat['data']['partList']]
+        urls = []
+        for a in dat['data']['partList']:
+            p = u"%s_第%02d集" % (t, a['part'])
+            u = "https://www.kantv6.com/%s/%s-%s" % (sect, tvid, a['part_id'])
+            #echo(p, u)
+            urls.append((p, u))
+        return urls
 
     def get_title(self, tvid, sect):
         u = "https://www.kantv6.com/index.php/video/info"
