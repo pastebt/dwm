@@ -1,4 +1,5 @@
 #! /usr/bin/python -B
+# -*- coding: utf8 -*-
 
 import os
 import re
@@ -13,7 +14,7 @@ except ImportError:
     from urllib.parse import quote, unquote, urlparse
     py3 = True
 
-from comm import echo
+from comm import echo, U
 
 
 class UpFile(object):
@@ -91,7 +92,7 @@ def post(h, p, dst, fns):
 
 
 def post_one(fn, conn, dst):
-    echo(fn)
+    echo(fn, dst)
     #conn = HTTPConnection(ip, port)
     bun = "-----------------12123135---61b3e9bf8df4ee45---------------"
     fo = UpFile(fn, 'attachment', bun)
@@ -100,11 +101,22 @@ def post_one(fn, conn, dst):
                }
     conn.request("POST", dst, fo, headers)
     resp = conn.getresponse()
-    #print
     echo(resp.status, resp.reason)
 
 
+def post_file(filename, dest_uri):
+    h, p, dst = make_host_port(dest_uri)
+    conn = HTTPConnection(h, p)
+    if not py3:
+        if isinstance(filename, unicode):
+            filename = filename.encode("utf8")
+    #post_one(filename, conn, quote(unquote(dst)))
+    post_one(filename, conn, dst)
+
+
 if __name__ == '__main__':
+    post_file("无耻之徒(美版) 第一季_第01集.mp4", "http://10.0.0.7:8080/Movies/SOAP/无耻之徒/season1/")
+    sys.exit(0)
     if len(sys.argv) < 2:
         echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)

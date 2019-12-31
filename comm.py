@@ -58,6 +58,7 @@ except ImportError:
 
 import ssl
 
+from post import post_file
 from merge import merge, tss, m3u8_merge
 
 #USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
@@ -323,6 +324,7 @@ class DWM(object):
             self.avconv_m3u8(title, "mp4", url)
         else:
             self.wget_m3u8(title, url)
+        return outfn
 
     def avconv_m3u8(self, title, ext, url):
         outfn = self.get_outfn(title, ext)
@@ -365,6 +367,7 @@ class DWM(object):
                 self.wget_one_url(outfn, url, unum)
         echo("progress = 100%")
         self.use_dwm_merge(urls, title, ext, False)
+        return outfn
 
     def wget_one_url(self, outfn, url, unum, totalsize=0):
         if unum > 1:
@@ -451,11 +454,16 @@ class DWM(object):
             echo("title =", title, ext)
             echo("Size:\t%.2f MiB (%d Bytes)" % (round(size / 1048576.0, 2),
                                                  size))
-        if not self.info_only:
-            if ext == 'm3u8':
-                self.download_m3u8(title, urls)
-            else:
-                self.download_urls(title, ext, urls, size)
+        if self.info_only:
+            return
+
+        if ext == 'm3u8':
+            outfn = self.download_m3u8(title, urls)
+        else:
+            outfn = self.download_urls(title, ext, urls, size)
+        if self.parsed_args.post_uri:
+            #post_file(outfn.encode('utf8'), self.parsed_args.post_uri)
+            post_file(outfn, self.parsed_args.post_uri)
 
     def try_playlist(self, ispl, url):
         if ispl:
@@ -684,7 +692,7 @@ def start(kls):
                    help='url of movie')
     p.add_argument('-i', '--info_only', action='store_true',
                    help='show information only')
-    p.add_argument('-o', '--output', metavar='dir|url', action='store',
+    p.add_argument('-o', '--output', metavar='dir', action='store',
                    #help='where download file go, dir or url to post',
                    help='where download file go, dir',
                    default='.')
@@ -701,6 +709,8 @@ def start(kls):
     p.add_argument('--title', metavar='TITLE', action='store',
                    help='movie name if you want to define it',
                    default=UTITLE)
+    p.add_argument('--post_uri', metavar='URI', action='store',
+                   help='uri to post downloaded file')
     #p.add_argument('--wget_skip', type=int, metavar='#', action='store',
     #               help='wget skip # urls in list', default=0)
     p.add_argument('--align_num', type=int, metavar='#', action='store',
