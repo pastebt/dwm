@@ -18,9 +18,10 @@ from comm import echo, U
 
 
 class UpFile(object):
-    def __init__(self, filename, name, bun=""):
+    def __init__(self, filename, name, bun="", upd=""):
         global py3
 
+        self.upd = upd
         self.s = 0
         self.f = open(filename, "r+b")
         #fn = '_'.join(os.path.basename(filename).split('"'))
@@ -54,7 +55,8 @@ class UpFile(object):
             if buf:
                 #print '#',
                 self.cnt += len(buf)
-                sys.stdout.write("\r%0.1f" % (self.cnt * 100.0 / self.tal))
+                sys.stdout.write("\r%s%0.1f" % (
+                                  self.upd, self.cnt * 100.0 / self.tal))
                 return buf
             self.s = 2
             echo("")
@@ -91,11 +93,11 @@ def post(h, p, dst, fns):
         post_one(fn, conn, dst)
 
 
-def post_one(fn, conn, dst):
+def post_one(fn, conn, dst, upd=""):
     echo(fn, dst)
     #conn = HTTPConnection(ip, port)
     bun = "-----------------12123135---61b3e9bf8df4ee45---------------"
-    fo = UpFile(fn, 'attachment', bun)
+    fo = UpFile(fn, 'attachment', bun, upd)
     headers = {"Content-Type": "multipart/form-data; boundary=%s" % bun,
                "Content-Length": str(fo.size()),
                }
@@ -111,12 +113,10 @@ def post_file(filename, dest_uri):
         if isinstance(filename, unicode):
             filename = filename.encode("utf8")
     #post_one(filename, conn, quote(unquote(dst)))
-    post_one(filename, conn, dst)
+    post_one(filename, conn, dst, "uploaded ")
 
 
 if __name__ == '__main__':
-    post_file("无耻之徒(美版) 第一季_第01集.mp4", "http://10.0.0.7:8080/Movies/SOAP/无耻之徒/season1/")
-    sys.exit(0)
     if len(sys.argv) < 2:
         echo('Usage:', sys.argv[0], 'remote_path [filename ...]')
         sys.exit(1)
