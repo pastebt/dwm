@@ -55,6 +55,7 @@ def merge(name, ext, cnt, clean=False, ists=False):
     fs = []
     for i in range(cnt):
         fs.append("%s[%02d].%s" % (name, i, ext))
+        #fs.append("%s%03d.%s" % (name, i + 1, ext))
 
     cmd = ["avconv",
            "-v", "error",
@@ -102,14 +103,23 @@ def merge(name, ext, cnt, clean=False, ists=False):
             os.remove(f + ".ts")
 
 
-def m3u8_merge(url, outfn):
+def m3u8_merge(url, outfn, slow=False):
     #outfn = name + ".mp4"
     #url = "%s.dwm/%s.m3u8" % (name, name)
-    cmds = ["avconv",
+    if slow:
+        cmds = ["avconv",
             "-allowed_extensions", "ALL",
             "-i", url,
-            "-acodec", "copy",
-            "-vcodec", "copy",
+            "-f", "mp4",
+            outfn + ".dwm",
+            ]
+    else:
+        cmds = ["avconv",
+            "-allowed_extensions", "ALL",
+            "-i", url,
+            #"-acodec", "copy",
+            #"-vcodec", "copy",
+            "-c", "copy",
             "-f", "mp4",
             outfn + ".dwm",
             ]
@@ -124,17 +134,18 @@ def m3u8_merge(url, outfn):
 def usage():
     echo('Usage:', sys.argv[0], "name ext url_num [ists]")
     echo('Usage:', sys.argv[0], "m3u8 name")
+    echo('Usage:', sys.argv[0], "slow name")
     sys.exit(1)
 
 
 def main():
-    if len(sys.argv) == 3 and sys.argv[1] == 'm3u8':
+    if len(sys.argv) == 3 and sys.argv[1] in ('m3u8', 'slow'):
         name = sys.argv[2]
         if name.endswith(".dwm"):
             name = name[:-4]
         outfn = name + ".mp4"
         url = "%s.dwm/%s.m3u8" % (name, name)
-        m3u8_merge(url, outfn)
+        m3u8_merge(url, outfn, sys.argv[1] == 'slow')
         return
     if len(sys.argv) not in (4, 5):
         usage()
