@@ -461,7 +461,7 @@ class DWM(object):
             outfn = self.download_m3u8(title, urls)
         else:
             outfn = self.download_urls(title, ext, urls, size)
-        if self.parsed_args.post_uri:
+        if self.parsed_args.post_uri and outfn:
             #post_file(outfn.encode('utf8'), self.parsed_args.post_uri)
             post_file(outfn, self.parsed_args.post_uri)
 
