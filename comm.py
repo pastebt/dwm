@@ -309,7 +309,7 @@ class DWM(object):
             echo("merge")
             self.avconv_m3u8(title, "mp4", fm3u8)
         else:
-            echo("some download failed, skip merge")
+            echo("some download failed %d != %d, skip merge" % (cnt, unum))
 
     def download_m3u8(self, title, url):
         outfn = self.get_outfn(title, "mp4")
