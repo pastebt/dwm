@@ -377,9 +377,10 @@ class DWM(object):
         dwnfn = outfn + ".dwm"
         cmds = ["wget",
                 "-U", USER_AGENT,
-                #"--wait", "30",
+                #"--wait", "10",
                 #"--tries=50",
-                "--read-timeout=60",
+                #"--read-timeout=60",
+                "--timeout=60",
                 "--continue",
                 "--no-use-server-timestamps",
                 #"-S",
