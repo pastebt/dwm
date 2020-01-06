@@ -4,6 +4,7 @@
 import os
 import sys
 import shutil
+from time import sleep
 from subprocess import Popen, PIPE, CalledProcessError
 
 from comm import echo
@@ -101,6 +102,24 @@ def merge(name, ext, cnt, clean=False, ists=False):
         for f in fs:
             os.remove(f)
             os.remove(f + ".ts")
+
+
+def waitp(p, timeout=0):
+    if timeout <= 0:
+        p.wait()
+        return p.returncode
+
+    while timeout > 0:
+        timeout -= 1
+        sleep(1)
+        p.poll()
+        if not p.returncode is None:
+            break
+    if p.returncode is None:
+        p.kill()
+        p.terminate()
+
+    return p.returncode
 
 
 def m3u8_merge(url, outfn, slow=False):
