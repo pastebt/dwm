@@ -41,6 +41,19 @@ def merge1(name, ext, cnt):
 tss = ('ts', 'x-mpeg-ts', 'mp2t', 'MP2T')
 
 
+def find_tool():
+    p = Popen(['which', 'ffmpeg'])
+    p.wait()
+    if p.returncode == 0:
+        return "ffmpeg"
+
+    p = Popen(['which', 'avconv'])
+    p.wait()
+    if p.returncode == 0:
+        return "avconv"
+    return ""
+
+
 def merge(name, ext, cnt, clean=False, ists=False):
     # ext = 'x-mpeg-ts'
     # avconv -i 12.mp4 -c copy -f mpegts -bsf h264_mp4toannexb - > aa.ts
@@ -125,15 +138,18 @@ def waitp(p, timeout=0):
 def m3u8_merge(url, outfn, slow=False):
     #outfn = name + ".mp4"
     #url = "%s.dwm/%s.m3u8" % (name, name)
+    tool = find_tool()
+    if not tool:
+        return
     if slow:
-        cmds = ["avconv",
+        cmds = [tool,
             "-allowed_extensions", "ALL",
             "-i", url,
             "-f", "mp4",
             outfn + ".dwm",
             ]
     else:
-        cmds = ["avconv",
+        cmds = [tool,
             "-allowed_extensions", "ALL",
             "-i", url,
             #"-acodec", "copy",
