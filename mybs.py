@@ -310,6 +310,8 @@ class MyHtmlParser(HTMLParser):
         #print "start:", tag, attrs
         self.now_node = TagNode(self.now_node, tag, attrs,
                                 self.get_starttag_text())
+        if tag == 'meta':
+            self.handle_endtag(tag)
 
     def _handle_endtag(self, tag):
         ns = self.now_node
