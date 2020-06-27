@@ -171,6 +171,16 @@ class DWM(object):
         p.wait()
         return hutf
 
+    def last_m3u8(self, src):
+        us = [src]
+        while len(us) == 1:
+            last = us[0]
+            us = self._get_m3u8_urls(last, self.get_html(last))
+            t, s = get_kind_size(us[0])
+            if t != 'm3u8':
+                break
+        return last
+
     def try_m3u8(self, src):
         #url = 'http://www.ttwanda.com/films/us/2091.html?ac'
         # http://www.ttwanda.com/films/us/1881.html?le  mp2t
