@@ -15,7 +15,7 @@ class DUBOKU(DWM):
         mu = self.last_m3u8(json.loads(dat)['url'])
         #us = self.try_m3u8(u)
         t = SelStr("h2.title", hutf)[0]
-        title = ' '.join(t.text.split())
+        title = '_'.join(t.text.split())
         return title, "m3u8", mu, None
         #echo(us)
 
@@ -24,7 +24,7 @@ class DUBOKU(DWM):
         t = SelStr("h2.title a", hutf)[0]
         t = t.text.strip()
         ns = SelStr('div#playlist1 a', hutf)
-        return [(t + " " + a.text, "https://www.duboku.co" + a['href']) for a in ns]
+        return [(t + "_" + a.text.strip(), "https://www.duboku.co" + a['href']) for a in ns]
 
     def test(self, argv):
         url = "https://www.duboku.co/vodplay/1433-1-1.html"

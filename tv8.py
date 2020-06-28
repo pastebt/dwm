@@ -19,7 +19,7 @@ class TV8(DWM):
         mu = match1(d.text, ' video:\s*(\S+)').strip('"')
         mu = self.last_m3u8(mu)
         d.children = [c for c in d.children if isinstance(c, DataNode)]
-        title = h.text.strip() + " " + d.text.strip()
+        title = h.text.strip() + "_" + d.text.strip()
         return title, "m3u8", mu, None
 
     def query_info1(self, url):
