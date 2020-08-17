@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 import re
+import os
 import sys
 import json
 from subprocess import Popen, PIPE
@@ -14,14 +15,19 @@ class YOUTUBE(DWM):
     handle_list = ['/youtube\.com/', '/www\.youtube\.com/']
 
     def query_info(self, url):
-        title = UTITLE
-        return title, None, [url], None
+        #title = UTITLE
+        #return title, None, [url], None
+        return
 
     def get_one(self, url, t=UTITLE, n=False):
         p = Popen(["../you-get/you-get", url])
         p.wait()
-        if self.parsed_args.post_uri and t:
-            post_file(t + ".mp4", self.parsed_args.post_uri)
+        if self.parsed_args.post_uri:
+            for e in ('.mp4', '.webm'):
+                if os.isfile(t + e):
+                    post_file(t + e, self.parsed_args.post_uri)
+                    return
+            raise("can not find " + t)
         
     def get_playlist(self, url):
         #return [(a.text, a['href']) for a in ns]
