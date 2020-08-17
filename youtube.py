@@ -20,7 +20,9 @@ class YOUTUBE(DWM):
         return
 
     def get_one(self, url, t=UTITLE, n=False):
-        p = Popen(["../you-get/you-get", url])
+        dn = os.path.dirname(os.path.abspath(__file__))
+        fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
+        p = Popen([fn, url])
         p.wait()
         if self.parsed_args.post_uri:
             for e in ('.mp4', '.webm'):
@@ -56,6 +58,10 @@ class YOUTUBE(DWM):
         return us
 
     def test(self, args):
+        dn = os.path.dirname(os.path.abspath(__file__))
+        fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
+        echo(fn)
+        return
         hutf = open('l.html').read().decode('utf8')
         js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*\}\}\});''', hutf)
         #echo(js[0])
