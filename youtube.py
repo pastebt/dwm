@@ -58,6 +58,8 @@ class YOUTUBE(DWM):
         return us
 
     def test(self, args):
+        vid = "PnISflVsnoc"
+        u = 'https://www.youtube.com/get_video_info?video_id={}&eurl=https%3A%2F%2Fy'.format(vid)
         dn = os.path.dirname(os.path.abspath(__file__))
         fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
         echo(fn)
