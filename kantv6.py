@@ -26,7 +26,7 @@ class KANTV6(DWM):
         sect, tvid, ptid = self.get_stp(url)
         title = self.get_title(tvid, sect)
         du = "https://www.kantv6.com/index.php/video/play"
-        if sect == 'movie':
+        if sect == 'movie' or sect == 'anime':
             du = "%s?tvid=%s&line=1&seo=%s" % (du, tvid, sect)
         elif sect == 'tvdrama':
             if not ptid:
@@ -81,7 +81,7 @@ class KANTV6(DWM):
         if m:
             sect, tvid, ptid = m.groups()
             return sect, tvid, ptid
-        m = re.search("/(tvdrama|movie)/(\d+)", url)
+        m = re.search("/(tvdrama|movie|anime)/(\d+)", url)
         sect, tvid = m.groups()
         return sect, tvid, ""
 
