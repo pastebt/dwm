@@ -62,7 +62,10 @@ class KANTV6(DWM):
         #return [(t + '_' + a['part_title'], "https:" + a['url']) for a in dat['data']['partList']]
         urls = []
         for a in dat['data']['partList']:
-            p = u"%s_第%02d集" % (t, a['part'])
+            if sect == "show":
+                p = t + " " + a['part_title']
+            elif sect == "tvdrama":
+                p = u"%s_第%02d集" % (t, a['part'])
             u = "https://www.kantv6.com/%s/%s-%s" % (sect, tvid, a['part_id'])
             #echo(p, u)
             urls.append((p, u))
