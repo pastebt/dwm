@@ -108,6 +108,7 @@ def post_one(fn, conn, dst, upd=""):
 
 def post_file(filename, dest_uri):
     h, p, dst = make_host_port(dest_uri)
+    dst = quote(unquote(dst))
     conn = HTTPConnection(h, p)
     if not py3:
         if isinstance(filename, unicode):
