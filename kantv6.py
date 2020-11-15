@@ -10,7 +10,8 @@ from comm import DWM, echo, start, debug
 
 
 class KANTV6(DWM):
-    handle_list = ['//kantv6\.com/', '//www\.kantv6\.com/']
+    handle_list = ['//kantv6\.com/', '//www\.kantv6\.com/',
+                   '//wekan.tv/', '//www.wekan.tv/']
 
     def query_info(self, url):
         title, mu = "", url
@@ -28,7 +29,7 @@ class KANTV6(DWM):
         du = "https://www.kantv6.com/index.php/video/play"
         if sect in ('movie', 'anime'):
             du = "%s?tvid=%s&line=1&seo=%s" % (du, tvid, sect)
-        elif sect in ('tvdrama', 'show'):
+        elif sect in ('tvdrama', 'show', 'liveshow'):
             if not ptid:
                 echo("no ptid")
                 return
@@ -38,7 +39,7 @@ class KANTV6(DWM):
             return
         dat = self.get_hutf(du)
         dat = json.loads(dat)
-        if sect in ('tvdrama', 'show'):
+        if sect in ('tvdrama', 'show', 'liveshow'):
             title = title + "_" + dat['data']['part_title']
         debug(json.dumps(dat, indent=2))
         echo("title", title)
@@ -49,7 +50,7 @@ class KANTV6(DWM):
 
     def get_playlist(self, url):
         sect, tvid, ptid = self.get_stp(url)
-        if sect not in ("tvdrama", "show"):
+        if sect not in ("tvdrama", "show", 'liveshow'):
             return []
         u = 'https://www.kantv6.com/index.php/video/part'
         u = '%s?tvid=%s' % (u, tvid)
@@ -62,7 +63,7 @@ class KANTV6(DWM):
         #return [(t + '_' + a['part_title'], "https:" + a['url']) for a in dat['data']['partList']]
         urls = []
         for a in dat['data']['partList']:
-            if sect == "show":
+            if sect in ("show", "liveshow"):
                 p = t + " " + a['part_title']
             elif sect == "tvdrama":
                 p = u"%s_第%02d集" % (t, a['part'])
@@ -80,11 +81,11 @@ class KANTV6(DWM):
         return dat['data']['title']
 
     def get_stp(self, url):
-        m = re.search("/(tvdrama|show)/(\d+)-(\d+)", url)
+        m = re.search("/(tvdrama|show|liveshow)/(\d+)-(\d+)", url)
         if m:
             sect, tvid, ptid = m.groups()
             return sect, tvid, ptid
-        m = re.search("/(tvdrama|movie|anime|show)/(\d+)", url)
+        m = re.search("/(tvdrama|movie|anime|show|liveshow)/(\d+)", url)
         sect, tvid = m.groups()
         return sect, tvid, ""
 
