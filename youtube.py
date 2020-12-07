@@ -25,10 +25,12 @@ class YOUTUBE(DWM):
         #return
         dn = os.path.dirname(os.path.abspath(__file__))
         fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
-        p = Popen([fn, "--no-caption", url])
+        p = Popen([fn, "-o", self.out_dir, "--no-caption", url])
         p.wait()
+
         if not self.parsed_args.post_uri:
             return
+
         t = t.encode("utf8")
         for e in ('.mp4', '.webm'):
             #echo(t, e)
