@@ -20,16 +20,25 @@ class YOUTUBE(DWM):
         return
 
     def get_one(self, url, t=UTITLE, n=False):
+        #echo(url, t)
+        #echo("")
+        #return
         dn = os.path.dirname(os.path.abspath(__file__))
         fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
-        p = Popen([fn, url])
+        p = Popen([fn, "--no-caption", url])
         p.wait()
-        if self.parsed_args.post_uri:
-            for e in ('.mp4', '.webm'):
-                if os.isfile(t + e):
-                    post_file(t + e, self.parsed_args.post_uri)
-                    return
-            raise("can not find " + t)
+        if not self.parsed_args.post_uri:
+            return
+        t = t.encode("utf8")
+        for e in ('.mp4', '.webm'):
+            #echo(t, e)
+            fn = t + e
+            fn = os.path.join(self.out_dir, fn)
+            if os.path.isfile(fn):
+                post_file(fn, self.parsed_args.post_uri)
+                return
+        else:
+            raise Exception("can not find " + t)
         
     def get_playlist(self, url):
         ll = re.findall("list=([0-9a-zA-Z-_]+)", url)
