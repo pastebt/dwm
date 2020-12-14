@@ -5,7 +5,12 @@ import os
 import sys
 import json
 from subprocess import Popen, PIPE
+try:
+    from urllib import unquote_plus
+except ImportError:
+    from urllib.parse import unquote_plus
 
+import comm
 from mybs import SelStr
 from post import post_file
 from comm import DWM, echo, start, UTITLE
@@ -31,14 +36,14 @@ class YOUTUBE(DWM):
         if not self.parsed_args.post_uri:
             return
 
-        t = t.encode("utf8")
+        #t = t.encode("utf8")
         for e in ('.mp4', '.webm'):
-            #echo(t, e)
-            fn = t + e
-            fn = os.path.join(self.out_dir, fn)
-            if os.path.isfile(fn):
-                post_file(fn, self.parsed_args.post_uri)
-                return
+            for t in (t.encode("utf8"), unquote_plus(t)):
+                fn = t + e
+                fn = os.path.join(self.out_dir, fn)
+                if os.path.isfile(fn):
+                    post_file(fn, self.parsed_args.post_uri)
+                    return
         else:
             raise Exception("can not find " + t)
         
@@ -52,12 +57,26 @@ class YOUTUBE(DWM):
         us = []
         js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*\}\});''', hutf)
         js = json.loads(js[0])['contents']["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"][0]["playlistVideoListRenderer"]
+        if comm.DEBUG:
+            with open("debug_yt.json", "w") as jout:
+                json.dump(js, jout, indent=2)
         for j in js["contents"]:
-            j = j["playlistVideoRenderer"]
+            #if comm.DEBUG:
+            #    json.dump(j, sys.stdout, indent=2)
+            j = j.get("playlistVideoRenderer")
+            if not j:
+                # if item count > 100, last one will be "continuationItemRenderer"
+                # TODO handle it
+                continue
             #us.append((j["title"]["simpleText"],
             us.append((j['title']['runs'][0]['text'],
                       "https://youtube.com/watch?v=" + j["videoId"]))
         return us
+
+    def get_next(self, us, key):
+        #url = 'https://www.youtube.com/watch?v=BupDf81sxK4&list=PLwGmw7Ao_fs8VK2iH4hybZ0jhpOBzcKmg&index=1'
+        # https://www.youtube.com/youtubei/v1/browse?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
+        pass
 
     def test1(self, args):
         vid = "PnISflVsnoc"
@@ -108,6 +127,7 @@ class YOUTUBE(DWM):
 
     def test(self, args):
         url = 'https://www.youtube.com/watch?v=CtiGG5JgRss&list=OLAK5uy_nbCXU_ETWKYRkx_Y7V0b5wPm5DkL9mhw4&index=1'
+        url = 'https://www.youtube.com/watch?v=BupDf81sxK4&list=PLwGmw7Ao_fs8VK2iH4hybZ0jhpOBzcKmg&index=1'
         us = self.get_playlist(url)
         json.dump(us, sys.stdout, indent=2)
 
