@@ -56,6 +56,10 @@ class YOUTUBE(DWM):
         hutf = self.get_hutf(url)
         us = []
         js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*\}\});''', hutf)
+        if not js:
+            js = re.findall('''var\s+ytInitialData\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
+        if not js:
+            raise Exception("can not find ytInitialData")
         js = json.loads(js[0])['contents']["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"][0]["playlistVideoListRenderer"]
         if comm.DEBUG:
             with open("debug_yt.json", "w") as jout:
@@ -130,6 +134,12 @@ class YOUTUBE(DWM):
         url = 'https://www.youtube.com/watch?v=BupDf81sxK4&list=PLwGmw7Ao_fs8VK2iH4hybZ0jhpOBzcKmg&index=1'
         us = self.get_playlist(url)
         json.dump(us, sys.stdout, indent=2)
+        return
+        hutf = open("y1.html").read().decode("utf8")
+        js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
+        echo(js)
+        js = re.findall('''var\s+ytInitialData\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
+        echo(js)
 
 
 if __name__ == '__main__':
