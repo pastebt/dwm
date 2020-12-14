@@ -132,14 +132,34 @@ class YOUTUBE(DWM):
     def test(self, args):
         url = 'https://www.youtube.com/watch?v=CtiGG5JgRss&list=OLAK5uy_nbCXU_ETWKYRkx_Y7V0b5wPm5DkL9mhw4&index=1'
         url = 'https://www.youtube.com/watch?v=BupDf81sxK4&list=PLwGmw7Ao_fs8VK2iH4hybZ0jhpOBzcKmg&index=1'
-        us = self.get_playlist(url)
-        json.dump(us, sys.stdout, indent=2)
-        return
+        #us = self.get_playlist(url)
+        #json.dump(us, sys.stdout, indent=2)
+        #return
         hutf = open("y1.html").read().decode("utf8")
-        js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
-        echo(js)
+        #js = re.findall('''window\["ytInitialData"\]\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
+        #echo(js)
         js = re.findall('''var\s+ytInitialData\s*=\s*(\{.*playlistVideoListRenderer.*\}\});''', hutf)
-        echo(js)
+        #echo(js)
+        js = json.loads(js[0])
+        pvlr = find_in(js, "playlistVideoListRenderer")
+        json.dump(pvlr, sys.stdout, indent=2)
+
+
+def find_in(dat, name):
+    if isinstance(dat, dict):
+        for k, v in dat.items():
+            if k == name:
+                return v
+            else:
+                d = find_in(v, name)
+                if d:
+                    return d
+    elif isinstance(dat, (list, tuple)):
+        for v in dat:
+            d = find_in(v, name)
+            if d:
+                return d
+    return None
 
 
 if __name__ == '__main__':
