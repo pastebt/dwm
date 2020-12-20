@@ -13,6 +13,7 @@ try:
     from queue import Queue
     import http.client as httplib
     import urllib.parse as urlparse
+    from urllib.parse import quote
     from urllib.request import HTTPCookieProcessor, ProxyHandler
     from urllib.request import HTTPRedirectHandler, HTTPSHandler
     from urllib.request import Request
@@ -28,6 +29,7 @@ try:
 except ImportError:
     import httplib
     import urlparse
+    from urllib import quote
     from Queue import Queue
     from urllib2 import HTTPCookieProcessor, ProxyHandler
     from urllib2 import HTTPRedirectHandler, HTTPSHandler
@@ -799,6 +801,9 @@ def run(k, args):
                 #if args.continue_next:
                 if args.debug:
                     echo("Error:", e)
+                    with open("exception_%s.txt" % quote(url), "w") as fo:
+                        fo.write(title + "\n")
+                        fo.write(url + "\n")
                 else:
                     raise
     elif not args.playlist_only:
