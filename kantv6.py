@@ -89,7 +89,7 @@ class KANTV6(DWM):
         sect, tvid = m.groups()
         return sect, tvid, ""
 
-    def test(self, argv):
+    def test1(self, argv):
         mu = self.get_m3u8(argv.url)
         echo(mu)
         sect, tvid, ptid = self.get_stp(argv.url)
@@ -99,13 +99,15 @@ class KANTV6(DWM):
         dat = json.loads(dat)
         debug(json.dumps(dat, indent=2))
 
-    def test1(self, argv):
+    def test(self, argv):
         url = 'https://www.kantv6.com/tvdrama/301948271219001-161948271219033'
         url = 'https://www.kantv6.com/index.php/video/part?tvid=301948271219001'
         url = 'https://www.kantv6.com/index.php/video/info?tvid=301948271219001&seo=tvdrama'
         url = 'https://www.kantv6.com/tvdrama/301948271219001'
         url = 'https://www.kantv6.com/movie/301749570845001'
-        url = "https://www.kantv6.com/index.php/video/info?tvid=301749570845001&seo=movie"
+        #url = "https://www.kantv6.com/index.php/video/info?tvid=301749570845001&seo=movie"
+        url = "https://www.kantv6.com/index.php/video/info?tvid=301805671042001&seo=documentary"
+        #url = 'https://www.kantv6.com/documentary/301805671042001'
         dat = self.get_hutf(url)
         dat = json.loads(dat)
         echo(json.dumps(dat, indent=2))

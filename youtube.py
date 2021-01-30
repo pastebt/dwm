@@ -4,6 +4,7 @@ import re
 import os
 import sys
 import json
+from glob import glob
 from subprocess import Popen, PIPE
 try:
     from urllib import unquote_plus
@@ -13,7 +14,7 @@ except ImportError:
 import comm
 from mybs import SelStr
 from post import post_file
-from comm import DWM, echo, start, UTITLE
+from comm import DWM, echo, start, UTITLE, debug
 
 
 class YOUTUBE(DWM):
@@ -37,15 +38,23 @@ class YOUTUBE(DWM):
             return
 
         #t = t.encode("utf8")
-        for e in ('.mp4', '.webm'):
-            for t in (t.encode("utf8"), unquote_plus(t)):
-                fn = t + e
-                fn = os.path.join(self.out_dir, fn)
-                if os.path.isfile(fn):
-                    post_file(fn, self.parsed_args.post_uri)
-                    return
-        else:
-            raise Exception("can not find " + t)
+        #for e in ('.mp4', '.webm'):
+        #    for t in (t.encode("utf8"), unquote_plus(t), t.replace("|", "-")):
+        #        fn = t + e
+        #        fn = os.path.join(self.out_dir, fn)
+        #        debug("try find " + fn)
+        #        if os.path.isfile(fn):
+        #            post_file(fn, self.parsed_args.post_uri)
+        #            return
+        for i in range(1, len(t)):
+            n = t[:i] + "*"
+            debug("ls " + n)
+            ls = glob(n)
+            if len(ls) == 1:
+                post_file(ls[0], self.parsed_args.post_uri)
+                return
+                
+        raise Exception("can not find " + t)
         
     def get_playlist(self, url):
         ll = re.findall("list=([0-9a-zA-Z-_]+)", url)
