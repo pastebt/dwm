@@ -768,8 +768,9 @@ def start(kls):
     kls.align_num = args.align_num
     kls.login_cookie = args.cookie
     kls.login_agent = args.user_agent
-    kls.no_check_certificate = args.no_check_certificate
-    if args.no_check_certificate:
+    DWM.no_check_certificate = args.no_check_certificate
+    #if args.no_check_certificate:
+    if kls.no_check_certificate:
         ssl._create_default_https_context = ssl._create_unverified_context
     kls.download_urls = DWM.wget_urls
     kls.skim_output = args.skim_output

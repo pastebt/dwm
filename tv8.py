@@ -7,6 +7,7 @@ from comm import DWM, echo, start, match1
 
 
 class TV8(DWM):
+    no_check_certificate = True
     handle_list = ['/tv8\.fun/', '.dayi.ca/']
 
     def query_info(self, url):

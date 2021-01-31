@@ -14,7 +14,7 @@ class SHIMO(DWM):
     def download(self, url, name):
         #for u in self.get_list(url, name):
         #    self.download_one(u)
-        print "not implement yet"
+        echo("not implement yet")
 
     def download_one(self, url):
         #url = "https://shimo.im/docs/gJQufddR72AZJcna/read"
