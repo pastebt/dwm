@@ -1,9 +1,13 @@
 # -*- coding: utf8 -*-
 
+import re
 import json
-
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 from mybs import SelStr, DataNode
-from comm import DWM, echo, start, match1
+from comm import DWM, echo, start, match1, U, debug
 
 
 class TV8(DWM):
@@ -43,6 +47,21 @@ class TV8(DWM):
         return title, "m3u8", u, None
 
     def get_playlist(self, url):
+        hutf = self.get_hutf(url)
+        p = SelStr("div.entry-content p", hutf)
+        m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
+        max_id = int(m.group(1))
+        for a in p[1].select("a"):
+            uo = urlparse.urlparse(a['href'])
+            qs = urlparse.parse_qs(uo.query)
+            if 'p' in qs and 'page' in qs:
+                pn = int(qs['p'][0])
+                break
+        us = [("%d" % i, "http://www.dayi.ca/ys/?p=%d&page=%d" % (pn, i)) for i in range(1, max_id + 1)]
+        debug(us)
+        return us
+
+    def get_playlist1(self, url):
         # url = 'http://tv8.fun/20170328-人民的名义/'
         hutf = self.get_hutf(url)
         # echo(hutf)
@@ -67,22 +86,21 @@ class TV8(DWM):
         # 'http://www.dayi.ca/ys/?p=3004&page=2'
         #url = 'http://www.dayi.ca/ys/?p=2386&page=52'
         #url = 'http://www.dayi.ca/ys/?p=3004&page=1'
-        url = 'http://www.dayi.ca/ys/?p=4076&&page=1'
+        #url = 'http://www.dayi.ca/ys/?p=4076&&page=1'
+        url = 'http://tv8.fun/%e4%b8%8a%e9%98%b3%e8%b5%8b/' # 上阳赋
         hutf = self.get_hutf(url)
-        h = SelStr("h3", hutf)[0]
-        echo(h.text)
-        d = SelStr("div.post-entry p", hutf)[0]
-        d.children = [c for c in d.children if isinstance(c, DataNode)]
-        echo(d.text)
-        #dat = match1(hutf, r" var\s+videoObject\s*\=\s*({[^}]+})")
-        #hutf = '''//advertisements:'website:http://dayi.ca/ys/wp-content/themes/responsive-child/ad.json',
-        #        video:"https://videos6.jsyunbf.com/20190630/MnyGwQRx/index.m3u8"
-                
-        #}'''
-        #dat = match1(hutf, ' video:\s*(\S+)')
-        #dat = dat.strip('"')
-        #dat = json.loads(dat)["video"]
-        #echo(dat)
+        #echo(hutf)
+        p = SelStr("div.entry-content p", hutf)
+        echo(p[0].text)
+        m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
+        echo(m.group(1))
+        for a in p[1].select("a"):
+            if 'page=' not in a['href']:
+                continue
+            uo = urlparse.urlparse(a['href'])
+            qs = urlparse.parse_qs(uo.query)
+            echo(qs)
+            break
 
 
 if __name__ == '__main__':
