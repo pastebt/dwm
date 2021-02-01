@@ -48,16 +48,24 @@ class TV8(DWM):
 
     def get_playlist(self, url):
         hutf = self.get_hutf(url)
+        #m = re.search(U("通用版.+第(\d+)集"), p[3].text)
+        #if m:
+        #    max_id = int(m.group(1))
+        #else:
+        #    m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
+        #    max_id = int(m.group(1))
+        t = SelStr("h1.entry-title", hutf)[0]
+        m = re.search(U("(.+) 至第(\d+)集"), t.text)
+        title, max_id = m.group(1).strip(), int(m.group(2))
+
         p = SelStr("div.entry-content p", hutf)
-        m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
-        max_id = int(m.group(1))
         for a in p[1].select("a"):
             uo = urlparse.urlparse(a['href'])
             qs = urlparse.parse_qs(uo.query)
             if 'p' in qs and 'page' in qs:
                 pn = int(qs['p'][0])
                 break
-        us = [("%d" % i, "http://www.dayi.ca/ys/?p=%d&page=%d" % (pn, i)) for i in range(1, max_id + 1)]
+        us = [(U("%s_第%02d集") % (title, i), "http://www.dayi.ca/ys/?p=%d&page=%d" % (pn, i)) for i in range(1, max_id + 1)]
         debug(us)
         return us
 
@@ -90,8 +98,13 @@ class TV8(DWM):
         url = 'http://tv8.fun/%e4%b8%8a%e9%98%b3%e8%b5%8b/' # 上阳赋
         hutf = self.get_hutf(url)
         #echo(hutf)
+        t = SelStr("h1.entry-title", hutf)[0]
+        m = re.search(U("(.+) 至第(\d+)集"), t.text)
+        echo(m.group(1), m.group(2))
         p = SelStr("div.entry-content p", hutf)
-        echo(p[0].text)
+        echo(p[3].text)
+        m = re.search(U("通用版.+第(\d+)集"), p[3].text)
+        echo(m.group(1))
         m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
         echo(m.group(1))
         for a in p[1].select("a"):
