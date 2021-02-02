@@ -47,6 +47,8 @@ class TV8(DWM):
         return title, "m3u8", u, None
 
     def get_playlist(self, url):
+        if 'dayi.ca/' in url:
+            return []
         hutf = self.get_hutf(url)
         #m = re.search(U("通用版.+第(\d+)集"), p[3].text)
         #if m:
@@ -56,7 +58,12 @@ class TV8(DWM):
         #    max_id = int(m.group(1))
         t = SelStr("h1.entry-title", hutf)[0]
         m = re.search(U("(.+) 至第(\d+)集"), t.text)
-        title, max_id = m.group(1).strip(), int(m.group(2))
+        if m:
+            title, max_id = m.group(1).strip(), int(m.group(2))
+        else:
+            m = re.search(u"(.+) (\d+)集全", t.text)
+            if m:
+                title, max_id = m.group(1).strip(), int(m.group(2))
 
         p = SelStr("div.entry-content p", hutf)
         for a in p[1].select("a"):
