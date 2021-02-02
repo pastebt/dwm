@@ -99,7 +99,7 @@ class TV8(DWM):
         hutf = self.get_hutf(url)
         #echo(hutf)
         t = SelStr("h1.entry-title", hutf)[0]
-        m = re.search(U("(.+) 至第(\d+)集"), t.text)
+        m = re.search(u"(.+) 至第(\d+)集", t.text)
         echo(m.group(1), m.group(2))
         p = SelStr("div.entry-content p", hutf)
         echo(p[3].text)
