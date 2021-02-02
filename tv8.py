@@ -103,7 +103,7 @@ class TV8(DWM):
         echo(m.group(1), m.group(2))
         p = SelStr("div.entry-content p", hutf)
         echo(p[3].text)
-        m = re.search(U("通用版.+第(\d+)集"), p[3].text)
+        m = re.search(u"通用版.+第(\d+)集", p[3].text)
         echo(m.group(1))
         m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
         echo(m.group(1))
