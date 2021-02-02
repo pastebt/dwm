@@ -50,6 +50,8 @@ class YOUTUBE(DWM):
             n = t[:i] + "*"
             debug("ls " + n)
             ls = glob(n)
+            if len(ls) == 0:
+                break
             if len(ls) == 1:
                 post_file(ls[0], self.parsed_args.post_uri)
                 return
