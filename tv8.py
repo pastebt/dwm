@@ -65,8 +65,10 @@ class TV8(DWM):
             if m:
                 title, max_id = m.group(1).strip(), int(m.group(2))
 
-        p = SelStr("div.entry-content p", hutf)
-        for a in p[1].select("a"):
+        #ps = SelStr("div.entry-content p", hutf)
+        #for a in p[1].select("a"):
+        al = SelStr("div.entry-content p a", hutf)
+        for a in al:
             uo = urlparse.urlparse(a['href'])
             qs = urlparse.parse_qs(uo.query)
             if 'p' in qs and 'page' in qs:
@@ -103,8 +105,10 @@ class TV8(DWM):
         #url = 'http://www.dayi.ca/ys/?p=3004&page=1'
         #url = 'http://www.dayi.ca/ys/?p=4076&&page=1'
         url = 'http://tv8.fun/%e4%b8%8a%e9%98%b3%e8%b5%8b/' # 上阳赋
+        url = 'http://tv8.fun/%e8%a5%bf%e4%ba%ac%e6%95%85%e4%ba%8b/' # 西京故事
         hutf = self.get_hutf(url)
-        #echo(hutf)
+        echo(hutf)
+        return
         t = SelStr("h1.entry-title", hutf)[0]
         m = re.search(u"(.+) 至第(\d+)集", t.text)
         echo(m.group(1), m.group(2))
