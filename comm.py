@@ -13,7 +13,7 @@ try:
     from queue import Queue
     import http.client as httplib
     import urllib.parse as urlparse
-    from urllib.parse import quote
+    from urllib.parse import quote, unquote
     from urllib.request import HTTPCookieProcessor, ProxyHandler
     from urllib.request import HTTPRedirectHandler, HTTPSHandler
     from urllib.request import Request
@@ -29,7 +29,7 @@ try:
 except ImportError:
     import httplib
     import urlparse
-    from urllib import quote
+    from urllib import quote, unquote
     from Queue import Queue
     from urllib2 import HTTPCookieProcessor, ProxyHandler
     from urllib2 import HTTPRedirectHandler, HTTPSHandler
@@ -75,6 +75,12 @@ def debug(*args):
     if not DEBUG:
         return
     echo(*args)
+
+
+def norm_url(url):
+    if isinstance(url, unicode):
+        url = url.encode('utf8')
+    return quote(unquote(url), ":=?/")
 
 
 class UO(object):

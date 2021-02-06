@@ -4,7 +4,7 @@ import re
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from comm import DWM, echo, start, match1
+from comm import DWM, echo, start, match1, norm_url
 
 
 class DRAMA8(DWM):
@@ -33,7 +33,8 @@ class DRAMA8(DWM):
         skey = match1(hutf, "\s+var\s+skey\s*=\s*'(\S+)'\s*;")
         echo(skey)
         mp3url = match1(hutf, " '(\S+skey=)'\s*\+\s*skey")
-        echo(mp3url)
+        #echo(quote(mp3url.encode('utf8'), ":?=/"))
+        echo(norm_url(mp3url + skey)) #.encode('utf8')))
 
 
 if __name__ == '__main__':
