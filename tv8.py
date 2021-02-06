@@ -57,7 +57,7 @@ class TV8(DWM):
         #    m = re.search(U("首播:.+共(\d+)集"), p[0].text) #, flags=re.M+re.U)
         #    max_id = int(m.group(1))
         t = SelStr("h1.entry-title", hutf)[0]
-        m = re.search(U("(.+) 至第(\d+)集"), t.text)
+        m = re.search(U("(.+) .+第(\d+)集"), t.text)
         if m:
             title, max_id = m.group(1).strip(), int(m.group(2))
         else:
