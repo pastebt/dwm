@@ -3,15 +3,16 @@
 import json
 
 from mybs import SelStr
-from comm import DWM, echo, start, match1
+from comm import DWM, echo, start, match1, debug
 
 
 class DUBOKU(DWM):
-    handle_list = ['/duboku\.co/', '/www.duboku\.co/']
+    handle_list = ['/duboku\.co/', '/www.duboku\.co/', '\.zdubo.com/']
 
     def query_info(self, url):
         hutf = self.get_hutf(url)
         dat = match1(hutf, r"var\s+player_data\s*\=\s*({[^}]+})")
+        debug(dat)
         mu = self.last_m3u8(json.loads(dat)['url'])
         #us = self.try_m3u8(u)
         t = SelStr("h2.title", hutf)[0]
@@ -28,9 +29,14 @@ class DUBOKU(DWM):
 
     def test(self, argv):
         url = "https://www.duboku.co/vodplay/1433-1-1.html"
-        hutf = self.get_hutf(url)
+        url = "https://u.zdubo.com/vodplay/1697-1-1.html"
+        #hutf = self.get_hutf(url)
+        #echo(hutf)
+        #return
+        hutf = open("d.html").read().decode('utf8')
         dat = match1(hutf, r"var\s+player_data\s*\=\s*({[^}]+})")
         dat = json.loads(dat)
+        echo(dat)
         echo(dat['url'])
         #us = self.try_m3u8(dat['url'])
         #echo(us)
