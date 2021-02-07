@@ -1,10 +1,11 @@
 # -*- coding: utf8 -*-
 
 import re
+import json
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from chrom import get_ci
+from chrome import get_ci
 from comm import DWM, echo, start, match1, norm_url
 
 
@@ -62,8 +63,17 @@ class YOUSXS(DWM):
 
     def test(self, argv):
         url = "https://www.yousxs.com/player/4659_1.html"
-        hutf = self.phantom_hutf(url)
-        echo(hutf)
+        #hutf = self.phantom_hutf(url)
+        #echo(hutf)
+        ci = get_ci() #True)
+        try:
+            ci.Page.navigate(url=url)
+            ci.wait_event("Page.loadEventFired", timeout=30)
+            ret = ci.Runtime.evaluate(expression="skey")
+            print(json.dumps(ret, indent=2))
+            print("skey =", ret["result"]["result"]["value"])
+        finally:
+            ci.stop()
 
 
 if __name__ == '__main__':
