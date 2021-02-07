@@ -7,7 +7,7 @@ from comm import DWM, echo, start, match1, norm_url
 
 
 class XIMALAYA(DWM):
-    handle_list = ['(/|\.)yousxs\.com(/|:)']
+    handle_list = ['(/|\.)ximalaya\.com(/|:)']
 
     def query_info(self, url):
         #url = "https://www.yousxs.com/player/4659_1.html"

@@ -72,9 +72,9 @@ UTITLE = "UnknownTitle"
 
 def debug(*args):
     global DEBUG
-    if not DEBUG:
-        return
-    echo(*args)
+    if DEBUG:
+        echo(*args)
+    return DEBUG
 
 
 def norm_url(url):
