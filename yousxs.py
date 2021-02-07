@@ -61,7 +61,8 @@ class YOUSXS(DWM):
 
     def test(self, argv):
         url = "https://www.yousxs.com/player/4659_1.html"
-        hutf = self.phantom_hutf(url)
+        #hutf = self.phantom_hutf(url)
+        hutf = self.chrome_hutf(url)
         echo(hutf)
 
 
