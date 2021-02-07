@@ -80,7 +80,7 @@ def debug(*args):
 def norm_url(url):
     if isinstance(url, unicode):
         url = url.encode('utf8')
-    return quote(unquote(url), ":=?/")
+    return quote(unquote(url), ":=?/&#;,@")
 
 
 class UO(object):
@@ -376,7 +376,8 @@ class DWM(object):
             return    # file exists
         echo("download", outfn)
         if unum == 1:
-            return self.wget_one_url(outfn, urls[0], 1, tsize)
+            self.wget_one_url(outfn, urls[0], 1, tsize)
+            return outfn
         #for cnt, url in enumerate(urls[self.dwn_skip:], start=self.dwn_skip):
         for cnt, url in enumerate(urls):
             echo("progress = %.1f%%" % (100.0 * cnt / len(urls)))
@@ -480,6 +481,8 @@ class DWM(object):
             outfn = self.download_m3u8(title, urls)
         else:
             outfn = self.download_urls(title, ext, urls, size)
+        debug("post_uri = ", self.parsed_args.post_uri)
+        debug("outfn = ", outfn)
         if self.parsed_args.post_uri and outfn:
             #post_file(outfn.encode('utf8'), self.parsed_args.post_uri)
             post_file(outfn, self.parsed_args.post_uri)
