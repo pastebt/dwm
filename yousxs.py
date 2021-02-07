@@ -30,7 +30,7 @@ class YOUSXS(DWM):
             if n is None:
                 continue
             n = int(n)
-            ul.append(("%s_%02d.mp3" % (title, n),
+            ul.append((u"%s_有声小说_第%02d集" % (title, n),
                        "https://www.yousxs.com/player/%s_%d.html" % (mid, n)))
         return ul
        
