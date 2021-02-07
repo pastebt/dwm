@@ -1,23 +1,30 @@
 # -*- coding: utf8 -*-
 
 import re
+import json
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
-from comm import DWM, echo, start, match1, norm_url
+from chrome import get_ci
+from comm import DWM, echo, start, match1, norm_url, debug
 
 
 class YOUSXS(DWM):
-    handle_list = ['(/|\.)yousxs\.com(/|:)']
+    handle_list = ['(/|\.)yousxs\.com/']
 
     def query_info(self, url):
         #url = "https://www.yousxs.com/player/4659_1.html"
-        hutf = self.get_hutf(url)
-        title = SelStr("h3", hutf)[0].text
-        skey = match1(hutf, "\s+var\s+skey\s*=\s*'(\S+)'\s*;")
-        skey = "1ab7d3b36620467d9bd0ca00e3b13ef3"
-        mp3url = match1(hutf, " '(\S+skey=)'\s*\+\s*skey")
-        u = norm_url(mp3url + skey)
+        ci = get_ci(debug())
+        try:
+            ci.Page.navigate(url=url)
+            ci.wait_event("Page.loadEventFired", timeout=30)
+            ret = ci.Runtime.evaluate(expression="ap.options.audio[0].name")
+            title = ret["result"]["result"]["value"]
+            ret = ci.Runtime.evaluate(expression="ap.options.audio[0].url")
+            mp3url = ret["result"]["result"]["value"]
+        finally:
+            ci.stop()
+        u = norm_url(mp3url)
         return title, "mp3", [u], None
 
     def get_playlist(self, url):
@@ -38,16 +45,6 @@ class YOUSXS(DWM):
     def test1(self, argv):
         url = "https://www.yousxs.com/4659.html"
         echo(self.get_playlist(url))
-        #url = "https://www.yousxs.com/player/4659_1.html"
-        #hutf = self.get_hutf(url)
-        #echo(hutf)
-        hutf = open("y_4659_1.html").read().decode("utf8")
-        #skey = match1(hutf, " var\S+skey\s*=\s*'(\S+)'\s*;")
-        skey = match1(hutf, "\s+var\s+skey\s*=\s*'(\S+)'\s*;")
-        echo(skey)
-        mp3url = match1(hutf, " '(\S+skey=)'\s*\+\s*skey")
-        #echo(quote(mp3url.encode('utf8'), ":?=/"))
-        echo(norm_url(mp3url + skey)) #.encode('utf8')))
         mid = match1(url, "yousxs.com/(\d+).html")
         echo(mid)
         hutf = open("y_4659.html").read().decode("utf8")
@@ -60,10 +57,21 @@ class YOUSXS(DWM):
             echo(n)
 
     def test(self, argv):
+        url = "https://www.yousxs.com/4659.html"
         url = "https://www.yousxs.com/player/4659_1.html"
         #hutf = self.phantom_hutf(url)
-        hutf = self.chrome_hutf(url)
-        echo(hutf)
+        #echo(hutf)
+        ci = get_ci(debug())
+        try:
+            ci.Page.navigate(url=url)
+            ci.wait_event("Page.loadEventFired", timeout=30)
+            ret = ci.Runtime.evaluate(expression="skey")
+            #print(json.dumps(ret, indent=2))
+            #print("skey =", ret["result"]["result"]["value"])
+            ret = ci.Runtime.evaluate(expression="ap.options.audio[0].url")
+            ret = ci.Runtime.evaluate(expression="ap.options.audio[0].name")
+        finally:
+            ci.stop()
 
 
 if __name__ == '__main__':
