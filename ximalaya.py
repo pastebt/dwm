@@ -10,13 +10,6 @@ class XIMALAYA(DWM):
     handle_list = ['(/|\.)ximalaya\.com(/|:)']
 
     def query_info(self, url):
-        #url = "https://www.yousxs.com/player/4659_1.html"
-        hutf = self.get_hutf(url)
-        title = SelStr("h3", hutf)[0].text
-        skey = match1(hutf, "\s+var\s+skey\s*=\s*'(\S+)'\s*;")
-        skey = "1ab7d3b36620467d9bd0ca00e3b13ef3"
-        mp3url = match1(hutf, " '(\S+skey=)'\s*\+\s*skey")
-        u = norm_url(mp3url + skey)
         return title, "mp3", [u], None
 
     def get_playlist(self, url):
