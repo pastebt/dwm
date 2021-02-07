@@ -4,6 +4,7 @@ import re
 from subprocess import Popen, PIPE
 
 from mybs import SelStr
+from chrom import get_ci
 from comm import DWM, echo, start, match1, norm_url
 
 
