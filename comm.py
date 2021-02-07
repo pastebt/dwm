@@ -563,6 +563,9 @@ def get_kind_size(u, cookie=""):
             # application/x-mpegURL
             if kind.lower().endswith(".mpegurl") or kind.lower().endswith('/x-mpegurl'):
                 return "m3u8", size
+            # audio/x-m4a
+            if kind.lower().endswith("/x-m4a"):
+                return "m4a", size
             if not size:
                 url = u
                 act = 'GET'
