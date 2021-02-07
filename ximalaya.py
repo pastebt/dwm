@@ -1,13 +1,12 @@
 # -*- coding: utf8 -*-
 
-import re
-from subprocess import Popen, PIPE
+import json
 
 from mybs import SelStr
 from comm import DWM, echo, start, match1, norm_url
 
 
-class YOUSXS(DWM):
+class XIMALAYA(DWM):
     handle_list = ['(/|\.)yousxs\.com(/|:)']
 
     def query_info(self, url):
@@ -35,35 +34,13 @@ class YOUSXS(DWM):
                        "https://www.yousxs.com/player/%s_%d.html" % (mid, n)))
         return ul
        
-    def test1(self, argv):
-        url = "https://www.yousxs.com/4659.html"
-        echo(self.get_playlist(url))
-        #url = "https://www.yousxs.com/player/4659_1.html"
-        #hutf = self.get_hutf(url)
-        #echo(hutf)
-        hutf = open("y_4659_1.html").read().decode("utf8")
-        #skey = match1(hutf, " var\S+skey\s*=\s*'(\S+)'\s*;")
-        skey = match1(hutf, "\s+var\s+skey\s*=\s*'(\S+)'\s*;")
-        echo(skey)
-        mp3url = match1(hutf, " '(\S+skey=)'\s*\+\s*skey")
-        #echo(quote(mp3url.encode('utf8'), ":?=/"))
-        echo(norm_url(mp3url + skey)) #.encode('utf8')))
-        mid = match1(url, "yousxs.com/(\d+).html")
-        echo(mid)
-        hutf = open("y_4659.html").read().decode("utf8")
-        al = SelStr("div.panel-body div.col-xs-3 a", hutf)
-        echo(al)
-        for a in al:
-            n = match1(a['href'], "player/4659_(\d+).html")
-            if n is None:
-                continue
-            echo(n)
-
     def test(self, argv):
-        url = "https://www.yousxs.com/player/4659_1.html"
-        hutf = self.phantom_hutf(url)
-        echo(hutf)
+        url = "https://www.ximalaya.com/youshengshu/22658739/"
+        url = "https://www.ximalaya.com/youshengshu/22658739/202502304"
+        url = "https://www.ximalaya.com/revision/play/v1/audio?id=202502304&ptype=1"
+        hutf = self.get_hutf(url)
+        echo(json.dumps(json.loads(hutf), indent=2))
 
 
 if __name__ == '__main__':
-    start(YOUSXS)
+    start(XIMALAYA)
