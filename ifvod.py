@@ -15,9 +15,13 @@ class IFVOD(DWM):
         #echo("key=", key)
         #return
         if not key:
-            key = self.detail_key(url)
-        title, murl = self.key_m3u8("https://www.ifvod.tv/play?id=" + key)
+            c, t, keys = self.detail_key(url)
+            key = keys[0]
+        title, murl = self.key_m3u8(self.key_url(key))
         return title, "m3u8", murl, None
+
+    def key_url(self, key):
+        return "https://www.ifvod.tv/play?id=" + key
 
     def key_m3u8(self, url):
         #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
@@ -81,23 +85,34 @@ class IFVOD(DWM):
                     #echo("body", body)
                     body = json.loads(ret['result']['body'])
                     #echo(json.dumps(body, indent=2))
-                    key = body['data']['info'][0]['guestSeriesList'][0]['key']
-                    debug("key = ", key)
-                    return key
+                    #key = body['data']['info'][0]['guestSeriesList'][0]['key']
+                    bdi0 = body['data']['info'][0]
+                    title, channel = bdi0['title'], bdi0['channel']
+                    keys = [g['key'] for g in bdi0['guestSeriesList']]
+                    debug("keys = ", keys)
+                    return channel, title, keys
         except Exception as e:
             echo("detail_key out:", repr(e))
         finally:
             ci.stop()
+        return None, None, []
 
     def get_playlist(self, url):
-        return []
+        chan, title, keys = self.detail_key(url)
+        if not keys:
+            return []
+        return [("%s_%02d" % (title, i), self.key_url(k))
+                for i, k in enumerate(keys, 1)]
 
     def test(self, args):
         #url = 'https://www.ifvod.tv/detail?id=zEplg9yO88S'  # durl, white tiger
         #self.detail_key(url)
-        url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
+        #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
         #self.key_m3u8(url)
-        self.query_info(url)
+        #self.query_info(url)
+        url = 'https://www.ifvod.tv/detail?id=sz9aeyuFHXw'
+        ul = self.get_playlist(url)
+        echo(json.dumps(ul, indent=2))
         return
         # in detail?, get title, key(id)
         url = 'https://m8.ifvod.tv/api/video/detail?cinema=1&device=1&player=CkPlayer&tech=HLS&country=HU&lang=cns&v=1&id=zEplg9yO88S&vv=ef4901e4ca585ec9bfecd2c38e9bef9e&pub=1612745887675'
