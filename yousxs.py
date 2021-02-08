@@ -2,7 +2,6 @@
 
 import re
 import json
-from subprocess import Popen, PIPE
 
 from mybs import SelStr
 from chrome import get_ci

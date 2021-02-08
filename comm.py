@@ -66,6 +66,7 @@ from merge import merge, tss, m3u8_merge
 #USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) '
 #USER_AGENT += 'Gecko/20100101 Firefox/33.0'
 USER_AGENT = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36'
 DEBUG = False
 UTITLE = "UnknownTitle"
 
