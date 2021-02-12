@@ -17,13 +17,15 @@ class IFVOD(DWM):
         if not key:
             c, t, keys = self.detail_key(url)
             key = keys[0]
-        title, murl = self.key_m3u8(self.key_url(key))
-        return title, "m3u8", murl, None
+        title, murl = self.title_murl(self.key_url(key))
+        if 'chunklist.m3u8' in murl:
+            return title, "m3u8", murl, None
+        return title, None, [murl], None
 
     def key_url(self, key):
         return "https://www.ifvod.tv/play?id=" + key
 
-    def key_m3u8(self, url):
+    def title_murl(self, url):
         #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
         ci = get_ci(debug())
         ci.ws.settimeout(30)
@@ -46,17 +48,21 @@ class IFVOD(DWM):
                     req_id = dat['params']['requestId']
                     debug("req_url = ", req_url)
                     debug("req_id = ", req_id)
+                    break
                 # find m3u8
-                elif method == "Network.requestWillBeSent":
-                    u = dat['params']['request']['url']
-                    if 'chunklist.m3u8' in u:
-                        murl = u
-                        debug("murl = ", murl)
-            # find title
+                #elif method == "Network.requestWillBeSent":
+                #    u = dat['params']['request']['url']
+                #    if 'chunklist.m3u8' in u:
+                #        murl = u
+                #        debug("murl = ", murl)
             ret = ci.Network.getResponseBody(requestId=req_id)
             body = json.loads(ret['result']['body'])
+            zero = body['data']['info'][0]
+            # find murl
+            murl = zero['flvPathList'][-1]['result']
+            # find title
             #echo(json.dumps(body, indent=2))
-            title = body['data']['info'][0]['vl']['title']
+            title = zero['vl']['title']
             debug("title=", title, ", murl=", murl)
             return title, murl
         except Exception as e:
@@ -105,6 +111,7 @@ class IFVOD(DWM):
                 for i, k in enumerate(keys, 1)]
 
     def test(self, args):
+        url = 'https://www.ifvod.tv/play?id=79GyBcG802Q'
         #url = 'https://www.ifvod.tv/detail?id=zEplg9yO88S'  # durl, white tiger
         #self.detail_key(url)
         #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
