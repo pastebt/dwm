@@ -109,7 +109,7 @@ class IFVOD(DWM):
         chan, title, keys = self.detail_key(url)
         if not keys:
             return []
-        return [("%s_%02d" % (title, i), self.key_url(k))
+        return [(u"%s_第%02d集" % (title, i), self.key_url(k))
                 for i, k in enumerate(keys, 1)]
 
     def test(self, args):

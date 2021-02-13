@@ -84,13 +84,14 @@ class ChromeInterface(object):
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         if self.google_chrome:
             ret = self.Browser.close()
+            print(ret)
             for i in range(5):
-                if self.google_chrome.poll():
-                    if self.google_chrome.returncode is None:
-                        time.sleep(1)
-                    else:
-                        print("bye google_chrome")
-                        break
+                self.google_chrome.poll()
+                if self.google_chrome.returncode is None:
+                    time.sleep(1)
+                else:
+                    print("bye google_chrome")
+                    break
             else:
                 print("google_chrome.kill")
                 self.google_chrome.terminate()
