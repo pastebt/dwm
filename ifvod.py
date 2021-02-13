@@ -48,18 +48,20 @@ class IFVOD(DWM):
                     req_id = dat['params']['requestId']
                     debug("req_url = ", req_url)
                     debug("req_id = ", req_id)
-                    break
+                    #break
                 # find m3u8
-                #elif method == "Network.requestWillBeSent":
-                #    u = dat['params']['request']['url']
-                #    if 'chunklist.m3u8' in u:
-                #        murl = u
-                #        debug("murl = ", murl)
+                elif method == "Network.requestWillBeSent":
+                    u = dat['params']['request']['url']
+                    if 'chunklist.m3u8' in u or ".mp4?" in u:
+                        murl = u
+                        debug("murl = ", murl)
             ret = ci.Network.getResponseBody(requestId=req_id)
             body = json.loads(ret['result']['body'])
             zero = body['data']['info'][0]
-            # find murl
-            murl = zero['flvPathList'][-1]['result']
+            # find murl, this is not ready one
+            debug(" url = ", zero['flvPathList'][-1]['result'])
+            debug("murl = ", murl)
+            #murl = zero['flvPathList'][-1]['result']
             # find title
             #echo(json.dumps(body, indent=2))
             title = zero['vl']['title']

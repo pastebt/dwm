@@ -815,7 +815,7 @@ def run(k, args):
                 #if args.continue_next:
                 if args.debug:
                     echo("Error:", e)
-                    with open("exception_%s.txt" % quote(url), "w") as fo:
+                    with open("exception_%s.txt" % quote(url, ""), "w") as fo:
                         fo.write(title + "\n")
                         fo.write(url + "\n")
                 else:

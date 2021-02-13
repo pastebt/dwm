@@ -15,6 +15,8 @@ except ImportError:
 TIMEOUT = 1
 
 
+# https://chromedevtools.github.io/devtools-protocol/
+
 def get_ci(debug=False):
     GenericElement.debug = debug
     ci = ChromeInterface(auto_connect=False)
@@ -79,11 +81,21 @@ class ChromeInterface(object):
                                         "--remote-debugging-port=9222"])
 
     def stop(self):
+        ret = self.Browser.close()
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         self.close()
         if self.google_chrome:
-            print("google_chrome.kill")
-            self.google_chrome.kill()
+            for i in range(5):
+                if self.google_chrome.poll():
+                    if self.google_chrome.returncode is None:
+                        time.sleep(1)
+                    else:
+                        print("bye google_chrome")
+                        break
+            else:
+                print("google_chrome.kill")
+                self.google_chrome.terminate()
+                self.google_chrome.kill()
             self.google_chrome = None
 
     def __del__(self):
