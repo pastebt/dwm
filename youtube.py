@@ -7,9 +7,10 @@ import json
 from glob import glob
 from subprocess import Popen, PIPE
 try:
-    from urllib import unquote_plus
+    from urllib import unquote_plus, unquote
+    from urlparse import parse_qs
 except ImportError:
-    from urllib.parse import unquote_plus
+    from urllib.parse import unquote_plus, unquote, parse_qs
 
 import comm
 from mybs import SelStr
@@ -154,6 +155,14 @@ class YOUTUBE(DWM):
         js = json.loads(js[0])
         pvlr = find_in(js, "playlistVideoListRenderer")
         json.dump(pvlr, sys.stdout, indent=2)
+
+    def test(self, args):
+        #url = 'https://www.youtube.com/watch?v=dF2X2Bl9fps'
+        #'https://www.youtube.com/watch?v=dF2X2Bl9fps&pbj=1'
+        hutf = self.get_hutf(args.url)
+        dat = parse_qs(unquote(hutf))
+        echo(json.dumps(dat, indent=2))
+
 
 
 def find_in(dat, name):
