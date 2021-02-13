@@ -107,6 +107,9 @@ class IFVOD(DWM):
 
     def get_playlist(self, url):
         chan, title, keys = self.detail_key(url)
+        if chan == u'电影':
+            echo("this is 电影, no playlist")
+            return []
         if not keys:
             return []
         return [(u"%s_第%02d集" % (title, i), self.key_url(k))
