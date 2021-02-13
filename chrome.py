@@ -81,10 +81,9 @@ class ChromeInterface(object):
                                         "--remote-debugging-port=9222"])
 
     def stop(self):
-        ret = self.Browser.close()
         #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
-        self.close()
         if self.google_chrome:
+            ret = self.Browser.close()
             for i in range(5):
                 if self.google_chrome.poll():
                     if self.google_chrome.returncode is None:
@@ -97,6 +96,7 @@ class ChromeInterface(object):
                 self.google_chrome.terminate()
                 self.google_chrome.kill()
             self.google_chrome = None
+        self.close()
 
     def __del__(self):
         print("ChromeInterface.__del__", self.google_chrome)
