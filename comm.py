@@ -443,7 +443,6 @@ class DWM(object):
             sleep(1 + i)
         return p.returncode
 
-    #def get_one(self, url, t="UnknownTitle", n=False):
     def get_one(self, url, t=UTITLE, n=False):
         title, ext, urls, size = self.query_info(url)
         debug("get_one from query_info title=", title)

@@ -15,20 +15,19 @@ except ImportError:
 import comm
 from mybs import SelStr
 from post import post_file
-from comm import DWM, echo, start, UTITLE, debug
+from comm import DWM, echo, start, match1, UTITLE, debug
 
 
 class YOUTUBE(DWM):
     handle_list = ['/youtube\.com/', '/www\.youtube\.com/']
 
-    def query_info(self, url):
-        #title = UTITLE
-        #return title, None, [url], None
-        return
-
     def get_one(self, url, t=UTITLE, n=False):
+        if t == UTITLE:
+            hutf = self.get_hutf(url)
+            t = match1(hutf, '\<meta name="title" content="([^"]+)"\>')
         #echo(url, t)
-        #echo("")
+        echo("download", t)
+        echo("")
         #return
         dn = os.path.dirname(os.path.abspath(__file__))
         fn = os.path.abspath(os.path.join(dn, "../you-get/you-get"))
@@ -38,15 +37,6 @@ class YOUTUBE(DWM):
         if not self.parsed_args.post_uri:
             return
 
-        #t = t.encode("utf8")
-        #for e in ('.mp4', '.webm'):
-        #    for t in (t.encode("utf8"), unquote_plus(t), t.replace("|", "-")):
-        #        fn = t + e
-        #        fn = os.path.join(self.out_dir, fn)
-        #        debug("try find " + fn)
-        #        if os.path.isfile(fn):
-        #            post_file(fn, self.parsed_args.post_uri)
-        #            return
         for i in range(1, len(t)):
             n = t[:i] + "*"
             debug("ls " + n)
@@ -141,7 +131,7 @@ class YOUTUBE(DWM):
             urls.append("https://youtube.com/watch?v=" + vid[0])
         json.dump(urls, sys.stdout, indent=2)
 
-    def test(self, args):
+    def test2(self, args):
         url = 'https://www.youtube.com/watch?v=CtiGG5JgRss&list=OLAK5uy_nbCXU_ETWKYRkx_Y7V0b5wPm5DkL9mhw4&index=1'
         url = 'https://www.youtube.com/watch?v=BupDf81sxK4&list=PLwGmw7Ao_fs8VK2iH4hybZ0jhpOBzcKmg&index=1'
         #us = self.get_playlist(url)
@@ -160,9 +150,12 @@ class YOUTUBE(DWM):
         #url = 'https://www.youtube.com/watch?v=dF2X2Bl9fps'
         #'https://www.youtube.com/watch?v=dF2X2Bl9fps&pbj=1'
         hutf = self.get_hutf(args.url)
-        dat = parse_qs(unquote(hutf))
-        echo(json.dumps(dat, indent=2))
-
+        #dat = parse_qs(unquote(hutf))
+        #echo(json.dumps(dat, indent=2))
+        #echo(hutf)
+        # <meta name="title" content="心經唱誦36次 -齊豫居士">
+        ret = match1(hutf, '\<meta name="title" content="([^"]+)"\>')
+        echo(repr(ret))
 
 
 def find_in(dat, name):
