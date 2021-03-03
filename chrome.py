@@ -16,7 +16,8 @@ TIMEOUT = 1
 
 
 # https://chromedevtools.github.io/devtools-protocol/
-
+# https://en.wikipedia.org/wiki/WebSocket
+# https://yalantis.com/blog/how-to-build-websockets-in-go/
 def get_ci(debug=False):
     GenericElement.debug = debug
     ci = ChromeInterface(auto_connect=False)
