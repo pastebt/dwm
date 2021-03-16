@@ -3,6 +3,7 @@
 import json
 import time
 from subprocess import Popen, PIPE
+from threading import Thread, Lock
 
 #import requests
 import websocket
@@ -31,8 +32,8 @@ def get_ci(debug=False):
             break
     ci.Network.enable()
     ci.Page.enable()
-    ci.DOM.enable()
-    ci.Debugger.enable()
+    #ci.DOM.enable()
+    #ci.Debugger.enable()
     return ci
 
 
@@ -70,7 +71,9 @@ class ChromeInterface(object):
         self.host = host
         self.port = port
         self.ws = None
+        self.mid = 10
         self.tabs = None
+        self.regs = {}
         self.timeout = timeout
         self.google_chrome = None
         if auto_connect:
@@ -81,27 +84,15 @@ class ChromeInterface(object):
                                         "--disable-gpu",
                                         "--remote-debugging-port=9222"])
 
+    def get_mid(self):
+        with self.Lock:
+            self.mid += 1
+            return self.mid
+
     def stop(self):
-        #https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
-        if self.google_chrome:
-            ret = self.Browser.close()
-            print(ret)
-            for i in range(5):
-                self.google_chrome.poll()
-                if self.google_chrome.returncode is None:
-                    time.sleep(1)
-                else:
-                    print("bye google_chrome")
-                    break
-            else:
-                print("google_chrome.kill")
-                self.google_chrome.terminate()
-                self.google_chrome.kill()
-            self.google_chrome = None
-        self.close()
+        self.ws.close()
 
     def __del__(self):
-        print("ChromeInterface.__del__", self.google_chrome)
         self.stop()
 
     def get_tabs(self):
@@ -134,6 +125,10 @@ class ChromeInterface(object):
     def close(self):
         if self.ws:
             self.ws.close()
+
+    def reg(self, mid, func):
+        self.regs[mid] = func
+
 
     # Blocking
     def wait_message(self, timeout=None):
