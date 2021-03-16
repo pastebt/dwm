@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 import json
-
+from queue import Queue
 from mybs import SelStr
 from chrome import get_ci
 from comm import DWM, start, debug, echo, match1
@@ -119,57 +119,34 @@ class IFSP(DWM):
                 for i, k in enumerate(keys, 1)]
 
     def test(self, args):
-        url = 'https://www.ifvod.tv/play?id=79GyBcG802Q'
-        #url = 'https://www.ifvod.tv/detail?id=zEplg9yO88S'  # durl, white tiger
-        #self.detail_key(url)
-        #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
-        #self.key_m3u8(url)
-        #self.query_info(url)
-        url = 'https://www.ifvod.tv/detail?id=sz9aeyuFHXw'
-        ul = self.get_playlist(url)
-        echo(json.dumps(ul, indent=2))
-        return
-        # in detail?, get title, key(id)
-        url = 'https://m8.ifvod.tv/api/video/detail?cinema=1&device=1&player=CkPlayer&tech=HLS&country=HU&lang=cns&v=1&id=zEplg9yO88S&vv=ef4901e4ca585ec9bfecd2c38e9bef9e&pub=1612745887675'
-        # in play, title, m3u8
-        url = 'https://m8.ifvod.tv/api/video/play?cinema=1&id=AyVW8xSvQrV&region=CA&device=1&usersign=1&vv=0474bdc82615ce18b409dde54c870552&pub=1612745961896'
-        url = 'https://www.ifvod.tv/detail?id=zEplg9yO88S'  # durl, white tiger
-        #url = 'https://www.ifvod.tv/play?id=AyVW8xSvQrV'    # murl
-        #hutf = self.get_hutf(url)
-        #echo(hutf)
-        ci = get_ci(debug())
-        ci.timeout = 60
-        ci.ws.settimeout(5)
-        ci.Log.enable()
-        murl, durl = "", ""
-        try:
-            ci.Page.navigate(url=url)
-            while True:
-                message = ci.ws.recv()
-                dat = json.loads(message)
-                if dat.get("method") == "Network.requestWillBeSent":
-                    #echo(json.dumps(dat, indent=2))
-                    u = dat['params']['request']['url']
-                    echo("u = ", u)
-                    if 'chunklist.m3u8' in u:
-                        murl = u
-                    if 'detail' in u:
-                        durl = u
-                    if murl and durl:
-                        break
-            #ci.wait_event("Page.loadEventFired", timeout=30)
-            #ci.wait_event("Log.entryAdded", timeout=30)
-            #ret = ci.Runtime.evaluate(expression="skey")
-            #print(json.dumps(ret, indent=2))
-            #print("skey =", ret["result"]["result"]["value"])
-            #ret = ci.Runtime.evaluate(expression="ap.options.audio[0].url")
-            #ret = ci.Runtime.evaluate(expression="ap.options.audio[0].name")
-        except:
-            pass
-        finally:
-            ci.stop()
-        echo('murl = ', murl)
-        echo('durl = ', durl)
+        url = 'https://www.ifsp.tv/play?id=lSqo26L8OME'
+        ci = get_ci(debug=debug())
+        # "Network.requestWillBeSent"
+        # chunklist.m3u8
+        chm = Queue()
+        def get_murl(wo, obj):
+            u = obj['params']['request']['url']
+            if 'chunklist.m3u8' in u:
+                chm.put(u)
+        ci.reg("Network.requestWillBeSent", get_murl)
+        # "Network.responseReceived"
+        cht = Queue()
+        def get_title(wo, obj):
+            req_url = obj['params']['response']['url']
+            #/v3/video/detail               # title
+            #/v3/video/languagesplaylist    # play list
+            if '/v3/video/play' not in req_url:
+                return
+            req_id = obj['params']['requestId']
+            cht.put(req_id)
+        ci.reg("Network.responseReceived", get_title)
+
+        ci.Page.navigate(url=url)
+        info = ci.Network.getResponseBody(requestId=cht.get())
+        #debug(json.dumps(info['result'], indent=2))
+        debug(json.dumps(json.loads(info['result']['body']), indent=2))
+        debug("murl = ", chm.get())
+        ci.close()
 
 
 if __name__ == '__main__':

@@ -1,19 +1,21 @@
 
 # copy from https://github.com/marty90/PyChromeDevTools
 import json
-import time
+from time import time, sleep
 from subprocess import Popen, PIPE
 from threading import Thread, Lock
 
 #import requests
 import websocket
 try:
+    from queue import Queue
     from urllib.request import urlopen
 except ImportError:
+    from Queue import Queue
     from urllib2 import urlopen
     from socket import error as BlockingIOError
 
-TIMEOUT = 1
+TIMEOUT = 20
 
 
 # https://chromedevtools.github.io/devtools-protocol/
@@ -21,13 +23,13 @@ TIMEOUT = 1
 # https://yalantis.com/blog/how-to-build-websockets-in-go/
 def get_ci(debug=False):
     GenericElement.debug = debug
-    ci = ChromeInterface(auto_connect=False)
+    ci = ChromeInterface(auto_connect=False, debug=debug)
     while True:
         try:
             ci.connect()
         except Exception as e:
             print("sleep", e)
-            time.sleep(1)
+            sleep(1)
         else:
             break
     ci.Network.enable()
@@ -49,17 +51,17 @@ class GenericElement(object):
 
         def generic_function(**args):
             #self.parent.pop_messages()
-            self.parent.message_counter += 1
-            message_id = int('{}{}'.format(id(self),
-                             self.parent.message_counter))
-            message_id = self.parent.message_counter
-            call_obj = {'id': message_id, 'method': func_name, 'params': args}
-            self.parent.ws.send(json.dumps(call_obj))
-            result, _ = self.parent.wait_result(message_id)
-            if self.debug:
-                print(func_name, args)
-                print(json.dumps(result, indent=2))
-            return result
+            #self.parent.message_counter += 1
+            #message_id = int('{}{}'.format(id(self),
+            #                 self.parent.message_counter))
+            #message_id = self.parent.message_counter
+            #call_obj = {'id': message_id, 'method': func_name, 'params': args}
+            #self.parent.ws.send(json.dumps(call_obj))
+            #result, _ = self.parent.wait_result(message_id)
+            #if self.debug:
+            #    print(func_name, args)
+            #    print(json.dumps(result, indent=2))
+            return self.parent.wait(func_name, **args)
         return generic_function
 
 
@@ -67,14 +69,17 @@ class ChromeInterface(object):
     message_counter = 0
 
     def __init__(self, host='localhost', port=9222, tab=0,
-                 timeout=TIMEOUT, auto_connect=True):
+                 timeout=TIMEOUT, auto_connect=True, debug=True):
         self.host = host
         self.port = port
         self.ws = None
         self.mid = 10
+        self.dbg = debug
         self.tabs = None
         self.regs = {}
-        self.timeout = timeout
+        self.name = "ChromeInterface"
+        self.lock = Lock()
+        self.timecut = time() + timeout
         self.google_chrome = None
         if auto_connect:
             self.connect(tab=tab)
@@ -82,18 +87,20 @@ class ChromeInterface(object):
             self.google_chrome = Popen(["google-chrome",
                                         "--headless",
                                         "--disable-gpu",
-                                        "--remote-debugging-port=9222"])
+                                        "--remote-debugging-port=%d" % self.port])
+
+    def debug(self, msg):
+        if self.dbg:
+            print(msg)
 
     def get_mid(self):
-        with self.Lock:
+        with self.lock:
             self.mid += 1
             return self.mid
 
-    def stop(self):
-        self.ws.close()
-
     def __del__(self):
-        self.stop()
+        #self.stop()
+        self.Browser.close()
 
     def get_tabs(self):
         #response = requests.get('http://{}:{}/json'.format(self.host, self.port))
@@ -107,7 +114,8 @@ class ChromeInterface(object):
         wsurl = self.tabs[tab]['webSocketDebuggerUrl']
         self.close()
         self.ws = websocket.create_connection(wsurl)
-        self.ws.settimeout(self.timeout)
+        #self.ws.settimeout(self.timeout)
+        Thread(target=self.run).start()
 
     def connect_targetID(self, targetID):
         try:
@@ -129,82 +137,43 @@ class ChromeInterface(object):
     def reg(self, mid, func):
         self.regs[mid] = func
 
-
-    # Blocking
-    def wait_message(self, timeout=None):
-        timeout = timeout if timeout is not None else self.timeout
-        self.ws.settimeout(timeout)
-        try:
-            message = self.ws.recv()
-        except websocket._exceptions.WebSocketTimeoutException:
-            return None
-        finally:
-            self.ws.settimeout(self.timeout)
-        return json.loads(message)
-
-    # Blocking
-    def wait_event(self, event, timeout=None):
-        timeout = timeout if timeout is not None else self.timeout
-        start_time = time.time()
-        messages = []
-        matching_message = None
-        while True:
-            now = time.time()
-            if now - start_time > timeout:
-                break
-            try:
-                message = self.ws.recv()
-                parsed_message = json.loads(message)
-                messages.append(parsed_message)
-                if 'method' in parsed_message and \
-                   parsed_message['method'] == event:
-                    matching_message = parsed_message
-                    break
-            except websocket._exceptions.WebSocketTimeoutException:
-                continue
-                #break
-        return (matching_message, messages)
-
-    # Blocking
-    def wait_result(self, result_id, timeout=None):
-        timeout = timeout if timeout is not None else self.timeout
-        start_time = time.time()
-        messages = []
-        matching_result = None
-        while True:
-            now = time.time()
-            if now - start_time > timeout:
-                break
-            try:
-                message = self.ws.recv()
-                parsed_message = json.loads(message)
-                messages.append(parsed_message)
-                if 'result' in parsed_message and \
-                   parsed_message['id'] == result_id:
-                    matching_result = parsed_message
-                    break
-            except websocket._exceptions.WebSocketTimeoutException:
-                continue
-                #break
-        return (matching_result, messages)
-
-    # Non Blocking
-    def pop_messages(self):
-        messages = []
-        self.ws.settimeout(0)
+    def run(self):
         while True:
             try:
-                message = self.ws.recv()
-                messages.append(json.loads(message))
-            except BlockingIOError:
+                to = self.timecut - time()
+                if to < 0:
+                    to = 0.2
+                self.ws.settimeout(to)
+                msg = json.loads(self.ws.recv())
+            except websocket.WebSocketConnectionClosedException:
                 break
-            except websocket._exceptions.WebSocketTimeoutException:
+            except websocket.WebSocketTimeoutException:
+                #self.done.put("0")
+                self.debug("%s timeout" % self.name)
+                #continue
                 break
-            #except:
-            #    #print(e)
-            #    raise
-        self.ws.settimeout(self.timeout)
-        return messages
+            self.debug("%s recv %s" % (self.name, json.dumps(msg, indent=2)))
+            mid = msg.get("method", msg.get("id"))
+            if mid in self.regs:
+                self.regs[mid](self, msg)
+
+    def send(self, obj):
+        ms = json.dumps(obj, indent=2)
+        with self.lock:
+            ret = self.ws.send(ms)
+        self.debug("send_obj %s %s, ret=%s" % (self.name, ms, str(ret)))
+
+    def call(self, method, **params):
+        self.send({"id": self.get_mid(), "method": method, "params": params})
+
+    def wait(self, method, **params):
+        mid = self.get_mid()
+        ch = Queue()
+        def _wait(wo, msg):
+            ch.put(msg)
+        self.reg(mid, _wait)
+        self.send({"id": mid, "method": method, "params": params})
+        return ch.get()
 
     def __getattr__(self, attr):
         genericelement = GenericElement(attr, self)
