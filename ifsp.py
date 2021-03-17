@@ -135,18 +135,34 @@ class IFSP(DWM):
             req_url = obj['params']['response']['url']
             #/v3/video/detail               # title
             #/v3/video/languagesplaylist    # play list
-            if '/v3/video/play' not in req_url:
-                return
-            req_id = obj['params']['requestId']
-            cht.put(req_id)
+            #if '/v3/video/play' not in req_url:
+            #    return
+            for n in ('/v3/video/detail', '/v3/video/languagesplaylist'):
+                if n in req_url:
+                    req_id = obj['params']['requestId']
+                    debug("put", n, req_id)
+                    cht.put((n, req_id))
         ci.reg("Network.responseReceived", get_title)
 
         ci.Page.navigate(url=url)
-        info = ci.Network.getResponseBody(requestId=cht.get())
-        #debug(json.dumps(info['result'], indent=2))
-        debug(json.dumps(json.loads(info['result']['body']), indent=2))
-        debug("murl = ", chm.get())
+        title, pl = "", []
+        for i in range(2):
+            n, req_id = cht.get()
+            debug("get", n, req_id)
+            info = ci.Network.getResponseBody(requestId=req_id)
+            dat = json.loads(info['result']['body'])['data']['info'][0]
+            print(n, json.dumps(dat, indent=2))
+            if 'detail' in n:
+                title = dat['title']
+            if 'playlist' in n:
+                pl = dat['playList']
+            if title and pl:
+                break
+        murl = chm.get()
         ci.close()
+        debug("playlist", pl)
+        debug("title", title)
+        debug("murl", murl)
 
 
 if __name__ == '__main__':

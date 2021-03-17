@@ -98,9 +98,9 @@ class ChromeInterface(object):
             self.mid += 1
             return self.mid
 
-    def __del__(self):
-        #self.stop()
-        self.Browser.close()
+    #def __del__(self):
+    #    #self.stop()
+    #    self.Browser.close()
 
     def get_tabs(self):
         #response = requests.get('http://{}:{}/json'.format(self.host, self.port))
@@ -112,7 +112,7 @@ class ChromeInterface(object):
         if update_tabs or self.tabs is None:
             self.get_tabs()
         wsurl = self.tabs[tab]['webSocketDebuggerUrl']
-        self.close()
+        #self.close()
         self.ws = websocket.create_connection(wsurl)
         #self.ws.settimeout(self.timeout)
         Thread(target=self.run).start()
@@ -122,7 +122,7 @@ class ChromeInterface(object):
             wsurl = 'ws://{}:{}/devtools/page/{}'.format(self.host,
                                                          self.port,
                                                          targetID)
-            self.close()
+            #self.close()
             self.ws = websocket.create_connection(wsurl)
             self.ws.settimeout(self.timeout)
         except:
@@ -131,8 +131,8 @@ class ChromeInterface(object):
             self.ws.settimeout(self.timeout)
 
     def close(self):
-        if self.ws:
-            self.ws.close()
+        self.Browser.close()
+        self.ws.close()
 
     def reg(self, mid, func):
         self.regs[mid] = func
@@ -160,7 +160,11 @@ class ChromeInterface(object):
     def send(self, obj):
         ms = json.dumps(obj, indent=2)
         with self.lock:
-            ret = self.ws.send(ms)
+            try:
+                ret = self.ws.send(ms)
+            except websocket.WebSocketConnectionClosedException:
+                #raise
+                return
         self.debug("send_obj %s %s, ret=%s" % (self.name, ms, str(ret)))
 
     def call(self, method, **params):
