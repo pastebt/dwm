@@ -60,6 +60,11 @@ class ChromeInterface(object):
             self.mid += 1
             return self.mid
 
+    def get_to(self):
+        to = self.timecut - time()
+        if to < 0:
+            to = 0.5
+
     def connect(self):
         self.google_chrome = Popen(["google-chrome",
                                     "--headless",
@@ -88,10 +93,7 @@ class ChromeInterface(object):
     def run(self):
         while True:
             try:
-                to = self.timecut - time()
-                if to < 0:
-                    to = 0.2
-                self.ws.settimeout(to)
+                self.ws.settimeout(self.get_to())
                 msg = json.loads(self.ws.recv())
             except websocket.WebSocketConnectionClosedException:
                 break
@@ -120,7 +122,7 @@ class ChromeInterface(object):
 
     def wait(self, method, **params):
         ch = self.post(method, **params)
-        return ch.get()
+        return ch.get(timeout=self.get_to())
 
     def post(self, method, **params):
         mid = self.get_mid()
