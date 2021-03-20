@@ -1,13 +1,18 @@
 # -*- coding: utf8 -*-
 
 import json
-from queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
+
 from mybs import SelStr
 from chrome import get_ci
 from comm import DWM, start, debug, echo, match1
 
 
 class IFSP(DWM):
+    no_check_certificate = True
     handle_list = ['(/|\.)ifsp\.tv/']
 
     def query_info(self, url):
@@ -67,7 +72,7 @@ class IFSP(DWM):
         title, murl, pl = self.title_murl(url)
         return [(u"%s_第%s集" % (title, n), self.key_url(k)) for k, n in pl]
 
-    def test(self, args):
+    def test1(self, args):
         #url = 'https://www.ifsp.tv/play?id=lSqo26L8OME'
         url = 'https://www.ifsp.tv/play?id=PBPhNoEyRaP'
         ci = get_ci(debug=debug())
@@ -113,6 +118,9 @@ class IFSP(DWM):
         debug("playlist", pl)
         debug("title", title)
         debug("murl", murl)
+
+    def test(self, args):
+        url = 'https://www.ifsp.tv/play?id=m0IXOmqu894'
 
 
 if __name__ == '__main__':
