@@ -18,7 +18,8 @@ class IFSP(DWM):
     def query_info(self, url):
         key = match1(url, "/play\?id=(.+)")
         title, murl, pl = self.title_murl(url)
-        title = u"%s_第%s集" % (title, dict(pl)[key])
+        if key in dict(pl):
+            title = u"%s_第%s集" % (title, dict(pl)[key])
         if 'chunklist.m3u8' in murl:
             return title, "m3u8", murl, None
         return title, None, [murl], None
