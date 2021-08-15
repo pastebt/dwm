@@ -198,3 +198,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    #m3u8_merge("https://europe.olemovienews.com/hlstimeofffmp4/20210503/xyflmsiG/mp4/xyflmsiG.mp4/master.m3u8", "maste.mp4", slow=False)
