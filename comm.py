@@ -101,6 +101,7 @@ class DWM(object):
     wget_cookie = {}
     no_check_certificate = False
     skim_output = False
+    m3u8_slow_merge = False
 
     def __init__(self, proxy=None):
         global USER_AGENT
@@ -279,7 +280,10 @@ class DWM(object):
     def try_key(self, bu, rt, dn, line):
         m = re.search('#EXT-X-KEY:.+URI="([^"]+)"', line)
         if not m:
-            return line
+            #EXT-X-MAP:URI="init-v1-a1.mp4"
+            m = re.search('#EXT-X-MAP:.*URI="([^"]+)"', line)
+            if not m:
+                return line
         u = self.get_real_url(bu, rt, m.group(1))
         n = os.path.basename(u)
         self.wget_one_url(os.path.join(dn, n), u, 0)
@@ -347,7 +351,7 @@ class DWM(object):
 
     def avconv_m3u8(self, title, ext, url):
         outfn = self.get_outfn(title, ext)
-        m3u8_merge(url, outfn)
+        m3u8_merge(url, outfn, self.m3u8_slow_merge)
         ##if not title.endswith(".mp4"):
         ##    title += ".mp4"
         #cmds = ["avconv",

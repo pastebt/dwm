@@ -14,25 +14,15 @@ from comm import DWM, start, debug, echo, match1
 
 
 class OLEVOD(DWM):
-    no_check_certificate = True
+    #no_check_certificate = True
     handle_list = ['(/|\.)olevod\.com/']
+    m3u8_slow_merge = True
 
     def query_info(self, url):
-        #key = match1(url, "/play\?id=(.+)")
-        ##echo("key=", key)
-        ##return
-        #if not key:
-        #    c, t, keys = self.detail_key(url)
-        #    key = keys[0]
         title, murl = self.title_murl(url)
-        #if 'chunklist.m3u8' in murl:
-        #    return title, "m3u8", murl, None
         murl = self.last_m3u8(murl)
         echo(murl)
         return title, "m3u8", murl, None
-
-    def key_url(self, key):
-        return "https://train.ifvod.tv/play?id=" + key
 
     def get_playlist(self, url):
         chan, title, keys = self.detail_key(url)
@@ -121,7 +111,9 @@ class OLEVOD(DWM):
 
     def test(self, args):
         url = "https://www.olevod.com/index.php/vod/play/id/24986/sid/1/nid/75.html"
-        self.title_murl(url)
+        hutf = self.get_hutf(url)
+        echo(hutf)
+        #self.title_murl(url)
         # https://europe.olemovienews.com/hlstimeofffmp4/20210503/xyflmsiG/mp4/xyflmsiG.mp4/master.m3u8
 
 
