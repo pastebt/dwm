@@ -286,6 +286,8 @@ class DWM(object):
                 return line
         u = self.get_real_url(bu, rt, m.group(1))
         n = os.path.basename(u)
+        if len(n) > 100:
+            n = "long_%s_uri_%d" % (line[1:10], len(n))
         self.wget_one_url(os.path.join(dn, n), u, 0)
         return line.replace(m.group(1), n)
 
@@ -303,7 +305,9 @@ class DWM(object):
         #echo("unum =", unum)
         #cnt = 0
         dats = []
+        lc = 0
         for line in data.split('\n'):
+            lc += 1
             if not line or line.startswith("#"):
                 line = self.try_key(bu, rt, dn, line)
                 fout.write(line + "\n")
@@ -311,6 +315,8 @@ class DWM(object):
                 continue
             u = self.get_real_url(bu, rt, line)
             n = os.path.basename(u)
+            if len(n) > 100:
+                n = "%04d_%s" % (lc, n.split('?')[0])
             fout.write(n + "\n")
             dats.append((os.path.join(dn, n), u))
             #fout.flush()
