@@ -15,17 +15,18 @@ class SHUQUGE(DWM):
         #url = "https://www.shuquge.com/txt/12236/46252712.html"
         hutf = self.get_hutf(url)
         #echo(hutf)
-        ct = SelStr("div.content", hutf)
+        cts = SelStr("div.showtxt", hutf)
         #echo(ct.text)
         t = SelStr("div.content h1", hutf)[0]
         #return "", "mp4", us, None
-        return t.text, "epub", ct, 1
+        return t.text, "epub", cts, 1
 
-    def save_book(self, outfn, ct):
-        #echo(outfn)
-        with open(outfn, "w") as fout:
-            dat = unicode(ct[0])
-            fout.write(dat.encode('utf8'))
+    def save_book(self, outfn, cts):
+        echo("write to", outfn)
+        with open(outfn + ".dwm", "w") as fout:
+            for ct in cts:
+                fout.write(unicode(ct).encode('utf8'))
+        os.rename(outfn + ".dwm", outfn)
 
     def get_playlist(self, url):
         #url = "https://www.shuquge.com/txt/12236/index.html"
