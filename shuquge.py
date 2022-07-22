@@ -4,11 +4,12 @@ import os
 import sys
 from subprocess import Popen, PIPE
 
+from book import BOOK
 from mybs import SelStr
-from comm import DWM, echo, start, match1
+from comm import echo, start, match1
 
 
-class SHUQUGE(DWM):
+class SHUQUGE(BOOK):
     handle_list = ['shuquge.com']
 
     def query_info(self, url):
@@ -19,7 +20,7 @@ class SHUQUGE(DWM):
         #echo(ct.text)
         t = SelStr("div.content h1", hutf)[0]
         #return "", "mp4", us, None
-        return t.text, "epub", cts, 1
+        return t.text, "book", cts, 1
 
     def save_book(self, outfn, cts):
         echo("write to", outfn)

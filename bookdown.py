@@ -4,11 +4,12 @@ import re
 import sys
 from subprocess import Popen, PIPE
 
+from book import BOOK
 from mybs import SelStr
-from comm import DWM, echo, start, match1
+from comm import echo, start, match1
 
 
-class BOOKDN(DWM):
+class BOOKDN(BOOK):
     handle_list = ['bookdown.com.cn']
 
     def query_info(self, url):
@@ -17,7 +18,7 @@ class BOOKDN(DWM):
         echo(hutf)
         us = self._get_m3u8_urls(url, hutf)
         #return "", "mp4", us, None
-        return "", None, us, None
+        return "", "book", us, None
 
     def test1(self, args):
         # http://m.bookdown.com.cn/read/31314.html
