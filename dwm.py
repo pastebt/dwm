@@ -3,7 +3,10 @@
 import os
 import re
 import sys
-import imp
+try:
+    from importlib.machinery import SourceFileLoader as load_source
+except ImportError:
+    from imp import load_source
 
 # python -B
 sys.dont_write_bytecode = True
@@ -24,7 +27,7 @@ def find_kls(url):
             continue
         name = fn[:-3]
         try:
-            m = imp.load_source(name, fn)
+            m = load_source(name, fn)
         except Exception as e:
             echo(name, e)
         else:
