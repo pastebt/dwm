@@ -18,7 +18,7 @@ def find_kls(url):
     n = os.path.basename(sys.argv[0])
     if not p:
         p = "."
-    dwmkls = re.compile("^class\s+(\S+)\s*\(DWM\)\:", re.M)
+    dwmkls = re.compile("^class\s+(\S+)\s*\((DWM|BOOK)\)\:", re.M)
     for fn in os.listdir(p):
         if not fn.endswith(".py") or fn == n:
             continue
@@ -31,7 +31,8 @@ def find_kls(url):
         except Exception as e:
             echo(name, e)
         else:
-            for n in ret:
+            #echo(ret)
+            for n, c in ret:
                 kls = getattr(m, n)
                 if kls.can_handle_it(url):
                     return kls

@@ -470,7 +470,7 @@ class DWM(object):
             title = nt
         else:
             echo('nt =', nt)
-        if self.info_only:
+        if self.info_only and ext != "book":
             for url in urls:
                 echo(url)
         title = self.align_title_num(title)
@@ -489,6 +489,10 @@ class DWM(object):
 
         if ext == 'm3u8':
             outfn = self.download_m3u8(title, urls)
+        elif ext == 'book':
+            outfn = self.get_outfn(title, "xhtml")
+            if outfn:
+                self.save_book(outfn, urls)
         else:
             outfn = self.download_urls(title, ext, urls, size)
         debug("post_uri = ", self.parsed_args.post_uri)
