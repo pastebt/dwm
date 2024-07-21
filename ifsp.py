@@ -13,7 +13,7 @@ from comm import DWM, start, debug, echo, match1
 
 class IFSP(DWM):
     no_check_certificate = True
-    handle_list = ['(/|\.)ifsp\.tv/']
+    handle_list = ['(/|\.)(ifsp|iyf)\.tv/']
 
     def query_info(self, url):
         key = match1(url, "/play\?id=(.+)")
